@@ -8,5 +8,3 @@ const firebaseConfig: Record<string, string> = {
   appId: "1:425565430168:web:7acc214179792c56f00bed",
   measurementId: "G-1M4N0H90T2"
 };
-
-firebaseConfig

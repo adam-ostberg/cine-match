@@ -1,3 +1,3 @@
-export default function Swipe() {
+export function Swipe() {
   return <p>Swipe</p>;
 }
