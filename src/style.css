@@ -1,0 +1,19 @@
+:root {
+    background-color: #2b2a37;
+    color: white;
+}
+
+.home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.home h1 {
+    font-weight: bold;
+    font-size: 80;
+}
+
+.home p {
+    color: rgb(198, 198, 198);
+}
