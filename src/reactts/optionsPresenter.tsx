@@ -3,16 +3,16 @@ import { observer } from "mobx-react-lite";
 import { OptionsView } from "../views/OptionsView.tsx";
 
 export type Genre = {
-    id: Int32Array;
+    id: number;
     name: string;
 }
 
 export type OptionsModel = {
     genres: Genre[];
-    selectedGenreIds: Int32Array[];
+    selectedGenreIds: number[];
     minRating: number;
 
-    toggleGenre: (id: Int32Array) => void;
+    toggleGenre: (id: number) => void;
     setMinRating: (rating: number) => void;
 }
 
@@ -24,7 +24,7 @@ export type OptionsPresenterProps = {
 const Options = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
     function OptionsRender(props: OptionsPresenterProps) {
 
-        function onGenreChangeACB(genreId: Int32Array) {
+        function onGenreChangeACB(genreId: number) {
             props.model.toggleGenre(genreId);
         }
         function onRatingChangeACB(newRating: number) {

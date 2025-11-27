@@ -6,7 +6,7 @@ import { SwipeView } from "../views/SwipeView";
 
 export type SwipeModel = {
     currentMovie: {
-        movie_id: Int32Array;
+        movie_id: number;
         title: string;
         poster_path: string;
         overview: string;

@@ -3,10 +3,10 @@ import type { Genre } from "../reactts/optionsPresenter.tsx";
 
 export type OptionsViewProps = {
   availableGenres: Genre[];
-  selectedGenreIds: Int32Array[];
+  selectedGenreIds: number[];
   currentMinRating: number;
 
-  onGenreChange: (id: Int32Array) => void;
+  onGenreChange: (id: number) => void;
   onRatingChange: (rating: number) => void;
 }
 

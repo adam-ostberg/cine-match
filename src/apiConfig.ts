@@ -59,9 +59,9 @@ function getGenres() {
 }
 
 export type searchData = {
-  query: "string";
-  region: "string";
-  year: "string";
+  query: string;
+  region?: string;
+  year?: string;
 };
 
 function searchMovies(searchParams: searchData) {
@@ -97,7 +97,7 @@ function searchMovies(searchParams: searchData) {
     .catch(handleErrorACB);
 }
 
-function getMovieDetails(movie_id: Int32Array) {
+function getMovieDetails(movie_id: number) {
   const ENDPOINT = `/movie/${movie_id}`;
 
   function handleResponseACB(response: Response) {
@@ -121,7 +121,7 @@ function getMovieDetails(movie_id: Int32Array) {
     .catch(handleErrorACB);
 }
 
-function getMovieImages(movie_id: Int32Array) {
+function getMovieImages(movie_id: number) {
   /* Kanske inte ett måste, man får med get movie details */
 
   const ENDPOINT = `/movie/${movie_id}/images`;
@@ -151,7 +151,7 @@ function getMovieImages(movie_id: Int32Array) {
     .catch(handleErrorACB);
 }
 
-function getTrailer(movie_id: Int32Array) {
+function getTrailer(movie_id: number) {
   /* Gets the trailer video */
 
   const ENDPOINT = `/movie/${movie_id}/videos`;
@@ -205,7 +205,7 @@ function getPopularMovies() {
     .catch(handleErrorACB);
 }
 
-function getSimilarMovie(movie_id: Int32Array) {
+function getSimilarMovie(movie_id: number) {
   /* From this we can get related movie IDs, image paths, etc. */
 
   const ENDPOINT = `/movie/${movie_id}/similar`;
