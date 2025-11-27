@@ -61,7 +61,28 @@ function searchMovies(searchParams: string) {
 }
 
 function getMovieDetails(movie_id: Int32Array) {
+    
     const ENDPOINT = `/movie/${movie_id}`
+
+    function handleResponseACB(response: Response) {
+        if (response.ok !== true) {
+            throw new Error
+        }
+        return response.json();
+    }
+
+    function handleSuccessACB(data: object) {
+        console.log(data);
+    }
+
+    function handleErrorACB(error: unknown) {
+        console.error(error);
+    }
+
+    return fetch(BASE_URL + ENDPOINT, options)
+        .then(handleResponseACB)
+        .then(handleSuccessACB)
+        .catch(handleErrorACB);
 }
 
 function getMovieImages(movie_id: Int32Array) {
