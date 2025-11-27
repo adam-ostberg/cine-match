@@ -35,9 +35,20 @@ function apiAuth() {
         .catch(handleErrorACB);
 }
 
-function searchMovies(searchParams: string) {
+export type searchData = {
+    query: 'string'
+    region: 'string'
+    year: 'string'
+}
+
+function searchMovies(searchParams: searchData) {
+    /* OBS: Det finns en distinkt skillnad mellan "discover"
+    och "search". Beroende på kanske denna ändras till discover. */
+    /* https://developer.themoviedb.org/reference/search-movie */
 
     const ENDPOINT = "/search/movie"
+    
+    const QUERY = searchParams.query
 
     function handleResponseACB(response: Response) {
         if (response.ok !== true) {
@@ -54,14 +65,14 @@ function searchMovies(searchParams: string) {
         console.error(error);
     }
 
-    return fetch(BASE_URL + ENDPOINT + "?" + new URLSearchParams(searchParams), options)
+    return fetch(BASE_URL + ENDPOINT + "?" + new URLSearchParams(QUERY), options)
         .then(handleResponseACB)
         .then(handleSuccessACB)
         .catch(handleErrorACB);
 }
 
 function getMovieDetails(movie_id: Int32Array) {
-    
+
     const ENDPOINT = `/movie/${movie_id}`
 
     function handleResponseACB(response: Response) {
