@@ -1,3 +1,4 @@
+
 const options = {
     method: 'GET',
     headers: {
@@ -6,21 +7,169 @@ const options = {
     }
 };
 
-function handleResponseCB(response: Response) {
+const BASE_URL = "https://api.themoviedb.org/3";
 
-  return response.json();
+function apiAuth() {
+
+    const ENDPOINT = '/authentication'
+
+    function handleResponseACB(response: Response) {
+        if (response.ok !== true) {
+            throw new Error
+        }
+        return response.json();
+    }
+
+    function handleSuccessACB(data: object) {
+        console.log(data);
+    }
+
+    function handleErrorACB(error: unknown) {
+        console.error(error);
+    }
+
+    // Execute fetch using the named callbacks
+    fetch(BASE_URL + ENDPOINT, options)
+        .then(handleResponseACB)
+        .then(handleSuccessACB)
+        .catch(handleErrorACB);
 }
 
-function handleSuccessCB(data: object) {
-    console.log(data);
+function searchMovies(searchParams: string) {
+
+    const ENDPOINT = "/search/movie"
+
+    function handleResponseACB(response: Response) {
+        if (response.ok !== true) {
+            throw new Error
+        }
+        return response.json();
+    }
+
+    function handleSuccessACB(data: object) {
+        console.log(data);
+    }
+
+    function handleErrorACB(error: unknown) {
+        console.error(error);
+    }
+
+    return fetch(BASE_URL + ENDPOINT + "?" + new URLSearchParams(searchParams), options)
+        .then(handleResponseACB)
+        .then(handleSuccessACB)
+        .catch(handleErrorACB);
 }
 
-function handleErrorCB(error: unknown) {
-    console.error(error);
+function getMovieDetails(movie_id: Int32Array) {
+    const ENDPOINT = `/movie/${movie_id}`
 }
 
-// Execute fetch using the named callbacks
-fetch('https://api.themoviedb.org/3/authentication', options)
-    .then(handleResponseCB)
-    .then(handleSuccessCB)
-    .catch(handleErrorCB);
+function getMovieImages(movie_id: Int32Array) {
+    /* Kanske inte ett måste, man får med get movie details */
+
+    const ENDPOINT = `/movie/${movie_id}/images`
+
+    function handleResponseACB(response: Response) {
+        if (response.ok !== true) {
+            throw new Error
+        }
+        return response.json();
+    }
+
+    function handleSuccessACB(data: object) {
+        console.log(data);
+        // [TODO] specify the one with the best vote_count?
+        // Also, specify aspect ratio for poster? Resolution
+        // Finns backdrops, logos, posters.
+        // Använd "logos" som png vid film-beskrivning
+    }
+
+    function handleErrorACB(error: unknown) {
+        console.error(error);
+    }
+
+    return fetch(BASE_URL + ENDPOINT, options)
+        .then(handleResponseACB)
+        .then(handleSuccessACB)
+        .catch(handleErrorACB);
+}
+
+function getTrailer(movie_id: Int32Array) {
+    /* Gets the trailer video */
+
+    const ENDPOINT = `/movie/${movie_id}/videos`
+
+    function handleResponseACB(response: Response) {
+        if (response.ok !== true) {
+            throw new Error
+        }
+        return response.json();
+    }
+
+    function handleSuccessACB(data: object) {
+        console.log(data);  
+        // [TODO] specify the type: "Trailer", (with the greatest size?)
+    }
+
+    function handleErrorACB(error: unknown) {
+        console.error(error);
+    }
+
+    return fetch(BASE_URL + ENDPOINT, options)
+        .then(handleResponseACB)
+        .then(handleSuccessACB)
+        .catch(handleErrorACB);
+}
+
+function getPopularMovies() {
+    /* We get a list of popular movies to populate a search screen */
+
+    const ENDPOINT = "/movie/popular"
+
+    function handleResponseACB(response: Response) {
+        if (response.ok !== true) {
+            throw new Error
+        }
+        return response.json();
+    }
+
+    function handleSuccessACB(data: object) {
+        console.log(data);  
+        // Gets poster path
+    }
+
+    function handleErrorACB(error: unknown) {
+        console.error(error);
+    }
+
+    return fetch(BASE_URL + ENDPOINT, options)
+        .then(handleResponseACB)
+        .then(handleSuccessACB)
+        .catch(handleErrorACB);
+}
+
+function getSimilarMovie(movie_id: Int32Array) {
+    /* From this we can get related movie IDs, image paths, etc. */
+
+    const ENDPOINT = `/movie/${movie_id}/similar`
+
+    function handleResponseACB(response: Response) {
+        if (response.ok !== true) {
+            throw new Error
+        }
+        return response.json();
+    }
+
+    function handleSuccessACB(data: object) {
+        console.log(data);  // [TODO] specify the type: "Trailer", (with the greatest size?)
+    }
+
+    function handleErrorACB(error: unknown) {
+        console.error(error);
+    }
+
+    return fetch(BASE_URL + ENDPOINT, options)
+        .then(handleResponseACB)
+        .then(handleSuccessACB)
+        .catch(handleErrorACB);
+}
