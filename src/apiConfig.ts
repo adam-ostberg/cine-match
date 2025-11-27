@@ -1,3 +1,4 @@
+const BASE_URL = "https://api.themoviedb.org/3";
 const optionsGET = {
   method: "GET",
   headers: {
@@ -6,8 +7,6 @@ const optionsGET = {
       "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2N2NlNGQ5YWZmYWRhN2RiZGZjNjA1YmYwNDljNzAzYyIsIm5iZiI6MTc2NDE1OTY0MC4xMTYsInN1YiI6IjY5MjZmMDk4Nzk4ZDU0YmJlMmMxMWY4NCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.5ERg42s4DbAtiLHNtlMbqVIGOXYD3f0MP8YtAjTHE-c",
   },
 };
-
-const BASE_URL = "https://api.themoviedb.org/3";
 
 function apiAuth() {
   const ENDPOINT = "/authentication";
@@ -66,12 +65,13 @@ export type searchData = {
 
 function searchMovies(searchParams: searchData) {
   /* OBS: Det finns en distinkt skillnad mellan "discover"
-    och "search". Beroende på kanske denna ändras till discover. */
+    och "search" (Discover kan bl.a. ha fler parametrar)
+    Beroende på kanske denna ändras till discover. */
   /* https://developer.themoviedb.org/reference/search-movie */
 
   const ENDPOINT = "/search/movie";
 
-  const QUERY = searchParams.query;
+  //   const QUERY = searchParams.query;
 
   function handleResponseACB(response: Response) {
     if (response.ok !== true) {
@@ -89,7 +89,7 @@ function searchMovies(searchParams: searchData) {
   }
 
   return fetch(
-    BASE_URL + ENDPOINT + "?" + new URLSearchParams(QUERY),
+    BASE_URL + ENDPOINT + "?" + new URLSearchParams(searchParams),
     optionsGET
   )
     .then(handleResponseACB)
