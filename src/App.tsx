@@ -1,7 +1,7 @@
-import { HomeView } from "./HomeView";
+import { HomeView } from "./views/HomeView";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { OptionsView } from "./OptionsView";
-import { SwipeView } from "./SwipeView";
+import { OptionsView } from "./views/OptionsView";
+import { SwipeView } from "./views/SwipeView";
 
 function App() {
 
