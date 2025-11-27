@@ -1,8 +1,8 @@
 
 import { observer } from "mobx-react-lite";
-import { HomeView } from "/src/views/HomeView.jsx";
+import { HomeView } from "/src/views/HomeView.tsx";
 
-const Sidebar = observer(             // needed for the presenter to update (its view) when relevant parts of the model change
+const Home = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
     function HomeRender(props){
         
         function sessionStartACB(evt) {
@@ -18,4 +18,6 @@ const Sidebar = observer(             // needed for the presenter to update (its
     }
 );
 
-export { Sidebar }
+
+
+export { Home }

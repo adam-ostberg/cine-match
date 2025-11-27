@@ -1,9 +1,12 @@
 import "./style.css";
 
 export function HomeView() {
+  function onLogoClickACB() {
+    window.location.hash="#/Home"
+    };
   return (
     <div className="home">
-      <h1>CineMatch</h1>
+      <h1 onClick={onLogoClickACB}>CineMatch</h1>
       <p>Swipe to find your perfect movie</p>
       <button>Start Session</button>
     </div>
