@@ -6,6 +6,8 @@ const optionsGET = {
   },
 };
 
+/* From https://imdbapi.dev */
+
 function getImdbRating(titleId: string) {
   const ENDPOINT = `/titles/${titleId}`;
 
@@ -17,7 +19,7 @@ function getImdbRating(titleId: string) {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data); // Check comment below for getting rating
+    console.log(data); // [TODO] Check comment below for getting rating
   }
 
   function handleErrorACB(error: unknown) {
@@ -50,6 +52,6 @@ function getImdbRating(titleId: string) {
     "string"
   ],
   "rating": {
-    "aggregateRating": 0,
+    "aggregateRating": 0,  // HERE [TODO]
     "voteCount": 0
   }, */
