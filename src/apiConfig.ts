@@ -8,7 +8,7 @@ const optionsGET = {
   },
 };
 
-function apiAuth() {
+export function apiAuth() {
   const ENDPOINT = "/authentication";
 
   function handleResponseACB(response: Response) {
@@ -32,7 +32,7 @@ function apiAuth() {
     .catch(handleErrorACB);
 }
 
-function getGenres() {
+export function getGenres() {
   const ENDPOINT = "/genre/movie/list";
 
   function handleResponseACB(response: Response) {
@@ -62,7 +62,7 @@ function getGenres() {
   year?: string;
 };
 
-function searchMovies(searchParams: searchData) {
+export function searchMovies(searchParams: searchData) {
   /* OBS: Det finns en distinkt skillnad mellan "discover"
     och "search" (Discover kan bl.a. ha fler parametrar)
     Beroende på kanske denna ändras till discover. */
@@ -94,7 +94,7 @@ function searchMovies(searchParams: searchData) {
     .catch(handleErrorACB);
 }
 
-function getMovieDetails(movie_id: number) {
+export function getMovieDetails(movie_id: number) {
   const ENDPOINT = `/movie/${movie_id}`;
 
   function handleResponseACB(response: Response) {
@@ -118,7 +118,7 @@ function getMovieDetails(movie_id: number) {
     .catch(handleErrorACB);
 }
 
-function getMovieImages(movie_id: number) {
+export function getMovieImages(movie_id: number) {
   /* Kanske inte ett måste, man får med get movie details */
 
   const ENDPOINT = `/movie/${movie_id}/images`;
@@ -148,7 +148,7 @@ function getMovieImages(movie_id: number) {
     .catch(handleErrorACB);
 }
 
-function getTrailer(movie_id: number) {
+export function getTrailer(movie_id: number) {
   /* Gets the trailer video */
 
   const ENDPOINT = `/movie/${movie_id}/videos`;
@@ -175,7 +175,7 @@ function getTrailer(movie_id: number) {
     .catch(handleErrorACB);
 }
 
-function getPopularMovies() {
+export function getPopularMovies() {
   /* We get a list of popular movies to populate a search screen */
 
   const ENDPOINT = "/movie/popular";
@@ -202,7 +202,7 @@ function getPopularMovies() {
     .catch(handleErrorACB);
 }
 
-function getSimilarMovie(movie_id: number): Promise<void | object> {
+export function getSimilarMovie(movie_id: number): Promise<void | object> {
   /* From this we can get related movie IDs, image paths, etc. */
   /* Sort by original_language to ensure english movies? */
   /* Sort by popularity? */
@@ -235,7 +235,7 @@ function getSimilarMovie(movie_id: number): Promise<void | object> {
   imdb_id: string | null;
 };
 
-function getImdbId(movie_id: number): Promise<string | void | null> {
+export function getImdbId(movie_id: number): Promise<string | void | null> {
   const ENDPOINT = `/movie/${movie_id}/external_ids`;
 
   function handleResponseACB(response: Response) {
