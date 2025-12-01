@@ -14,7 +14,6 @@ export type ModelType = {
 
 }
 
-
 export const model: ModelType = {
     userId: 0,
     genres: [],
@@ -22,7 +21,6 @@ export const model: ModelType = {
     dislikes: [],
     curMovieId: 0,
     movieDetailsPrmsState: {promise: null, data: null, error: null}, 
-
 
     setId(id: number) {
         this.userId = id;
@@ -35,5 +33,6 @@ export const model: ModelType = {
     currentMovieEffect() {
         const movieDetailsPrms = getMovieDetails(this.curMovieId);
         resolvePromise(movieDetailsPrms, this.movieDetailsPrmsState)
+        return movieDetailsPrms
     }
 }

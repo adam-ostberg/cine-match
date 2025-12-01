@@ -1,4 +1,4 @@
-import "/src/style.css"
+import "../style.css"
 import type { Genre } from "../reactts/optionsPresenter.tsx";
 
 export type OptionsViewProps = {

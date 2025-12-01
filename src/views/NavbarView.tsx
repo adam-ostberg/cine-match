@@ -1,4 +1,4 @@
-import "/src/style.css"
+import "../style.css"
 
 export type navbarViewProps = {
     onLogoClick: () => void;

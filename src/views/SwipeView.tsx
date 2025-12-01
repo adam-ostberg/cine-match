@@ -1,4 +1,4 @@
-import "/src/style.css"
+import "../style.css"
 
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 

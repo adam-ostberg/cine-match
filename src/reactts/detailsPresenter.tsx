@@ -1,32 +1,28 @@
 
 import { observer } from "mobx-react-lite";
-import { DetailsView, type MovieDetails } from "../views/DetailsView.tsx";
-
-type DetailsModel = {
-  currentMovie: MovieDetails/*  | null */; // [TODO] Add suspenseview
-  closeDetails: () => void;
-}
+import { DetailsView } from "../views/DetailsView.tsx";
+import type { ModelType } from "../MovieModel.ts";
 
 export type DetailsPresenterProps = {
-  model: DetailsModel;
+  model: ModelType;
 }
 
 const Details = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
   function DetailsRender(props: DetailsPresenterProps) {
 
+    const moviedetailsPrmsState = props.model.movieDetailsPrmsState
     /* if (!props.model.currentMovie) {
       return <SuspenseView />;
     } */
-
     function closeACB() {
-      props.model.closeDetails();
+      const b = 5
+      //props.model.closeDetails();
     }
 
+    const view = !!moviedetailsPrmsState.data ? <DetailsView details={moviedetailsPrmsState.data} onClose={closeACB}/> : ("__no_data__");
+
     return (
-      <DetailsView
-        movie={props.model.currentMovie}
-        onClose={closeACB}
-      />
+      view
     );
   }
 );

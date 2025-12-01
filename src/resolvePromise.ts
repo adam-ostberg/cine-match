@@ -1,7 +1,9 @@
+
+
 export type PromiseState = {
-    promise: any
-    data: any
-    error: any
+    promise: any;
+    data: any;
+    error: any;
 }
 
 export function resolvePromise(prms: Promise<any>, promiseState: PromiseState) {
