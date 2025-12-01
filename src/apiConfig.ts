@@ -57,7 +57,7 @@ function getGenres() {
     .catch(handleErrorACB);
 }
 
-export type searchData = {
+/* export */ type searchData = {
   query: string;
   region?: string;
   year?: string;
@@ -205,8 +205,10 @@ function getPopularMovies() {
     .catch(handleErrorACB);
 }
 
-function getSimilarMovie(movie_id: number) {
+function getSimilarMovie(movie_id: number): Promise<void | object> {
   /* From this we can get related movie IDs, image paths, etc. */
+  /* Sort by original_language to ensure english movies? */
+  /* Sort by popularity? */
 
   const ENDPOINT = `/movie/${movie_id}/similar`;
 
@@ -218,7 +220,7 @@ function getSimilarMovie(movie_id: number) {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data); 
+    return data;
   }
 
   function handleErrorACB(error: unknown) {
@@ -231,8 +233,13 @@ function getSimilarMovie(movie_id: number) {
     .catch(handleErrorACB);
 }
 
-function getImdbId(movie_id: number) {
-  const ENDPOINT = `/movie/${movie_id}/external_ids`
+/* export */ type ExternalIDs = {
+  id: number;
+  imdb_id: string | null;
+};
+
+function getImdbId(movie_id: number): Promise<string | void | null> {
+  const ENDPOINT = `/movie/${movie_id}/external_ids`;
 
   function handleResponseACB(response: Response) {
     if (response.ok !== true) {
@@ -241,8 +248,8 @@ function getImdbId(movie_id: number) {
     return response.json();
   }
 
-  function handleSuccessACB(data: object) {
-    console.log(data); // [TODO] .imdb_id to get imdb_id string 
+  function handleSuccessACB(data: ExternalIDs) {
+    return data.imdb_id;
   }
 
   function handleErrorACB(error: unknown) {
@@ -254,3 +261,7 @@ function getImdbId(movie_id: number) {
     .then(handleSuccessACB)
     .catch(handleErrorACB);
 }
+
+getSimilarMovie(550).then((data) => {
+  console.log(data);
+});
