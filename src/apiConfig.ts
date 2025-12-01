@@ -218,7 +218,31 @@ function getSimilarMovie(movie_id: number) {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data); // [TODO] specify the type: "Trailer", (with the greatest size?)
+    console.log(data); 
+  }
+
+  function handleErrorACB(error: unknown) {
+    console.error(error);
+  }
+
+  return fetch(BASE_URL + ENDPOINT, optionsGET)
+    .then(handleResponseACB)
+    .then(handleSuccessACB)
+    .catch(handleErrorACB);
+}
+
+function getImdbId(movie_id: number) {
+  const ENDPOINT = `/movie/${movie_id}/external_ids`
+
+  function handleResponseACB(response: Response) {
+    if (response.ok !== true) {
+      throw new Error();
+    }
+    return response.json();
+  }
+
+  function handleSuccessACB(data: object) {
+    console.log(data); // [TODO] .imdb_id to get imdb_id string 
   }
 
   function handleErrorACB(error: unknown) {
