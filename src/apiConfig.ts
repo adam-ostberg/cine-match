@@ -19,15 +19,14 @@ function apiAuth() {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data);
+    return data;
   }
 
   function handleErrorACB(error: unknown) {
     console.error(error);
   }
 
-  // Execute fetch using the named callbacks
-  fetch(BASE_URL + ENDPOINT, optionsGET)
+  return fetch(BASE_URL + ENDPOINT, optionsGET)
     .then(handleResponseACB)
     .then(handleSuccessACB)
     .catch(handleErrorACB);
@@ -44,7 +43,7 @@ function getGenres() {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data);
+    return data;
   }
 
   function handleErrorACB(error: unknown) {
@@ -71,8 +70,6 @@ function searchMovies(searchParams: searchData) {
 
   const ENDPOINT = "/search/movie";
 
-  //   const QUERY = searchParams.query;
-
   function handleResponseACB(response: Response) {
     if (response.ok !== true) {
       throw new Error();
@@ -81,7 +78,7 @@ function searchMovies(searchParams: searchData) {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data);
+    return data;
   }
 
   function handleErrorACB(error: unknown) {
@@ -108,7 +105,7 @@ function getMovieDetails(movie_id: number) {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data);
+    return data;
   }
 
   function handleErrorACB(error: unknown) {
@@ -134,7 +131,7 @@ function getMovieImages(movie_id: number) {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data);
+    return data;
     // [TODO] specify the one with the best vote_count?
     // Also, specify aspect ratio for poster? Resolution
     // Finns backdrops, logos, posters.
@@ -164,7 +161,7 @@ function getTrailer(movie_id: number) {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data);
+    return data;
     // [TODO] specify the type: "Trailer", (with the greatest size?)
   }
 
@@ -191,7 +188,7 @@ function getPopularMovies() {
   }
 
   function handleSuccessACB(data: object) {
-    console.log(data);
+    return data;
     // Gets poster path
   }
 
@@ -242,7 +239,7 @@ function getImdbId(movie_id: number): Promise<string | void | null> {
   const ENDPOINT = `/movie/${movie_id}/external_ids`;
 
   function handleResponseACB(response: Response) {
-    if (response.ok !== true) {
+    if (!response.ok) {
       throw new Error();
     }
     return response.json();
@@ -262,6 +259,9 @@ function getImdbId(movie_id: number): Promise<string | void | null> {
     .catch(handleErrorACB);
 }
 
-getSimilarMovie(550).then((data) => {
+/* getGenres().then((data) => {
   console.log(data);
 });
+ */
+/* run with node --loader ts-node/esm apiConfig.ts 
+movie_id ex is fight club: 550*/
