@@ -17,48 +17,47 @@ export type ProductionCompany = {
 export type ProductionCountry = {
   iso_3166_1: string;
   name: string;
-}
+};
 
 export type TMDBGenre = {
   id: number;
   name: string;
-}
+};
 
 export type SpokenLanguages = {
   english_name: string;
   iso_639_1: string;
   name: string;
-}
+};
 
 export type MovieDetails = {
-  adult: false,
-  backdrop_path: string, // jpg file path f.e "/hZkgoQYus5vegHoetLkCJzb17zJ.jpg"
-  belongs_to_collection: boolean,
-  budget: number,
-  genres: TMDBGenre[],
-  homepage: string,
-  id: number,
-  imdb_id: string, // f.e "tt0137523"
-  origin_country: string[], // example ["US"]
-  original_language: string, // example "en"
-  original_title: string,
-  overview: string, // Summary text
-  popularity: number,
-  poster_path: string, // jpg path file f.e
-  production_companies: ProductionCompany[],
-  production_countries: ProductionCountry[],
-  release_date: string, // YYYY-MM-DD
-  revenue: number,
-  runtime: number, // number of minutes
-  spoken_languages: SpokenLanguages[],
-  status: string, // f.e "released"
-  tagline: string, // f.e 'Mischief. Mayhem. Soap.'
-  title: string, // f.e 'Fight Club'
-  video: boolean,
-  vote_average: number,
-  vote_count: number
-}
-
+  adult: false;
+  backdrop_path: string; // jpg file path f.e "/hZkgoQYus5vegHoetLkCJzb17zJ.jpg"
+  belongs_to_collection: boolean;
+  budget: number;
+  genres: TMDBGenre[];
+  homepage: string;
+  id: number;
+  imdb_id: string; // f.e "tt0137523"
+  origin_country: string[]; // example ["US"]
+  original_language: string; // example "en"
+  original_title: string;
+  overview: string; // Summary text
+  popularity: number;
+  poster_path: string; // jpg path file f.e
+  production_companies: ProductionCompany[];
+  production_countries: ProductionCountry[];
+  release_date: string; // YYYY-MM-DD
+  revenue: number;
+  runtime: number; // number of minutes
+  spoken_languages: SpokenLanguages[];
+  status: string; // f.e "released"
+  tagline: string; // f.e 'Mischief. Mayhem. Soap.'
+  title: string; // f.e 'Fight Club'
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+};
 
 export function apiAuth() {
   const ENDPOINT = "/authentication";
@@ -311,9 +310,35 @@ export function getImdbId(movie_id: number): Promise<string | void | null> {
     .catch(handleErrorACB);
 }
 
-/* getGenres().then((data) => {
+export function getWatchProviders(movie_id: number) {
+  /* [TODO] Kräver implementation av regionsval, då den returnar baserat
+  på region. */
+  const ENDPOINT = `/movie/${movie_id}/watch/providers`;
+
+  function handleResponseACB(response: Response) {
+    if (!response.ok) {
+      throw new Error();
+    }
+    return response.json();
+  }
+
+  function handleSuccessACB(data: Promise<object>) {
+    return data;
+  }
+
+  function handleErrorACB(error: unknown) {
+    console.error(error);
+  }
+
+  return fetch(BASE_URL + ENDPOINT, optionsGET)
+    .then(handleResponseACB)
+    .then(handleSuccessACB)
+    .catch(handleErrorACB);
+}
+
+/* getWatchProviders(550).then((data) => {
   console.log(data);
-});
- */
+}); */
+
 /* run with node --loader ts-node/esm apiConfig.ts 
 movie_id ex is fight club: 550*/
