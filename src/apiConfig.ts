@@ -30,6 +30,17 @@ export type SpokenLanguages = {
   name: string;
 };
 
+export type searchData = {
+  query: string;
+  region?: string;
+  year?: string;
+};
+
+export type ExternalIDs = {
+  id: number;
+  imdb_id: string | null;
+};
+
 export type MovieDetails = {
   adult: false;
   backdrop_path: string; // jpg file path f.e "/hZkgoQYus5vegHoetLkCJzb17zJ.jpg"
@@ -106,12 +117,6 @@ export function getGenres() {
     .then(handleSuccessACB)
     .catch(handleErrorACB);
 }
-
-/* export */ type searchData = {
-  query: string;
-  region?: string;
-  year?: string;
-};
 
 export function searchMovies(searchParams: searchData) {
   /* OBS: Det finns en distinkt skillnad mellan "discover"
@@ -280,11 +285,6 @@ export function getSimilarMovie(movie_id: number): Promise<void | object> {
     .then(handleSuccessACB)
     .catch(handleErrorACB);
 }
-
-/* export */ type ExternalIDs = {
-  id: number;
-  imdb_id: string | null;
-};
 
 export function getImdbId(movie_id: number): Promise<string | void | null> {
   const ENDPOINT = `/movie/${movie_id}/external_ids`;
