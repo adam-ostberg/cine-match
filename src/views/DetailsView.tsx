@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 export type DetailsViewProps = {
   details: MovieDetails;
   onClose: () => void;
+  trailerKey: () => void;
 };
 
 const DetailsView = observer(
@@ -45,8 +46,7 @@ const DetailsView = observer(
               {details.overview}
             </p>
             {/* [TODO] Trailer imbed */}
-            <a className="trailer-video" href={`https://www.youtube.com/watch?v=qtRKdVHc-cE`}>
-            </a>
+            <iframe className="trailer-video" src={`https://www.youtube.com/watch?v=${props.trailerKey}?controls=0`}></iframe >
           </div>
         </div>
       </div>
