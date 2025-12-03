@@ -227,10 +227,36 @@ export function getTrailer(movie_id: number) {
     .catch(handleErrorACB);
 }
 
-export function getPopularMovies() {
+
+export interface TMDBPopularMovieResult {
+  id: number;
+  title: string;
+  overview: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  release_date: string;
+  adult: boolean;
+  original_language: string;
+  original_title: string;
+  popularity: number;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+  genre_ids: number[];
+}
+
+export interface TMDBPopularResponse {
+  page: number;
+  results: TMDBPopularMovieResult[];
+  total_pages: number;
+  total_results: number;
+}
+
+export function getPopularMovies(page: number): Promise<any>{
   /* We get a list of popular movies to populate a search screen */
 
   const ENDPOINT = "/movie/popular";
+  const PARAMS = `?page=${page}`;
 
   function handleResponseACB(response: Response) {
     if (response.ok !== true) {
@@ -248,7 +274,7 @@ export function getPopularMovies() {
     console.error(error);
   }
 
-  return fetch(BASE_URL + ENDPOINT, optionsGET)
+  return fetch(BASE_URL + ENDPOINT + PARAMS, optionsGET)
     .then(handleResponseACB)
     .then(handleSuccessACB)
     .catch(handleErrorACB);
@@ -281,6 +307,34 @@ export function getSimilarMovie(movie_id: number): Promise<void | object> {
     .then(handleSuccessACB)
     .catch(handleErrorACB);
 }
+
+
+export async function fetchPopularMoviesPages(
+  pagesToFetch: number,
+  startPage = 1
+): Promise<TMDBPopularMovieResult[]> {
+
+  if (pagesToFetch < 1) {
+    return [];
+  }
+
+  const endPage = startPage + pagesToFetch - 1;
+
+  // Build an array of promises for each page
+  const pagePromises: Promise<TMDBPopularResponse>[] = [];
+  for (let page = startPage; page <= endPage; page++) {
+    pagePromises.push(getPopularMovies(page));
+  }
+
+  // Fetch all pages in parallel
+  const pageResults = await Promise.all(pagePromises);
+
+  // Merge all results into one array
+  const allMovies = pageResults.flatMap((res) => res.results);
+
+  return allMovies;
+}
+
 
 /* export */ type ExternalIDs = {
   id: number;
