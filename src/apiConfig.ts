@@ -200,8 +200,8 @@ export function getMovieImages(movie_id: number) {
     .catch(handleErrorACB);
 }
 
-export function getTrailer(movie_id: number) {
-  /* Gets the trailer video */
+export function getMovieVideos(movie_id: number) {
+  /* Gets the movie videos */
 
   const ENDPOINT = `/movie/${movie_id}/videos`;
 
