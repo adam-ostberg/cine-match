@@ -1,9 +1,7 @@
 import { HomeView } from "./views/HomeView";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import { OptionsView } from "./views/OptionsView";
-import { SwipeView } from "./views/SwipeView";
-import { DetailsView } from "./views/DetailsView";
-import { model, type ModelType } from "./MovieModel"
+import { type ModelType } from "./MovieModel"
 import { Details } from "./reactts/detailsPresenter";
 import { observer } from "mobx-react-lite";
 import { Swipe } from "./reactts/swipePresenter";
