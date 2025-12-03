@@ -6,6 +6,7 @@ import { DetailsView } from "./views/DetailsView";
 import { model, type ModelType } from "./MovieModel"
 import { Details } from "./reactts/detailsPresenter";
 import { observer } from "mobx-react-lite";
+import { Swipe } from "./reactts/swipePresenter";
 
 export type AppRenderProps = {
 	model: ModelType
@@ -22,12 +23,12 @@ const App = observer(
 				{
 						path: "/options",
 						element: <OptionsView/>,
-				},
+				}, */
 				{
 						path: "/swipe",
-						element: <SwipeView/>,
+						element: <Swipe model={props.model}/>,
 				},
-				*/
+				
 				{
 						path: "/details",
 						element: <Details model={props.model}/>

@@ -7,10 +7,9 @@ export type ModelType = {
   likes: [];
   dislikes: [];
   curMovieId: number;
-  movieIdQueue: number[];
   movieDetailsPrmsState: PromiseState;
   movieVideosPrmsState: PromiseState;
-  movieIdQueuesPrmsState: PromiseState;
+  movieIdQueuePrmsState: PromiseState;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
   currentMovieEffect: () => void;
@@ -38,11 +37,10 @@ export const model: ModelType = {
     genres: [],
     likes: [],
     dislikes: [],
-    curMovieId: 0,
-    movieIdQueue: [],
+    curMovieId: 550,
     movieDetailsPrmsState: {promise: null, data: null, error: null}, 
     movieVideosPrmsState: {promise: null, data: null, error: null}, 
-    movieIdQueuesPrmsState: {promise: null, data: null, error: null},
+    movieIdQueuePrmsState: {promise: null, data: null, error: null},
 
     setId(id: number) {
         this.userId = id;
@@ -96,12 +94,11 @@ export const model: ModelType = {
 
     filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
         const ids: number[] = movies.map(m => m.id);
-        this.movieIdQueue.concat(ids);
-        return this.movieIdQueue;
+        return ids;
     },
 
     setMovieIdQueue() {
         const popularMoviesPromise = fetchPopularMoviesPages(1, 1).then(this.filterAndGetIdsFromMoviesACB)
-        resolvePromise(popularMoviesPromise, this.movieIdQueuesPrmsState);
+        resolvePromise(popularMoviesPromise, this.movieIdQueuePrmsState);
     },
 }
