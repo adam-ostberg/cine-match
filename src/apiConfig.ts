@@ -280,6 +280,33 @@ export function getPopularMovies(page: number): Promise<any>{
     .catch(handleErrorACB);
 }
 
+export async function fetchPopularMoviesPages(
+  pagesToFetch: number,
+  startPage = 1
+): Promise<TMDBPopularMovieResult[]> {
+
+  if (pagesToFetch < 1) {
+    return [];
+  }
+
+  const endPage = startPage + pagesToFetch - 1;
+
+  // Build an array of promises for each page
+  const pagePromises: Promise<TMDBPopularResponse>[] = [];
+  for (let page = startPage; page <= endPage; page++) {
+    pagePromises.push(getPopularMovies(page));
+  }
+
+  // Fetch all pages in parallel
+  const pageResults = await Promise.all(pagePromises);
+
+  // Merge all results into one array
+  const allMovies = pageResults.flatMap((res) => res.results);
+
+  return allMovies;
+}
+
+
 export function getSimilarMovie(movie_id: number): Promise<void | object> {
   /* From this we can get related movie IDs, image paths, etc. */
   /* Sort by original_language to ensure english movies? */
@@ -308,32 +335,6 @@ export function getSimilarMovie(movie_id: number): Promise<void | object> {
     .catch(handleErrorACB);
 }
 
-
-export async function fetchPopularMoviesPages(
-  pagesToFetch: number,
-  startPage = 1
-): Promise<TMDBPopularMovieResult[]> {
-
-  if (pagesToFetch < 1) {
-    return [];
-  }
-
-  const endPage = startPage + pagesToFetch - 1;
-
-  // Build an array of promises for each page
-  const pagePromises: Promise<TMDBPopularResponse>[] = [];
-  for (let page = startPage; page <= endPage; page++) {
-    pagePromises.push(getPopularMovies(page));
-  }
-
-  // Fetch all pages in parallel
-  const pageResults = await Promise.all(pagePromises);
-
-  // Merge all results into one array
-  const allMovies = pageResults.flatMap((res) => res.results);
-
-  return allMovies;
-}
 
 
 /* export */ type ExternalIDs = {
