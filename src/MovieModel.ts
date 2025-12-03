@@ -1,4 +1,4 @@
-import { getMovieDetails, type MovieDetails, getMovieVideos} from "./apiConfig"
+import { getMovieDetails, type MovieDetails, type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 
 export type ModelType = {
@@ -7,13 +7,17 @@ export type ModelType = {
   likes: [];
   dislikes: [];
   curMovieId: number;
-  movieDetailsPrmsState: PromiseState
-  movieVideosPrmsState: PromiseState
+  movieIdQueue: number[];
+  movieDetailsPrmsState: PromiseState;
+  movieVideosPrmsState: PromiseState;
+  movieIdQueuesPrmsState: PromiseState;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
   currentMovieEffect: () => void;
   getMovieVideos: () => Promise<void | object>;
   getMovieTrailer: () => void;
+  setMovieIdQueue: () => void;
+  filterAndGetIdsFromMoviesACB: (movies: TMDBPopularMovieResult[]) => void;
 }
 
 export type Video = {
@@ -35,8 +39,10 @@ export const model: ModelType = {
     likes: [],
     dislikes: [],
     curMovieId: 0,
+    movieIdQueue: [],
     movieDetailsPrmsState: {promise: null, data: null, error: null}, 
     movieVideosPrmsState: {promise: null, data: null, error: null}, 
+    movieIdQueuesPrmsState: {promise: null, data: null, error: null},
 
     setId(id: number) {
         this.userId = id;
@@ -86,5 +92,16 @@ export const model: ModelType = {
 
         // Return the promise chain
         return this.getMovieVideos().then(getTrailerACB);
-    }
+    },
+
+    filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
+        const ids: number[] = movies.map(m => m.id);
+        this.movieIdQueue.concat(ids);
+        return this.movieIdQueue;
+    },
+
+    setMovieIdQueue() {
+        const popularMoviesPromise = fetchPopularMoviesPages(1, 1).then(this.filterAndGetIdsFromMoviesACB)
+        resolvePromise(popularMoviesPromise, this.movieIdQueuesPrmsState);
+    },
 }
