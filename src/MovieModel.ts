@@ -11,11 +11,13 @@ export type ModelType = {
   nextMovieDetailPrmsState: PromiseState;
   movieVideosPrmsState: PromiseState;
   movieIdQueuePrmsState: PromiseState;
+  popularMoviesPrmsState: PromiseState; 
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
   currentMovieEffect: () => void;
   getMovieVideos: () => Promise<void | object>;
   getMovieTrailer: () => void;
+  getPopularMovies: () => Promise<TMDBPopularMovieResult[]>;
   setMovieIdQueue: () => Promise<any>;
   filterAndGetIdsFromMoviesACB: (movies: TMDBPopularMovieResult[]) => void;
   nextMovie: () => void;
@@ -51,6 +53,7 @@ export const model: ModelType = {
     nextMovieDetailPrmsState: {promise: null, data: null, error: null}, 
     movieVideosPrmsState: {promise: null, data: null, error: null}, 
     movieIdQueuePrmsState: {promise: null, data: null, error: null},
+    popularMoviesPrmsState: {promise: null, data: null, error: null},
 
     // NEW:
     movieDetailsById: {},
@@ -119,6 +122,12 @@ export const model: ModelType = {
 
         // Return the promise chain
         return this.getMovieVideos().then(getTrailerACB);
+    },
+
+    getPopularMovies() {
+        const prms = fetchPopularMoviesPages(1, 1);
+        resolvePromise(prms, this.popularMoviesPrmsState);
+        return prms;
     },
 
     filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
