@@ -213,3 +213,7 @@ html, body {
 .primary-button:hover {
     transform: scale(1.05);
 }
+
+.primary-button:active {
+    transform: scale(1);
+}
