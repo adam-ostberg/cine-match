@@ -21,6 +21,7 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden; /* For the carousel to work */
 }
 
 .home h1 {
@@ -32,6 +33,48 @@ html, body {
     color: rgb(198, 198, 198);
     margin: 0;
     padding: 0;
+}
+
+/* Carousel css from https://blog.logto.io/css-only-infinite-scroll */
+.carousel-view {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    margin: 20px 0 30px;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 16px;;
+    width: max-content;
+    /* Infinite scroll animation */
+    animation: scrolling 40s linear infinite;
+}
+
+.carousel-track:hover {
+    animation-play-state: paused;
+}
+
+.carousel-track .movie-card {
+    width: 250px;
+    height: auto;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    border-radius: 10px;
+    overflow: hidden; /* Ensures image corners curve with the card []*/
+}
+
+.carousel-track .movie-card:hover {
+    transform: scale(1.05);
+}
+
+@keyframes scrolling {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-25%);
+    }
 }
 
 .header {
