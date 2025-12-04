@@ -11,7 +11,9 @@ html, body {
 
 
 :root {
-    background-color: #2b2a37;
+    --bg-color: #201f2c;
+    --btn-green: #51b351;
+    background-color: #201f2c;
     color: white;
     height: 100%;
 }
@@ -38,9 +40,10 @@ html, body {
 /* Carousel css from https://blog.logto.io/css-only-infinite-scroll */
 .carousel-view {
     width: 100%;
-    height: 300px;
+    height: 500px;
     overflow: hidden;
-    margin: 20px 0 30px;
+    padding: 30px;
+    margin: 0 0 30px;
 }
 
 .carousel-track {
@@ -57,11 +60,16 @@ html, body {
 
 .carousel-track .movie-card {
     width: 250px;
-    height: auto;
     flex-shrink: 0;
     transition: transform 0.2s ease;
     border-radius: 10px;
     overflow: hidden; /* Ensures image corners curve with the card []*/
+}
+
+.carousel-track .movie-card img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .carousel-track .movie-card:hover {
@@ -86,7 +94,7 @@ html, body {
     flex-direction: row;
     margin: 0;
     padding: 0;
-    background-color: #201f2c;
+    background-color: var(--bg-color);
 }
 
 .header h1 {
@@ -154,11 +162,11 @@ html, body {
 
 .swipe-sidebar {
     width: 300px;
-    background-color: #201f2c;
+    background-color: var(--bg-color);
 }
 
 .swipe-section {
-    background-color: #201f2c;
+    background-color: var(--bg-color);
 }
 
 .movie-card img {
@@ -191,5 +199,10 @@ html, body {
     border-style: none;
     border-radius: 5px;
     color: white;
-    background-color: rgb(56, 137, 56);
+    background-color: var(--btn-green);
+    transition: transform 0.2s ease;
+}
+
+.primary-button:hover {
+    transform: scale(1.05);
 }
