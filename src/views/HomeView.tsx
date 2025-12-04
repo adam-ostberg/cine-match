@@ -12,8 +12,7 @@ export function HomeView(props: HomeViewProps) {
 
   const movies = props.movies || [];
 
-  // Duplicate array for infinite scroll (maybe stupid solution?)
-  // => This solution doesn't work [TODO]
+  // Duplicate array for infinite scroll
   const infiniteMovies = [...movies, ...movies];
 
   function onLogoClickACB() {
