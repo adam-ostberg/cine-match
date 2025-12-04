@@ -31,7 +31,7 @@ export function HomeView(props: HomeViewProps) {
     return (
       <a
         key={`${movie.id} ${index}`} // Unique key for array rendering (since IDs are duplicated)
-        className="carousel-movie-card"
+        className="movie-card"
         onClick={onMovieClickCB}
       >
         <img
@@ -42,9 +42,9 @@ export function HomeView(props: HomeViewProps) {
     );
   }
 
-  if (!props.movies) {
+  /* if (!props.movies) {
     return <div><p>Loading movies...</p></div>;
-  }
+  } */
 
   return (
     <div className="home">
