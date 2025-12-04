@@ -1,4 +1,4 @@
-import { HomeView } from "./views/HomeView";
+import { Home } from "./reactts/homePresenter"; // Make sure path is correct
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import { OptionsView } from "./views/OptionsView";
 import { type ModelType } from "./MovieModel"
@@ -12,33 +12,33 @@ export type AppRenderProps = {
 
 const App = observer(
 	function AppRender(props: AppRenderProps) {
-		function makeRouter(){
+		function makeRouter() {
 			return createHashRouter([
 				{
-						path: "/",
-						element: <HomeView/>,
+					path: "/",
+					element: <Home model={props.model} />,
 				},/*
 				{
 						path: "/options",
 						element: <OptionsView/>,
 				}, */
 				{
-						path: "/swipe",
-						element: <Swipe model={props.model}/>,
+					path: "/swipe",
+					element: <Swipe model={props.model} />,
 				},
-				
+
 				{
-						path: "/details",
-						element: <Details model={props.model}/>
+					path: "/details",
+					element: <Details model={props.model} />
 				}
 			]);
 		}
 		const router = makeRouter();
 
 		return (
-		<div className="mainContent">
-				<RouterProvider router={router}/>
-		</div>      
+			<div className="mainContent">
+				<RouterProvider router={router} />
+			</div>
 		);
 	}
 )
