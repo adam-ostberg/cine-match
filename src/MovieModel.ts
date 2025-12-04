@@ -124,22 +124,29 @@ export const model: ModelType = {
         return this.getMovieVideos().then(getTrailerACB);
     },
 
-    getPopularMovies() {
-        const prms = fetchPopularMoviesPages(1, 1);
-        resolvePromise(prms, this.popularMoviesPrmsState);
-        return prms;
-    },
-
     filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
         const ids: number[] = movies.map(m => m.id);
         return ids;
     },
 
     setMovieIdQueue() {
+        const prms = fetchPopularMoviesPages(1, 1);
+        
+        // Gets list for Home View
+        resolvePromise(prms, this.popularMoviesPrmsState);
+
+        // Gets IDs for the queue
+        const idPrms = prms.then(this.filterAndGetIdsFromMoviesACB);
+        resolvePromise(idPrms, this.movieIdQueuePrmsState);
+
+        return idPrms;
+    },
+
+    /* setMovieIdQueue() {
         const popularMoviesPromise = fetchPopularMoviesPages(1, 1).then(this.filterAndGetIdsFromMoviesACB)
         resolvePromise(popularMoviesPromise, this.movieIdQueuePrmsState);
         return popularMoviesPromise;
-    },
+    }, */
 
     nextMovie() {
         const movieIdsQueue = this.movieIdQueuePrmsState.data;
