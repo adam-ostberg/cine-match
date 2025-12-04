@@ -30,18 +30,12 @@ const SwipeView = observer(
 
     return (
       <div className="swipe-container">
-        <div className="swipe-content">
-          <div className="swipe-section">
-            <div className="movie-card">
-              <img
-                src={poster_path}
-                alt={details.title}
-              />
-            </div>
-            <div className="title-section">
-              <div className="movie-card-title">{details.title}</div>
-            </div>
-            <div className="controls">
+        <img className="movie-poster"
+            src={poster_path}
+            alt={details.title}
+        />
+        <h3>{details.title}</h3>
+        <div className="controls">
               <button className="dislike-btn" onClick={props.onDislike}>
                 Dislike
               </button>
@@ -50,13 +44,6 @@ const SwipeView = observer(
               </button>
               <button>more info...</button> {/* 2 buttons for more info – one outside one inside the card? */}
           </div>
-        </div>
-
-      </div>
-
-        <div className="swipe-sidebar">
-
-        </div>
       </div>
     );
   }
