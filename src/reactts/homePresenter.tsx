@@ -1,10 +1,15 @@
 
 import { observer } from "mobx-react-lite";
 import { HomeView } from "../views/HomeView.tsx";
+import type { TMDBPopularMovieResult } from "../apiConfig.ts";
+import type { PromiseState } from "../resolvePromise.ts";
 
 
 export type HomeModel = {
     initiateStart: () => void;
+    getPopularMovies: () => void;
+    popularMoviesPrmsState: PromiseState;
+    setCurrentMovieId: (id: number) => void;
 }
 
 export type HomePresenterProps = {
@@ -18,9 +23,21 @@ const Home = observer(  // needed for the presenter to update (its view) when re
             props.model.initiateStart()
         }
 
+        // Only fetch if we don't have data yet
+        if (!props.model.popularMoviesPrmsState.promise) {
+            props.model.getPopularMovies();
+        }
+
+        function onMovieClickedACB(id: number) {
+            props.model.setCurrentMovieId(id);
+            window.location.hash = "#/details"; // Navigate to details
+        }
+
         return (
             <HomeView
                 onStartSession={sessionStartACB}
+                movies={props.model.popularMoviesPrmsState.data as TMDBPopularMovieResult[]}
+                onMovieClick={onMovieClickedACB}
             />
         );
     }
