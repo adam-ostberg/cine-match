@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 export type DetailsViewProps = {
   details: MovieDetails;
   onClose: () => void;
-  trailerKey: () => void;
+  trailerKey: () => void; /* This needs to be string | null */
 };
 
 const DetailsView = observer(
@@ -18,6 +18,14 @@ const DetailsView = observer(
     const POSTER_URL = TMDB_BASE_URL + POSTER_WIDTH_URL + details.poster_path;
     function closeACB() {
       props.onClose();
+    }
+    function renderTrailer() {
+      if (!props.trailerKey) return <div></div>
+      return (
+        <iframe
+          className="trailer-video" src={`https://www.youtube.com/embed/${props.trailerKey}`}
+        ></iframe >
+      );
     }
 
     return (
@@ -46,9 +54,7 @@ const DetailsView = observer(
               {details.overview}
             </p>
             {/* [TODO] Trailer imbed */}
-            <iframe
-              className="trailer-video" src={`https://www.youtube.com/embed/${props.trailerKey}`}
-            ></iframe >
+            {renderTrailer()}
           </div>
         </div>
       </div>
