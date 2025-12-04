@@ -7,7 +7,6 @@ import type { PromiseState } from "../resolvePromise.ts";
 
 export type HomeModel = {
     initiateStart: () => void;
-    getPopularMovies: () => void;
     popularMoviesPrmsState: PromiseState;
     setCurrentMovieId: (id: number) => void;
 }
@@ -16,7 +15,7 @@ export type HomePresenterProps = {
     model: HomeModel;
 }
 
-const Home = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
+const Home = observer(
     function HomeRender(props: HomePresenterProps) {
 
         function sessionStartACB() {
@@ -35,7 +34,7 @@ const Home = observer(  // needed for the presenter to update (its view) when re
         return (
             <HomeView
                 onStartSession={sessionStartACB}
-                movies={props.model.popularMoviesPrmsState.data as TMDBPopularMovieResult[] | null}
+                movies={(props.model.popularMoviesPrmsState.data as TMDBPopularMovieResult[]) || []}
                 onMovieClick={onMovieClickedACB}
             />
         );
