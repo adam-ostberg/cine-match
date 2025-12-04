@@ -12,12 +12,13 @@ export type ModelType = {
   movieVideosPrmsState: PromiseState;
   movieIdQueuePrmsState: PromiseState;
   popularMoviesPrmsState: PromiseState; 
+  initiateStart: () => void;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
   currentMovieEffect: () => void;
   getMovieVideos: () => Promise<void | object>;
   getMovieTrailer: () => void;
-  getPopularMovies: () => Promise<TMDBPopularMovieResult[]>;
+  /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
   setMovieIdQueue: () => Promise<any>;
   filterAndGetIdsFromMoviesACB: (movies: TMDBPopularMovieResult[]) => void;
   nextMovie: () => void;
@@ -61,6 +62,11 @@ export const model: ModelType = {
 
     setId(id: number) {
         this.userId = id;
+    },
+
+    // Placeholder
+    initiateStart() {
+        console.log("Session started");
     },
 
     setCurrentMovieId(id: number) {
