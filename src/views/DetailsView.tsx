@@ -46,7 +46,9 @@ const DetailsView = observer(
               {details.overview}
             </p>
             {/* [TODO] Trailer imbed */}
-            <iframe className="trailer-video" src={`https://www.youtube.com/watch?v=${props.trailerKey}?controls=0`}></iframe >
+            <iframe
+              className="trailer-video" src={`https://www.youtube.com/embed/${props.trailerKey}`}
+            ></iframe >
           </div>
         </div>
       </div>
