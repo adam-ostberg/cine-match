@@ -23,9 +23,8 @@ const Home = observer(  // needed for the presenter to update (its view) when re
             props.model.initiateStart()
         }
 
-        // Only fetch if we don't have data yet
-        if (!props.model.popularMoviesPrmsState.promise) {
-            props.model.getPopularMovies();
+        if (!props.model.popularMoviesPrmsState.data) {
+            console.log("Loading..."); // ==> SuspenseView
         }
 
         function onMovieClickedACB(id: number) {
@@ -36,7 +35,7 @@ const Home = observer(  // needed for the presenter to update (its view) when re
         return (
             <HomeView
                 onStartSession={sessionStartACB}
-                movies={props.model.popularMoviesPrmsState.data as TMDBPopularMovieResult[]}
+                movies={props.model.popularMoviesPrmsState.data as TMDBPopularMovieResult[] | null}
                 onMovieClick={onMovieClickedACB}
             />
         );
