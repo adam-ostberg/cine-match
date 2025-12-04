@@ -61,7 +61,7 @@ html, body {
 .carousel-track .movie-card {
     width: 250px;
     flex-shrink: 0;
-    transition: transform 0.2s ease;
+    transition: transform 0.3s ease;
     border-radius: 10px;
     overflow: hidden; /* Ensures image corners curve with the card []*/
 }
@@ -200,7 +200,7 @@ html, body {
     border-radius: 5px;
     color: white;
     background-color: var(--btn-green);
-    transition: transform 0.2s ease;
+    transition: transform 0.3s ease;
 }
 
 .primary-button:hover {
