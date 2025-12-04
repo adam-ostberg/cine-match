@@ -10,5 +10,20 @@ declare global {
 }
 
 export const reactiveModel = observable(model);
+const idQueuePrms = reactiveModel.setMovieIdQueue();
+idQueuePrms.then(() => reactiveModel.currentMovieEffect());
+
+
+
+function currentMovieIdACB() {
+  return reactiveModel.curMovieId;
+}
+
+function movieIdEffectACB() {
+  return reactiveModel.currentMovieEffect();
+}
+
+reaction(currentMovieIdACB, movieIdEffectACB)
+
 window.model = reactiveModel
 

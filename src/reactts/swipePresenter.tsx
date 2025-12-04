@@ -20,11 +20,13 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		} */
 
 		function swipeDislikeACB() {
-			//props.model.handleDislike();
+			props.model.nextMovie();
+			console.log("Disliked");
 		}
 
 		function swipeLikeACB() {
-			//props.model.handleLike();
+			props.model.nextMovie();
+			console.log("Liked");
 		}
 		function navBarlogoClickedACB() {
 

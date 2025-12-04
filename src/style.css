@@ -108,18 +108,21 @@ html, body {
 }
 
 .movie-card img {
-    height: 620px;
+    width: 450px;
 }
 
 .swipe-section .title-section {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
+
+
 }
 
 .movie-card-title {
-    font-size: 50px;
+    width: 450px;
+    font-size: 40px;
+    display: block;        /* or flex, but block is simplest */
+    word-wrap: break-word; /* breaks long words instead of stretching width */
+    text-align: center;
+
 }
 
 .swipe-section .controls {
