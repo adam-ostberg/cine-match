@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 export type DetailsViewProps = {
   details: MovieDetails;
   onClose: () => void;
-  trailerKey: () => void; /* This needs to be string | null */
+  trailerKey: string | null;
 };
 
 const DetailsView = observer(
@@ -20,7 +20,7 @@ const DetailsView = observer(
       props.onClose();
     }
     function renderTrailer() {
-      if (!props.trailerKey) return <div></div>
+      if (!props.trailerKey) return null
       return (
         <iframe
           className="trailer-video" src={`https://www.youtube.com/embed/${props.trailerKey}`}
