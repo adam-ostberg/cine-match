@@ -17,7 +17,7 @@ export type ModelType = {
   setCurrentMovieId: (id: number) => void;
   currentMovieEffect: () => void;
   getMovieVideos: () => Promise<void | object>;
-  getMovieTrailer: () => void;
+  getMovieTrailerKey: () => string | null;
   /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
   setMovieIdQueue: () => Promise<any>;
   filterAndGetIdsFromMoviesACB: (movies: TMDBPopularMovieResult[]) => void;
@@ -92,6 +92,8 @@ export const model: ModelType = {
         // 3) Make sure we have a buffer of upcoming movies prefetched
         this.ensurePrefetchWindow();
 
+        this.getMovieVideos();
+
     },
 
     getMovieVideos() {
@@ -99,35 +101,31 @@ export const model: ModelType = {
         resolvePromise(movieVideosPrms, this.movieVideosPrmsState)
         return movieVideosPrms
     },
+    
+    getMovieTrailerKey() {
+        const data = this.movieVideosPrmsState.data;
+        if (!data || !data.results) return null;
 
-    getMovieTrailer() {
-        function getTrailerACB(data: any): string | null {
-            if (!data || !data.results) return null;
-
-            // Filter: Must be Official, a Trailer, and hosted on YouTube
-            function getRelevantCandidatesCB(video: Video) {
-                return video.official === true && 
-                video.type === "Trailer" && 
-                video.site === "YouTube"
-            }
-
-            const candidates = data.results.filter(getRelevantCandidatesCB);
-
-            // Sorts for the best quality video
-            function getHighestQualityCB(a: Video, b: Video) {
-                return b.size - a.size
-            }
-            candidates.sort(getHighestQualityCB);
-
-            // Return the key of the top result
-            if (candidates.length > 0) {
-                return candidates[0].key;
-            }
-            return null;
+        // Filter: Must be Official, a Trailer, and hosted on YouTube
+        function getRelevantCandidatesCB(video: Video) {
+            return video.official === true && 
+            video.type === "Trailer" && 
+            video.site === "YouTube"
         }
 
-        // Return the promise chain
-        return this.getMovieVideos().then(getTrailerACB);
+        const candidates = data.results.filter(getRelevantCandidatesCB);
+
+        // Sorts for the best quality video
+        function getHighestQualityCB(a: Video, b: Video) {
+            return b.size - a.size
+        }
+        candidates.sort(getHighestQualityCB);
+
+        // Return the key of the top result
+        if (candidates.length > 0) {
+            return candidates[0].key;
+        }
+        return null;
     },
 
     filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
