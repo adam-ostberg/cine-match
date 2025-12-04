@@ -17,7 +17,7 @@ export function HomeView(props: HomeViewProps) {
   const infiniteMovies = [...movies, ...movies];
 
   function onLogoClickACB() {
-    window.location.hash = "#/home";
+    window.location.hash = "#/";
   }
 
   /* function onStartSessionClickCB() { // For future implementation
