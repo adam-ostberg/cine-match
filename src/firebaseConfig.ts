@@ -2,6 +2,7 @@
 const firebaseConfig: Record<string, string> = {
   apiKey: "AIzaSyBt7wtaLCagTbDV5LJfejOGZqi_M16J37s",
   authDomain: "cinemamatcher.firebaseapp.com",
+  databaseURL: "https://cinemamatcher-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "cinemamatcher",
   storageBucket: "cinemamatcher.firebasestorage.app",
   messagingSenderId: "425565430168",
