@@ -9,6 +9,7 @@ export type SwipeViewProps = {
   model: ModelType;
   onDislike: () => void;
   onLike: () => void;
+  onMoreInfo: () => void;
 }
 
 const SwipeView = observer(
@@ -42,7 +43,7 @@ const SwipeView = observer(
           <button className="like-btn" onClick={props.onLike}>
             Like
           </button>
-          <button>more info...</button> {/* 2 buttons for more info – one outside one inside the card? */}
+          <button onClick={props.onMoreInfo}>more info...</button> {/* 2 buttons for more info – one outside one inside the card? */}
         </div>
       </div>
     );

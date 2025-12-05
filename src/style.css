@@ -158,6 +158,7 @@ html, body {
 .movie-poster {
     height: 60vh;
     width: auto;
+    border-radius: 5px;
 }
 
 .swipe-content {
@@ -225,14 +226,23 @@ html, body {
     position: fixed;
     top: 10px;
     right: 10px;
-
 }
+
+.details-container .close-button svg {
+  font-size: 52px;
+  color: darkgray;
+}
+.details-container .close-button svg:hover {
+    color: rgb(226, 226, 226);
+}
+
 
 .details-content {
     width: 1300px;
     background: rgba(0, 0, 0, 0.4); /* 25% white tint */
     z-index: 0;  /* above background, but behind content */
-    height: 100vh;
+    min-height: 100vh;
+    padding-bottom: 50px;
 }
 
 

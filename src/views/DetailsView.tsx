@@ -2,6 +2,9 @@ import "../style.css"
 import { type CountryWatchOptions, type MovieDetails, type SpokenLanguages, type TMDBCast, type TMDBCrew, type TMDBGenre, type TMDBMovieCredits, type TMDBVideoType, type WatchProvider, type WatchProvidersResponse } from "../apiConfig";
 import { observer } from "mobx-react-lite";
 import { getVideoUrl, minutesToHourAndMinutesText, getCountryCode } from "../helperFunctions";
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+
 
 export type DetailsViewProps = {
   details: MovieDetails;
@@ -80,6 +83,10 @@ const DetailsView = observer(
       const country = countryName.of(countryCode);
       return index < array.length-1 ? `${country}, ` : `${country}`; 
     }
+    function outputBudget(budget: number) {
+      if (!budget || budget <= 0) { return };
+      return <li>Budget: {budget.toLocaleString()}</li>;
+    }
     function filterAndSortWatchProviders(options: CountryWatchOptions) {
       if (!options) {
         return [];
@@ -115,9 +122,9 @@ const DetailsView = observer(
         </div>
         <div className="details-content">
 
-        <button className="close-button" onClick={closeACB}>
-          Close
-        </button>
+        <IconButton className="close-button" onClick={closeACB} aria-label="close">
+          <CloseIcon/>
+        </IconButton>
 
 
         <div className="details-header">
@@ -162,7 +169,6 @@ const DetailsView = observer(
             <li><b>Release date: </b>{dateFormatter.format(new Date(details.release_date))}</li>
             <li><b>Origin Country: </b>{details.origin_country.map(outputOriginCountryCB)}</li>
             <li><b>Languages: </b> {details.spoken_languages.map(outputSpokenLanguagesCB)}</li>
-            <li><b>Release date: </b></li>
           </ul>
 
           <h2>Cast & Crew</h2>
@@ -174,7 +180,7 @@ const DetailsView = observer(
           
           <h2>Box Office</h2>
           <ul>
-            <li>Budget: {details.budget.toLocaleString()}$</li>
+            {outputBudget(details.budget)}
             <li>Gross Revenue: {details.revenue.toLocaleString()}$</li>
           </ul>
         </div>
