@@ -9,7 +9,7 @@ export type DetailsViewProps = {
   credits: TMDBMovieCredits;
   imdb: number;
   onClose: () => void;
-  trailerKey: () => void;
+  //trailerKey: string | null;
 };
 
 const DetailsView = observer(
@@ -25,7 +25,7 @@ const DetailsView = observer(
 
     const HAS_TRAILER = !!props.video;
 
-    const videoUrl = HAS_TRAILER ? getVideoUrl(props.video)?? null : null;
+    const videoUrl = HAS_TRAILER ? getVideoUrl(props.video)?? "#" : "#";
     const videoBox = !!videoUrl ? <iframe className="trailer-video" src={videoUrl}></iframe> : <p>No trailer available.</p>;
     function closeACB() {
       props.onClose();
@@ -99,7 +99,6 @@ const DetailsView = observer(
           </div>
 
         </div>
-        {/* Movie title */}
         <div className="details-info">
           <div className="genre-boxes">
             {details.genres.map(genreBoxesCB)}
@@ -115,9 +114,7 @@ const DetailsView = observer(
             {peopleTextOutput(actors, "Actors: ")}
           </ul>
           
-
         </div>
-
         </div>
       </div>
     );

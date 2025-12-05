@@ -21,9 +21,9 @@ export type ModelType = {
   currentMovieEffect: () => void;
   getCurMovieCredits: () => void;
   getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
-  getMovieVideos: () => Promise<void | object>;
-  getMovieTrailer: () => void;
   getMovieImdbRating: (id: number) => void;
+  getMovieVideos: () => Promise<void | object>;
+  getMovieTrailerKey: () => string | null;
   /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
   setMovieIdQueue: () => Promise<any>;
   filterAndGetIdsFromMoviesACB: (data: any) => number[];
@@ -100,9 +100,10 @@ export const model: ModelType = {
             this.movieDetailsPrmsState = currentState;
         }
 
+        // this.getMovieVideos();
+
         // 3) Make sure we have a buffer of upcoming movies prefetched
         this.ensurePrefetchWindow();
-
     },
 
     getCurMovieCredits() {
@@ -121,40 +122,38 @@ export const model: ModelType = {
         return movieVideosPrms  
     },
 
+
     getMovieVideos() {
         const movieVideosPrms = getMovieVideos(this.curMovieId);
         resolvePromise(movieVideosPrms, this.movieVideosPrmsState);
         return movieVideosPrms;
     },
 
-    getMovieTrailer() {
-        function getTrailerACB(data: any): string | null {
-            if (!data || !data.results) return null;
+    
+    getMovieTrailerKey() {
+        const data = this.movieVideosPrmsState.data;
+        if (!data || !data.results) return null;
 
-            // Filter: Must be Official, a Trailer, and hosted on YouTube
-            function getRelevantCandidatesCB(video: Video) {
-                return video.official === true && 
-                video.type === "Trailer" && 
-                video.site === "YouTube"
-            }
-
-            const candidates = data.results.filter(getRelevantCandidatesCB);
-
-            // Sorts for the best quality video
-            function getHighestQualityCB(a: Video, b: Video) {
-                return b.size - a.size
-            }
-            candidates.sort(getHighestQualityCB);
-
-            // Return the key of the top result
-            if (candidates.length > 0) {
-                return candidates[0].key;
-            }
-            return null;
+        // Filter: Must be Official, a Trailer, and hosted on YouTube
+        function getRelevantCandidatesCB(video: Video) {
+            return video.official === true && 
+            video.type === "Trailer" && 
+            video.site === "YouTube"
         }
 
-        // Return the promise chain
-        return this.getMovieVideos().then(getTrailerACB);
+        const candidates = data.results.filter(getRelevantCandidatesCB);
+
+        // Sorts for the best quality video
+        function getHighestQualityCB(a: Video, b: Video) {
+            return b.size - a.size
+        }
+        candidates.sort(getHighestQualityCB);
+
+        // Return the key of the top result
+        if (candidates.length > 0) {
+            return candidates[0].key;
+        }
+        return null;
     },
 
     getMovieImdbRating(id: number) {

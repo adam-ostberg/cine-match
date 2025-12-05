@@ -51,7 +51,7 @@ html, body {
     gap: 16px;;
     width: max-content;
     /* Infinite scroll animation */
-    animation: scrolling 40s linear infinite;
+    animation: scrolling 240s linear infinite;
 }
 
 .carousel-track:hover {
@@ -63,7 +63,7 @@ html, body {
     flex-shrink: 0;
     transition: transform 0.3s ease;
     border-radius: 10px;
-    overflow: hidden; /* Ensures image corners curve with the card []*/
+    overflow: hidden; /* Ensures image corners curve with the card */
 }
 
 .carousel-track .movie-card img {
@@ -81,7 +81,14 @@ html, body {
       transform: translateX(0);
     }
     100% {
-      transform: translateX(-25%);
+        /* 
+   Logic:
+   The track contains 2 identical sets of items. 
+   When the animation reaches 100%, it has moved -50% (the width of one set).
+   => The first item of the 2nd set aligns with where the 1st item 
+   of the 1st set started. The animation then snaps back to 0%.
+        */
+      transform: translateX(-50%);
     }
 }
 
@@ -322,4 +329,6 @@ html, body {
 }
 
 
-
+.primary-button:active {
+    transform: scale(1);
+}
