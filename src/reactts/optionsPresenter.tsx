@@ -22,22 +22,22 @@ export type OptionsPresenterProps = {
 
 
 const Options = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
-    function OptionsRender(props: OptionsPresenterProps) {
+    function OptionsRender(/* props: OptionsPresenterProps */) {
 
-        function onGenreChangeACB(genreId: number) {
-            props.model.toggleGenre(genreId);
-        }
-        function onRatingChangeACB(newRating: number) {
-            props.model.setMinRating(newRating);
-        }
+        // function onGenreChangeACB(genreId: number) {
+        //     props.model.toggleGenre(genreId);
+        // }
+        // function onRatingChangeACB(newRating: number) {
+        //     props.model.setMinRating(newRating);
+        // }
         return (
             <OptionsView
-                availableGenres={props.model.genres}
-                selectedGenreIds={props.model.selectedGenreIds}
-                currentMinRating={props.model.minRating}
+            // availableGenres={props.model.genres}
+            // selectedGenreIds={props.model.selectedGenreIds}
+            // currentMinRating={props.model.minRating}
 
-                onGenreChange={onGenreChangeACB}
-                onRatingChange={onRatingChangeACB}
+            // onGenreChange={onGenreChangeACB}
+            // onRatingChange={onRatingChangeACB}
             />
         );
     }

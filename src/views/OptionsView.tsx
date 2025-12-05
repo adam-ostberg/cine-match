@@ -10,6 +10,6 @@ export type OptionsViewProps = {
   onRatingChange: (rating: number) => void;
 }
 
-export function OptionsView(props: OptionsViewProps) {
+export function OptionsView(/* props: OptionsViewProps */) {
   return <p>Options</p>;
 }
