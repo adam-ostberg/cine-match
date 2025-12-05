@@ -28,8 +28,8 @@ const DetailsView = observer(
     const POSTER_URL = TMDB_BASE_URL + POSTER_WIDTH_URL + details.poster_path;
 
     const HAS_TRAILER = !!props.video;
-    const videoUrl = HAS_TRAILER ? getVideoUrl(props.video)?? "#" : "#";
-    const videoBox = !!videoUrl ? <iframe className="trailer-video" src={videoUrl}></iframe> : <p>No trailer available.</p>;
+    const videoUrl = HAS_TRAILER ? getVideoUrl(props.video)?? undefined : undefined;
+    const videoBox = !!videoUrl ? <iframe className="trailer-video" src={videoUrl}></iframe> : "";
 
     const dateFormatter = new Intl.DateTimeFormat("en-US", {
       month: "long",
