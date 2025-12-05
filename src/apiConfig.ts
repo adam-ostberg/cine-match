@@ -59,6 +59,10 @@ export type MovieDetails = {
   vote_count: number
 }
 
+export type MovieList = {
+  genres: TMDBGenre[];
+}
+
 
 export function apiAuth() {
   const ENDPOINT = "/authentication";
@@ -372,3 +376,27 @@ export function getImdbId(movie_id: number): Promise<string | void | null> {
  */
 /* run with node --loader ts-node/esm apiConfig.ts 
 movie_id ex is fight club: 550*/
+
+export function getMovieList() {
+  const ENDPOINT = "/genre/movie/list";
+
+  function handleResponseACB(response: Response) {
+    if (response.ok !== true) {
+      throw new Error();
+    }
+    return response.json();
+  }
+
+  function handleSuccessACB(data: object) {
+    return data;
+  }
+
+  function handleErrorACB(error: unknown) {
+    console.error(error);
+  }
+
+  return fetch(BASE_URL + ENDPOINT, optionsGET)
+    .then(handleResponseACB)
+    .then(handleSuccessACB)
+    .catch(handleErrorACB);
+}

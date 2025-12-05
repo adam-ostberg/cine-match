@@ -6,8 +6,6 @@ import { NavBarView } from "../views/NavbarView";
 
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
-
-
 export type SwipePresenterProps = {
 	model: ModelType;
 }

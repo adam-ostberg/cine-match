@@ -1,10 +1,10 @@
 import { HomeView } from "./views/HomeView";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { OptionsView } from "./views/OptionsView";
 import { type ModelType } from "./MovieModel"
 import { Details } from "./reactts/detailsPresenter";
 import { observer } from "mobx-react-lite";
 import { Swipe } from "./reactts/swipePresenter";
+import { Options } from "./reactts/optionsPresenter";
 
 export type AppRenderProps = {
 	model: ModelType
@@ -17,11 +17,11 @@ const App = observer(
 				{
 						path: "/",
 						element: <HomeView/>,
-				},/*
+				},
 				{
 						path: "/options",
-						element: <OptionsView/>,
-				}, */
+						element: <Options model={props.model}/>,
+				},
 				{
 						path: "/swipe",
 						element: <Swipe model={props.model}/>,

@@ -1,40 +1,34 @@
 
 import { observer } from "mobx-react-lite";
 import { OptionsView } from "../views/OptionsView.tsx";
+import type { ModelType } from "../MovieModel.ts";
+import type { TMDBGenre } from "../apiConfig.ts";
+import { getMovieList } from "../apiConfig.ts";
 
 export type Genre = {
     id: number;
     name: string;
 }
 
-export type OptionsModel = {
-    genres: Genre[];
-    selectedGenreIds: number[];
-    minRating: number;
-
-    toggleGenre: (id: number) => void;
-    setMinRating: (rating: number) => void;
-}
-
 export type OptionsPresenterProps = {
-    model: OptionsModel;
+    model: ModelType;
+    genres: TMDBGenre[];
 }
-
 
 const Options = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
     function OptionsRender(props: OptionsPresenterProps) {
-
         function onGenreChangeACB(genreId: number) {
-            props.model.toggleGenre(genreId);
+            // TODO
         }
         function onRatingChangeACB(newRating: number) {
-            props.model.setMinRating(newRating);
+            // TODO
         }
+
         return (
             <OptionsView
                 availableGenres={props.model.genres}
-                selectedGenreIds={props.model.selectedGenreIds}
-                currentMinRating={props.model.minRating}
+                selectedGenreIds={[1, 2, 3]}
+                currentMinRating={3}
 
                 onGenreChange={onGenreChangeACB}
                 onRatingChange={onRatingChangeACB}

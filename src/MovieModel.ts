@@ -1,9 +1,10 @@
-import { getMovieDetails, type MovieDetails, type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages} from "./apiConfig"
+import { getMovieDetails, type MovieDetails, type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, getMovieList} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 
 export type ModelType = {
   userId: number;
   genres: [];
+  genresPrmsState: PromiseState;
   likes: [];
   dislikes: [];
   curMovieId: number;
@@ -26,6 +27,7 @@ export type ModelType = {
 
   prefetchMovieDetails: (id: number) => void;
   ensurePrefetchWindow: () => void;
+  fetchGenres: () => void;
 }
 
 export type Video = {
@@ -44,6 +46,7 @@ export type Video = {
 export const model: ModelType = {
     userId: 0,
     genres: [],
+    genresPrmsState: {promise: null, data: null, error: null},
     likes: [],
     dislikes: [],
     curMovieId: 550,
@@ -168,4 +171,14 @@ export const model: ModelType = {
             this.prefetchMovieDetails(id);
         }
     },
+
+    fetchGenres() {
+        const genresPrms = getMovieList().then((data: any) => {
+            if (data && data.genres) {
+                this.genres = data.genres;
+            }
+            return data;
+        });
+        resolvePromise(genresPrms, this.genresPrmsState);
+    }
 }
