@@ -14,3 +14,16 @@ export function getVideoUrl(video: { site: string; key: string }) {
       return null;
   }
 }
+
+export function minutesToHourAndMinutesText(totalMinutes: number) {
+  const hours =  Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const text = hours === 0 ? `${minutes}m` : `${hours}h ${minutes}m`;
+  return text;
+}
+
+export function getCountryCode(): string {
+  const locale = navigator.language || navigator.language[0];
+  const countryCode = locale.split("-")[1];
+  return countryCode
+}

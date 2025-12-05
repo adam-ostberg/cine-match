@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId} from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 
@@ -15,15 +15,15 @@ export type ModelType = {
   popularMoviesPrmsState: PromiseState;
   movieCreditsPrmsState: PromiseState; 
   imdbRatingPrmsState: PromiseState;
+  watchProvidersPrmsState: PromiseState;
   initiateStart: () => void;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
   currentMovieEffect: () => void;
   getCurMovieCredits: () => void;
   getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
+  getCurWatchProviders: () => Promise<WatchProvidersResponse | any>;
   getMovieImdbRating: (id: number) => void;
-  getMovieVideos: () => Promise<void | object>;
-  getMovieTrailerKey: () => string | null;
   /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
   setMovieIdQueue: () => Promise<any>;
   filterAndGetIdsFromMoviesACB: (data: any) => number[];
@@ -63,6 +63,7 @@ export const model: ModelType = {
     popularMoviesPrmsState: {promise: null, data: null, error: null},
     movieCreditsPrmsState: {promise: null, data: null, error: null},
     imdbRatingPrmsState: {promise: null, data: null, error: null},
+    watchProvidersPrmsState: {promise: null, data: null, error: null},
 
     // NEW:
     movieDetailsById: {},
@@ -91,6 +92,7 @@ export const model: ModelType = {
         this.getCurMovieTrailer();
         this.getCurMovieCredits();
         this.getMovieImdbRating(this.curMovieId);
+        this.getCurWatchProviders();
         // 1) Ensure current movie is prefetched
         this.prefetchMovieDetails(this.curMovieId);
 
@@ -114,6 +116,13 @@ export const model: ModelType = {
     getCurMovieTrailer() {
         function filterByTrailerACB(data: TMDBVideoResults): TMDBVideoType | undefined {
             const trailer = data.results.find(video => video.type == "Trailer");
+            if (!trailer) {
+                if (data.results.length) {
+                    const video = data.results[0];
+                    return video;
+                }
+                else { console.log("Couldn't find any video for the Movie, inside getCurMovieTrailer function.") };
+            }
             return trailer
         }
 
@@ -122,38 +131,10 @@ export const model: ModelType = {
         return movieVideosPrms  
     },
 
-
-    getMovieVideos() {
-        const movieVideosPrms = getMovieVideos(this.curMovieId);
-        resolvePromise(movieVideosPrms, this.movieVideosPrmsState);
-        return movieVideosPrms;
-    },
-
-    
-    getMovieTrailerKey() {
-        const data = this.movieVideosPrmsState.data;
-        if (!data || !data.results) return null;
-
-        // Filter: Must be Official, a Trailer, and hosted on YouTube
-        function getRelevantCandidatesCB(video: Video) {
-            return video.official === true && 
-            video.type === "Trailer" && 
-            video.site === "YouTube"
-        }
-
-        const candidates = data.results.filter(getRelevantCandidatesCB);
-
-        // Sorts for the best quality video
-        function getHighestQualityCB(a: Video, b: Video) {
-            return b.size - a.size
-        }
-        candidates.sort(getHighestQualityCB);
-
-        // Return the key of the top result
-        if (candidates.length > 0) {
-            return candidates[0].key;
-        }
-        return null;
+    getCurWatchProviders() {
+        const watchProvidersPrms = getWatchProviders(this.curMovieId);
+        resolvePromise(watchProvidersPrms, this.watchProvidersPrmsState);
+        return watchProvidersPrms;
     },
 
     getMovieImdbRating(id: number) {
