@@ -204,7 +204,29 @@ export function getMovieImages(movie_id: number) {
     .catch(handleErrorACB);
 }
 
-export function getMovieVideos(movie_id: number) {
+
+
+export type TMDBVideoType = {
+  iso_639_1: string, // ex: 'en'
+  iso_3166_1: string, // ex: 'US'
+  name: string,
+  key: string, // ex: 'V0Fqdb-smqo'
+  site: string, // ex: 'YouTube'
+  size: number, // 2160
+  type: string, // ex: 'Featurette'
+  official: boolean,
+  published_at: string, // ex: '2025-02-14T14:25:16.000Z'
+  id: string, // ex: '67c90f7a3dd7da394f24957b'
+}
+
+
+export type TMDBVideoResults = {
+  id: number,
+  results: TMDBVideoType[],
+}
+
+
+export function getMovieVideos(movie_id: number): Promise<TMDBVideoResults | any> {
   /* Gets the movie videos */
 
   const ENDPOINT = `/movie/${movie_id}/videos`;
@@ -346,7 +368,7 @@ export function getSimilarMovie(movie_id: number): Promise<void | object> {
   imdb_id: string | null;
 };
 
-export function getImdbId(movie_id: number): Promise<string | void | null> {
+export function getImdbId(movie_id: number): Promise<any> {
   const ENDPOINT = `/movie/${movie_id}/external_ids`;
 
   function handleResponseACB(response: Response) {
@@ -358,6 +380,71 @@ export function getImdbId(movie_id: number): Promise<string | void | null> {
 
   function handleSuccessACB(data: ExternalIDs) {
     return data.imdb_id;
+  }
+
+  function handleErrorACB(error: unknown) {
+    console.error(error);
+  }
+
+  return fetch(BASE_URL + ENDPOINT, optionsGET)
+    .then(handleResponseACB)
+    .then(handleSuccessACB)
+    .catch(handleErrorACB);
+}
+
+export type TMDBCast = {
+  adult: boolean,
+  gender: number,
+  id: number,
+  known_for_department: string, // ex: "Acting"
+  name: string,
+  original_name: string,
+  popularity: number,
+  profile_path: string, // ex: "/8nytsqL59SFJTVYVrN72k6qkGgJ.jpg"
+  cast_id: number,
+  character: string, // ex: "The Narrator"
+  credit_id: string, // ex: "52fe4250c3a36847f80149f3"
+  order: number,
+}
+
+export type TMDBCrew = {
+  adult: boolean,
+  gender: number,
+  id: number,
+  known_for_department: string, // ex: "Acting"
+  name: string,
+  original_name: string,
+  popularity: number,
+  profile_path: string, // ex: "/8nytsqL59SFJTVYVrN72k6qkGgJ.jpg"
+  credit_id: string, // ex: "52fe4250c3a36847f80149f3"
+  order: number,
+  department: string,
+  job: string, // This only exist if known_for_department !== "Acting"
+}
+
+export type TMDBMovieCredits = {
+  id: number;
+  cast: TMDBCast[];
+  crew: TMDBCrew[];
+}
+
+
+export function getMovieCredits(movie_id: number): Promise<void | TMDBMovieCredits> {
+  /* From this we can get related movie IDs, image paths, etc. */
+  /* Sort by original_language to ensure english movies? */
+  /* Sort by popularity? */
+
+  const ENDPOINT = `/movie/${movie_id}/credits`;
+
+  function handleResponseACB(response: Response) {
+    if (response.ok !== true) {
+      throw new Error();
+    }
+    return response.json();
+  }
+
+  function handleSuccessACB(data: TMDBMovieCredits) {
+    return data;
   }
 
   function handleErrorACB(error: unknown) {

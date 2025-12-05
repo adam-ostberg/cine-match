@@ -11,9 +11,14 @@ const Details = observer(  // needed for the presenter to update (its view) when
   function DetailsRender(props: DetailsPresenterProps) {
 
     const moviedetailsPrmsState = props.model.movieDetailsPrmsState
-    function getTrailerACB() {
-      props.model.getMovieTrailer();
-    }
+    const movieVideosPrmsState = props.model.movieVideosPrmsState;
+    const movieCreditsPrmsState = props.model.movieCreditsPrmsState;
+    const imdbRatingPrmsState = props.model.imdbRatingPrmsState;
+
+    //function getTrailerACB() {
+      //props.model.getMovieTrailer();
+    //}
+    //const trailerKey = props.model.getMovieTrailerKey();
     /* if (!props.model.currentMovie) {
       return <SuspenseView />;
     } */
@@ -22,7 +27,10 @@ const Details = observer(  // needed for the presenter to update (its view) when
       //props.model.closeDetails();
     }
 
-    const view = !!moviedetailsPrmsState.data ? <DetailsView details={moviedetailsPrmsState.data} onClose={closeACB} trailerKey={getTrailerACB} /> : ("__no_data__");
+    const HAS_ENOUGH_DATA = !!moviedetailsPrmsState.data && !!movieCreditsPrmsState.data && !!imdbRatingPrmsState.data;
+
+    const view = HAS_ENOUGH_DATA ? <DetailsView details={moviedetailsPrmsState.data} video={movieVideosPrmsState.data} credits={movieCreditsPrmsState.data} imdb={imdbRatingPrmsState.data} onClose={closeACB}/> : ("__no_data__");
+    //const view = !!moviedetailsPrmsState.data ? <DetailsView details={moviedetailsPrmsState.data} onClose={closeACB} trailerKey={trailerKey} /> : ("__no_data__");
 
     return (
       view

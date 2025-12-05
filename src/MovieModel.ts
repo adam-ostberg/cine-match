@@ -1,5 +1,6 @@
-import { getMovieDetails, type MovieDetails, type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, getMovieList} from "./apiConfig"
+import { getMovieDetails, type MovieDetails, type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, getMovieList} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
+import { getImdbRating } from "./imdbApiConfig";
 
 export type ModelType = {
   userId: number;
@@ -12,13 +13,21 @@ export type ModelType = {
   nextMovieDetailPrmsState: PromiseState;
   movieVideosPrmsState: PromiseState;
   movieIdQueuePrmsState: PromiseState;
+  popularMoviesPrmsState: PromiseState;
+  movieCreditsPrmsState: PromiseState; 
+  imdbRatingPrmsState: PromiseState;
+  initiateStart: () => void;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
   currentMovieEffect: () => void;
+  getCurMovieCredits: () => void;
+  getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
+  getMovieImdbRating: (id: number) => void;
   getMovieVideos: () => Promise<void | object>;
-  getMovieTrailer: () => void;
+  getMovieTrailerKey: () => string | null;
+  /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
   setMovieIdQueue: () => Promise<any>;
-  filterAndGetIdsFromMoviesACB: (movies: TMDBPopularMovieResult[]) => void;
+  filterAndGetIdsFromMoviesACB: (data: any) => number[];
   nextMovie: () => void;
 
   // NEW:
@@ -54,6 +63,9 @@ export const model: ModelType = {
     nextMovieDetailPrmsState: {promise: null, data: null, error: null}, 
     movieVideosPrmsState: {promise: null, data: null, error: null}, 
     movieIdQueuePrmsState: {promise: null, data: null, error: null},
+    popularMoviesPrmsState: {promise: null, data: null, error: null},
+    movieCreditsPrmsState: {promise: null, data: null, error: null},
+    imdbRatingPrmsState: {promise: null, data: null, error: null},
 
     // NEW:
     movieDetailsById: {},
@@ -61,6 +73,11 @@ export const model: ModelType = {
 
     setId(id: number) {
         this.userId = id;
+    },
+
+    // Placeholder
+    initiateStart() {
+        console.log("Session started");
     },
 
     setCurrentMovieId(id: number) {
@@ -74,6 +91,9 @@ export const model: ModelType = {
             return;
         }
 
+        this.getCurMovieTrailer();
+        this.getCurMovieCredits();
+        this.getMovieImdbRating(this.curMovieId);
         // 1) Ensure current movie is prefetched
         this.prefetchMovieDetails(this.curMovieId);
 
@@ -83,45 +103,65 @@ export const model: ModelType = {
             this.movieDetailsPrmsState = currentState;
         }
 
+        // this.getMovieVideos();
+
         // 3) Make sure we have a buffer of upcoming movies prefetched
         this.ensurePrefetchWindow();
-
     },
+
+    getCurMovieCredits() {
+        const movieCreditsPrms = getMovieCredits(this.curMovieId);
+        resolvePromise(movieCreditsPrms, this.movieCreditsPrmsState);
+    },
+
+    getCurMovieTrailer() {
+        function filterByTrailerACB(data: TMDBVideoResults): TMDBVideoType | undefined {
+            const trailer = data.results.find(video => video.type == "Trailer");
+            return trailer
+        }
+
+        const movieVideosPrms = getMovieVideos(this.curMovieId).then(filterByTrailerACB)
+        resolvePromise(movieVideosPrms, this.movieVideosPrmsState)
+        return movieVideosPrms  
+    },
+
 
     getMovieVideos() {
         const movieVideosPrms = getMovieVideos(this.curMovieId);
-        resolvePromise(movieVideosPrms, this.movieVideosPrmsState)
-        return movieVideosPrms
+        resolvePromise(movieVideosPrms, this.movieVideosPrmsState);
+        return movieVideosPrms;
     },
 
-    getMovieTrailer() {
-        function getTrailerACB(data: any): string | null {
-            if (!data || !data.results) return null;
+    
+    getMovieTrailerKey() {
+        const data = this.movieVideosPrmsState.data;
+        if (!data || !data.results) return null;
 
-            // Filter: Must be Official, a Trailer, and hosted on YouTube
-            function getRelevantCandidatesCB(video: Video) {
-                return video.official === true && 
-                video.type === "Trailer" && 
-                video.site === "YouTube"
-            }
-
-            const candidates = data.results.filter(getRelevantCandidatesCB);
-
-            // Sorts for the best quality video
-            function getHighestQualityCB(a: Video, b: Video) {
-                return b.size - a.size
-            }
-            candidates.sort(getHighestQualityCB);
-
-            // Return the key of the top result
-            if (candidates.length > 0) {
-                return candidates[0].key;
-            }
-            return null;
+        // Filter: Must be Official, a Trailer, and hosted on YouTube
+        function getRelevantCandidatesCB(video: Video) {
+            return video.official === true && 
+            video.type === "Trailer" && 
+            video.site === "YouTube"
         }
 
-        // Return the promise chain
-        return this.getMovieVideos().then(getTrailerACB);
+        const candidates = data.results.filter(getRelevantCandidatesCB);
+
+        // Sorts for the best quality video
+        function getHighestQualityCB(a: Video, b: Video) {
+            return b.size - a.size
+        }
+        candidates.sort(getHighestQualityCB);
+
+        // Return the key of the top result
+        if (candidates.length > 0) {
+            return candidates[0].key;
+        }
+        return null;
+    },
+
+    getMovieImdbRating(id: number) {
+        const imdbRatingPrms = getImdbId(id).then(getImdbRating);
+        resolvePromise(imdbRatingPrms, this.imdbRatingPrmsState);
     },
 
     filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
@@ -130,10 +170,23 @@ export const model: ModelType = {
     },
 
     setMovieIdQueue() {
+        const prms = fetchPopularMoviesPages(1, 1);
+        
+        // Gets list for Home View
+        resolvePromise(prms, this.popularMoviesPrmsState);
+
+        // Gets IDs for the queue
+        const idPrms = prms.then(this.filterAndGetIdsFromMoviesACB);
+        resolvePromise(idPrms, this.movieIdQueuePrmsState);
+
+        return idPrms;
+    },
+
+    /* setMovieIdQueue() {
         const popularMoviesPromise = fetchPopularMoviesPages(1, 1).then(this.filterAndGetIdsFromMoviesACB)
         resolvePromise(popularMoviesPromise, this.movieIdQueuePrmsState);
         return popularMoviesPromise;
-    },
+    }, */
 
     nextMovie() {
         const movieIdsQueue = this.movieIdQueuePrmsState.data;
