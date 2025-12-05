@@ -1,5 +1,5 @@
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig: Record<string, string> = {
+export const firebaseConfig: Record<string, string> = {
   apiKey: "AIzaSyBt7wtaLCagTbDV5LJfejOGZqi_M16J37s",
   authDomain: "cinemamatcher.firebaseapp.com",
   databaseURL: "https://cinemamatcher-default-rtdb.europe-west1.firebasedatabase.app",
