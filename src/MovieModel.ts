@@ -33,6 +33,7 @@ export type ModelType = {
   filterAndGetIdsFromMoviesACB: (data: any) => number[];
   nextMovie: () => void;
   toggleGenre: (id: number) => void;
+  toggleAllGenres: () => void;
   setMinRating: (rating: number) => void;
 
   // NEW:
@@ -185,6 +186,15 @@ export const model: ModelType = {
         } else {
             // If it wasn't selected, we want to add it.
             this.selectedGenreIds = [...this.selectedGenreIds, id];
+        }
+    },
+
+    toggleAllGenres() {
+        // If all are currently selected, clear them. Otherwise, select all.
+        if (this.selectedGenreIds.length === this.genres.length) {
+            this.selectedGenreIds = [];
+        } else {
+            this.selectedGenreIds = this.genres.map(g => g.id);
         }
     },
 
