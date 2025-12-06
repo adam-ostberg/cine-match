@@ -1,5 +1,4 @@
 import "../style.css"
-import type { Genre } from "../reactts/optionsPresenter.tsx";
 import type { TMDBGenre } from "../apiConfig.ts";
 
 export type OptionsViewProps = {
@@ -11,12 +10,52 @@ export type OptionsViewProps = {
   onRatingChange: (rating: number) => void;
 }
 
-function mapGenresCB(genre: Genre) {
-  return (
-    <div>{genre.name}</div>
-  );
-}
+export function OptionsView(props: OptionsViewProps) {
 
-export function OptionsView(/* props: OptionsViewProps */) {
-  return <p>Options</p>;
+  function renderGenreCB(genre: TMDBGenre) {
+    const isSelected = props.selectedGenreIds.includes(genre.id);
+
+    function genreClickACB() {
+      props.onGenreChange(genre.id);
+    }
+
+    return (
+      <button
+        key={genre.id}
+        className={`genre-option ${isSelected ? "selected" : ""}`} /* [TODO] CSS it */
+        onClick={genreClickACB}
+      >
+        {genre.name}
+      </button>
+    );
+  }
+
+  function handleRatingChangeACB(evt: React.ChangeEvent<HTMLInputElement>) {
+    props.onRatingChange(Number(evt.target.value));
+  }
+
+  return (
+    <div className="options-container">
+      <h2>Preferences</h2>
+
+      <div className="section">
+        <h3>Minimum IMDB Rating: {props.currentMinRating}</h3>
+        <input
+          type="range"
+          min="0"
+          max="10"
+          step="0.5"
+          value={props.currentMinRating}
+          onChange={handleRatingChangeACB}
+        />
+      </div>
+
+      <div className="section">
+        <h3>Genres</h3>
+        <div className="genre-list">
+          {props.availableGenres.map(renderGenreCB)}
+        </div>
+      </div>
+    </div>
+  );
 }
