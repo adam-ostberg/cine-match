@@ -16,6 +16,7 @@ export type ModelType = {
   popularMoviesPrmsState: PromiseState;
   movieCreditsPrmsState: PromiseState; 
   imdbRatingPrmsState: PromiseState;
+  currentSessionId: string | null;
   initiateStart: () => void;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
@@ -37,6 +38,9 @@ export type ModelType = {
   prefetchMovieDetails: (id: number) => void;
   ensurePrefetchWindow: () => void;
   fetchGenres: () => void;
+
+  // Session management
+  setSessionId: (sessionId: string | null) => void;
 }
 
 export type Video = {
@@ -233,5 +237,9 @@ export const model: ModelType = {
             return data;
         });
         resolvePromise(genresPrms, this.genresPrmsState);
+    },
+
+    setSessionId(sessionId: string | null) {
+        this.currentSessionId = sessionId;
     }
 }

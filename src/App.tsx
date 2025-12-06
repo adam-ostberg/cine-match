@@ -108,7 +108,7 @@ function() {
 					{
 						path: "/",
 						element: <Home model={props.model} />,
-					},/*
+					},
 				{
 						path: "/options",
 						element: <Options model={props.model}/>,

@@ -5,6 +5,7 @@ import type { TMDBPopularMovieResult } from "../apiConfig";
 export type HomeViewProps = {
   movies: TMDBPopularMovieResult[] | null;
   onStartSession: () => void;
+  onJoinSession: (sessionId: string) => void;
   onMovieClick: (id: number) => void;
 }
 
@@ -17,6 +18,16 @@ export function HomeView(props: HomeViewProps) {
 
   function onLogoClickACB() {
     window.location.hash = "#/";
+  }
+
+  function onStartSessionClickACB() {
+    props.onStartSession();
+  }
+
+  function onJoinSessionClickACB() {
+    const sessionIdInput = document.getElementById("session-id-input") as HTMLInputElement;
+    const sessionId = sessionIdInput.value;
+    props.onJoinSession(sessionId);
   }
 
   /* function onStartSessionClickCB() { // For future implementation
@@ -55,7 +66,14 @@ export function HomeView(props: HomeViewProps) {
           {infiniteMovies.map(renderMovieCardCB)}
         </div>
       </div>
-      <button className="primary-button" onClick={() => window.location.hash = "#/swipe"}>Start Session</button>
+      <div className="session-section">
+        <button className="primary-button" onClick={onStartSessionClickACB}>Create Session</button>
+        <p>or</p>
+        <div className="join-session-input">
+          <input id="session-id-input" type="text" placeholder="Enter Session ID" inputMode="numeric" pattern="\d*" />
+          <button className="secondary-button" onClick={onJoinSessionClickACB}>Join Session</button>
+        </div>
+      </div>
     </div>
   );
 }

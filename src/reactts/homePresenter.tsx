@@ -3,23 +3,30 @@ import { observer } from "mobx-react-lite";
 import { HomeView } from "../views/HomeView.tsx";
 import type { TMDBPopularMovieResult } from "../apiConfig.ts";
 import type { PromiseState } from "../resolvePromise.ts";
+import { createSession, joinSession } from "../firestoreModel.ts";
+import { type ModelType } from "../MovieModel.ts";
 
-
+/*
 export type HomeModel = {
     initiateStart: () => void;
     popularMoviesPrmsState: PromiseState;
     setCurrentMovieId: (id: number) => void;
 }
+*/
 
 export type HomePresenterProps = {
-    model: HomeModel;
+    model: ModelType;
 }
 
 const Home = observer(
     function HomeRender(props: HomePresenterProps) {
 
-        function sessionStartACB() {
-            props.model.initiateStart()
+        async function sessionStartACB() {
+            await createSession(props.model);
+        }
+
+        async function sessionJoinACB(sessionId: string) {
+            await joinSession(props.model, sessionId); // TODO get session ID from user input
         }
 
         if (!props.model.popularMoviesPrmsState.data) {
@@ -34,6 +41,7 @@ const Home = observer(
         return (
             <HomeView
                 onStartSession={sessionStartACB}
+                onJoinSession={sessionJoinACB}
                 movies={(props.model.popularMoviesPrmsState.data as TMDBPopularMovieResult[]) || []}
                 onMovieClick={onMovieClickedACB}
             />

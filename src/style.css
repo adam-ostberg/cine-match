@@ -40,7 +40,7 @@ html, body {
 /* Carousel css from https://blog.logto.io/css-only-infinite-scroll */
 .carousel-view {
     width: 100%;
-    height: 500px;
+    height: 400px;
     overflow: hidden;
     padding: 30px;
     margin: 0 0 30px;
@@ -333,4 +333,25 @@ html, body {
 
 .primary-button:active {
     transform: scale(1);
+}
+
+.session-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 50px;
+}
+
+.join-session-input {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.join-session-input input {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }

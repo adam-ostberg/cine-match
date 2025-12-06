@@ -1,3 +1,6 @@
+import { initializeApp } from "firebase/app";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig: Record<string, string> = {
   apiKey: "AIzaSyBt7wtaLCagTbDV5LJfejOGZqi_M16J37s",
@@ -8,3 +11,12 @@ const firebaseConfig: Record<string, string> = {
   appId: "1:425565430168:web:7acc214179792c56f00bed",
   measurementId: "G-1M4N0H90T2"
 };
+
+// uncomment the following lines when you have your firebaseConfig. Understand what the lines are doing!
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
+window.db = db;
+
+// make doc and setDoc available at the Console for testing
+window.doc = doc;
+window.setDoc = setDoc;
