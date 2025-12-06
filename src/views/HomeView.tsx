@@ -35,7 +35,7 @@ export function HomeView(props: HomeViewProps) {
   } */
 
   function renderMovieCardCB(movie: TMDBPopularMovieResult, index: number) {
-    function onMovieClickCB(evt: any) {
+    function onMovieClickCB() {
       props.onMovieClick(movie.id);
     }
 

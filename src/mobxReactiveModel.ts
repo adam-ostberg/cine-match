@@ -1,7 +1,7 @@
 import { observable, configure, reaction } from "mobx";
-configure({ enforceActions: "never", });  // we don't use Mobx actions in the Lab
-import { model, type ModelType } from "./MovieModel"
-
+configure({ enforceActions: "never" }); // we don't use Mobx actions in the Lab
+import { model, type ModelType } from "./MovieModel";
+import { connectToPersistence } from "./firebaseModel";
 
 declare global {
   interface Window {
@@ -13,8 +13,6 @@ export const reactiveModel = observable(model);
 const idQueuePrms = reactiveModel.setMovieIdQueue();
 idQueuePrms.then(() => reactiveModel.currentMovieEffect());
 
-
-
 function currentMovieIdACB() {
   return reactiveModel.curMovieId;
 }
@@ -23,7 +21,8 @@ function movieIdEffectACB() {
   return reactiveModel.currentMovieEffect();
 }
 
-reaction(currentMovieIdACB, movieIdEffectACB)
+reaction(currentMovieIdACB, movieIdEffectACB);
 
-window.model = reactiveModel
+window.model = reactiveModel;
 
+connectToPersistence(reactiveModel, reaction);

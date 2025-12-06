@@ -29,9 +29,12 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		function navBarlogoClickedACB() {
 
 		}
+		function moreInfoClickedACB() {
+			document.location.hash = "/details";
+		}
 
 		const ALL_DATA_FETCHED = !! model.movieIdQueuePrmsState.data && !!model.movieDetailsPrmsState.data;
-		const view = ALL_DATA_FETCHED ? <SwipeView model={model} onDislike={swipeDislikeACB} onLike={swipeLikeACB}/> : "__loading__";
+		const view = ALL_DATA_FETCHED ? <SwipeView model={model} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB}/> : "__loading__";
 
 		return (
 			<div className="swipe-flex-parent">

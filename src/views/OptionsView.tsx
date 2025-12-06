@@ -17,17 +17,6 @@ function mapGenresCB(genre: Genre) {
   );
 }
 
-export function OptionsView(props: OptionsViewProps) {
-  console.log(props.availableGenres);
-  return (
-    <div className="options-section">
-      <h2>Filter movies</h2>
-      <div className="genres-section">
-        <h3>Genres</h3>
-        <div className="genres-selection">
-          {props.availableGenres.map(mapGenresCB)}
-        </div>
-      </div>
-    </div>
-  );
+export function OptionsView(/* props: OptionsViewProps */) {
+  return <p>Options</p>;
 }

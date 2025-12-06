@@ -392,6 +392,56 @@ export function getImdbId(movie_id: number): Promise<any> {
     .catch(handleErrorACB);
 }
 
+
+// One streaming / rent / buy provider
+export interface WatchProvider {
+  logo_path: string;
+  provider_id: number;
+  provider_name: string;
+  display_priority: number;
+}
+
+// All options for a specific country (AE, AL, AR, AT, etc.)
+export interface CountryWatchOptions {
+  link: string;
+  flatrate?: WatchProvider[];
+  rent?: WatchProvider[];
+  buy?: WatchProvider[];
+}
+
+// Whole response object
+export interface WatchProvidersResponse {
+  id: number;
+  results: Record<string, CountryWatchOptions>;
+  // ex: results["SE"], results["US"], results["AR"], ...
+}
+
+export function getWatchProviders(movie_id: number): Promise<WatchProvidersResponse | any> {
+  const ENDPOINT = `/movie/${movie_id}/watch/providers`;
+
+  function handleResponseACB(response: Response) {
+    if (!response.ok) {
+      throw new Error();
+    }
+    return response.json();
+  }
+
+  function handleSuccessACB(data: ExternalIDs) {
+    return data;
+  }
+
+  function handleErrorACB(error: unknown) {
+    console.error(error);
+  }
+
+  return fetch(BASE_URL + ENDPOINT, optionsGET)
+    .then(handleResponseACB)
+    .then(handleSuccessACB)
+    .catch(handleErrorACB);
+}
+
+
+
 export type TMDBCast = {
   adult: boolean,
   gender: number,
