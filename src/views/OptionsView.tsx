@@ -7,6 +7,7 @@ export type OptionsViewProps = {
   currentMinRating: number;
 
   onGenreChange: (id: number) => void;
+  onToggleAll: () => void;
   onRatingChange: (rating: number) => void;
 }
 
@@ -34,6 +35,9 @@ export function OptionsView(props: OptionsViewProps) {
     props.onRatingChange(Number(evt.target.value));
   }
 
+  const isAllSelected = props.availableGenres.length > 0 && props.selectedGenreIds.length === props.availableGenres.length;
+
+
   return (
     <div className="options-container">
       <h2>Preferences</h2>
@@ -52,6 +56,9 @@ export function OptionsView(props: OptionsViewProps) {
 
       <div className="section">
         <h3>Genres</h3>
+        <button className={`secondary-button small-btn ${isAllSelected ? "deselect" : "select"}`} onClick={props.onToggleAll}>
+          {isAllSelected ? "Deselect All" : "Select All"}
+        </button>
         <div className="genre-list">
           {props.availableGenres.map(renderGenreCB)}
         </div>
