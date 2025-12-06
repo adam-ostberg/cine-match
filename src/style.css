@@ -416,3 +416,70 @@ html, body {
     border-radius: 5px;
     border: 1px solid #ccc;
 }
+
+/* Options View Styles */
+.options-container {
+    padding: 20px;
+    max-width: 800px; /* Keeps it from getting too wide on desktop */
+    margin: 0 auto; /* Centers container */
+    text-align: center;
+}
+
+.options-container h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.options-container .section {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.05); /* Subtle background */
+    border-radius: 10px;
+}
+
+/* Range Slider */ /* [TODO] Not wokring for webkit */
+.options-container input[type=range] {
+    width: 100%;
+    max-width: 500px;
+    height: 8px;
+    accent-color: #F2DB83; /* imdB color */
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+.genre-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.genre-option {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 1px solid gray;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+.genre-option:hover {
+    border-color: white;
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.02);
+}
+
+/* Selected State */
+.genre-option.selected {
+    border: 2px solid var(--btn-green);
+    background-color: rgba(81, 179, 81, 0.2); /* Transparent green */
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
+}
+
+.options-container input[type=range]:hover {
+    font-weight: bold;
+    box-shadow: 0 0 10px #dba60664; /* Glow */
+}

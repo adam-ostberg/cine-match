@@ -22,7 +22,7 @@ export function OptionsView(props: OptionsViewProps) {
     return (
       <button
         key={genre.id}
-        className={`genre-option ${isSelected ? "selected" : ""}`} /* [TODO] CSS it */
+        className={`genre-option ${isSelected ? "selected" : ""}`}
         onClick={genreClickACB}
       >
         {genre.name}
