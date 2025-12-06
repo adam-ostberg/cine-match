@@ -18,6 +18,8 @@ export type ModelType = {
   imdbRatingPrmsState: PromiseState;
   watchProvidersPrmsState: PromiseState;
   currentSessionId: string | null;
+  selectedGenreIds: number[];
+  minRating: number;
   initiateStart: () => void;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
@@ -30,6 +32,8 @@ export type ModelType = {
   setMovieIdQueue: () => Promise<any>;
   filterAndGetIdsFromMoviesACB: (data: any) => number[];
   nextMovie: () => void;
+  toggleGenre: (id: number) => void;
+  setMinRating: (rating: number) => void;
 
   // NEW:
   movieDetailsById: { [id: number]: PromiseState };
@@ -62,6 +66,9 @@ export const model: ModelType = {
     genresPrmsState: {promise: null, data: null, error: null},
     likes: [],
     dislikes: [],
+    currentSessionId: null, /* Added for it to work for me, might class with other implementation */
+    selectedGenreIds: [],
+    minRating: 0,
     curMovieId: 550,
     movieDetailsPrmsState: {promise: null, data: null, error: null}, 
     nextMovieDetailPrmsState: {promise: null, data: null, error: null}, 
@@ -167,11 +174,23 @@ export const model: ModelType = {
         return idPrms;
     },
 
-    /* setMovieIdQueue() {
-        const popularMoviesPromise = fetchPopularMoviesPages(1, 1).then(this.filterAndGetIdsFromMoviesACB)
-        resolvePromise(popularMoviesPromise, this.movieIdQueuePrmsState);
-        return popularMoviesPromise;
-    }, */
+    /* For OptionsView */
+    toggleGenre(id: number) {
+        function keepOtherGenresCB(existingId: number) {
+            return existingId !== id;
+        }
+        if (this.selectedGenreIds.includes(id)) {
+            // If it was already selected, we want to remove it.
+            this.selectedGenreIds = this.selectedGenreIds.filter(keepOtherGenresCB);
+        } else {
+            // If it wasn't selected, we want to add it.
+            this.selectedGenreIds = [...this.selectedGenreIds, id];
+        }
+    },
+
+    setMinRating(rating: number) {
+        this.minRating = rating;
+    },
 
     nextMovie() {
         const movieIdsQueue = this.movieIdQueuePrmsState.data;
