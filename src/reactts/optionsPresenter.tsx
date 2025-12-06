@@ -22,6 +22,10 @@ const Options = observer(
             props.model.toggleGenre(genreId);
         }
 
+        function onToggleAllGenresACB() {
+            props.model.toggleAllGenres();
+        }
+
         function onRatingChangeACB(newRating: number) {
             props.model.setMinRating(newRating);
         }
@@ -32,6 +36,7 @@ const Options = observer(
                 selectedGenreIds={props.model.selectedGenreIds}
                 currentMinRating={props.model.minRating}
                 onGenreChange={onGenreChangeACB}
+                onToggleAll={onToggleAllGenresACB}
                 onRatingChange={onRatingChangeACB}
             />
         );
