@@ -18,6 +18,10 @@ html, body {
     height: 100%;
 }
 
+.vertical-line {
+    color: white;
+    margin: 40px 0;
+}
 
 .home {
     display: flex;
@@ -437,14 +441,28 @@ html, body {
     border-radius: 10px;
 }
 
-/* Range Slider */ /* [TODO] Not wokring for webkit */
-.options-container input[type=range] {
-    width: 100%;
+/* Uses MuiSlider-root, bad practice? */
+.MuiSlider-root.slider {
+    /* Sets main color, affects track and thumb */
+    color: var(--btn-green); 
     max-width: 500px;
-    height: 8px;
-    accent-color: #F2DB83; /* imdB color */
-    cursor: pointer;
-    transition: all 0.5s;
+}
+
+.MuiSlider-root.slider .MuiSlider-valueLabel {
+    /* Sets color of valueLabel */
+    background-color: var(--btn-green);
+}
+
+/* Recolor imdB slider – should it? */
+.MuiSlider-root.imdb-slider{
+    /* Sets main color, affects track and thumb */
+    color: #F2DB83; 
+    max-width: 500px;
+}
+
+.MuiSlider-root.imdb-slider .MuiSlider-valueLabel{
+    /* Sets color of valueLabel */
+    background-color: #DBA506; 
 }
 
 .options-container input[type=range]:hover {
