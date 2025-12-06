@@ -24,6 +24,7 @@ export function OptionsView(props: OptionsViewProps) {
       <button
         key={genre.id}
         className={`genre-option ${isSelected ? "selected" : ""}`}
+        /* [TODO] Change to primary-button? secondary-button? For consistency*/
         onClick={genreClickACB}
       >
         {genre.name}
@@ -56,7 +57,7 @@ export function OptionsView(props: OptionsViewProps) {
 
       <div className="section">
         <h3>Genres</h3>
-        <button className={`secondary-button small-btn ${isAllSelected ? "deselect" : "select"}`} onClick={props.onToggleAll}>
+        <button className={`genre-option ${isAllSelected ? "selected" : ""} all`} onClick={props.onToggleAll}>
           {isAllSelected ? "Deselect All" : "Select All"}
         </button>
         <div className="genre-list">
