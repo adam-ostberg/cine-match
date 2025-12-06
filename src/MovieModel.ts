@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList} from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 
@@ -191,10 +191,14 @@ export const model: ModelType = {
 
     toggleAllGenres() {
         // If all are currently selected, clear them. Otherwise, select all.
+        function selectAllCB(genre: TMDBGenre) {
+            return genre.id;
+        }
+
         if (this.selectedGenreIds.length === this.genres.length) {
             this.selectedGenreIds = [];
         } else {
-            this.selectedGenreIds = this.genres.map(g => g.id);
+            this.selectedGenreIds = this.genres.map(selectAllCB);
         }
     },
 
