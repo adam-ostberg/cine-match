@@ -20,6 +20,9 @@ export type ModelType = {
   currentSessionId: string | null;
   selectedGenreIds: number[];
   minRating: number;
+  minRuntime: number;
+  maxRuntime: number;
+  setRuntime: (min: number, max: number) => void;
   initiateStart: () => void;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
@@ -70,6 +73,8 @@ export const model: ModelType = {
     currentSessionId: null, /* Added for it to work for me, might class with other implementation */
     selectedGenreIds: [],
     minRating: 0,
+    minRuntime: 0,
+    maxRuntime: 400,
     curMovieId: 550,
     movieDetailsPrmsState: {promise: null, data: null, error: null}, 
     nextMovieDetailPrmsState: {promise: null, data: null, error: null}, 
@@ -204,6 +209,11 @@ export const model: ModelType = {
 
     setMinRating(rating: number) {
         this.minRating = rating;
+    },
+
+    setRuntime(min: number, max: number) {
+        this.minRuntime = min;
+        this.maxRuntime = max;
     },
 
     nextMovie() {
