@@ -453,6 +453,11 @@ html, body {
     background-color: var(--btn-green);
 }
 
+/* From https://stackoverflow.com/a/67770685 */
+.MuiSlider-root.slider .MuiSlider-thumb:hover {
+      box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.2) !important;
+    }
+
 /* Recolor imdB slider – should it? */
 .MuiSlider-root.imdb-slider{
     /* Sets main color, affects track and thumb */
@@ -464,6 +469,10 @@ html, body {
     /* Sets color of valueLabel */
     background-color: #DBA506; 
 }
+
+.MuiSlider-root.imdb-slider .MuiSlider-thumb:hover {
+      box-shadow: 0 0 0 10px #dba60664 !important;
+    }
 
 .options-container input[type=range]:hover {
     font-weight: bold;
