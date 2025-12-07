@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList} from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type MovieDetails} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 
@@ -10,7 +10,6 @@ export type ModelType = {
   dislikes: [];
   curMovieId: number;
   movieDetailsPrmsState: PromiseState;
-  nextMovieDetailPrmsState: PromiseState;
   movieVideosPrmsState: PromiseState;
   movieIdQueuePrmsState: PromiseState;
   popularMoviesPrmsState: PromiseState;
@@ -20,6 +19,7 @@ export type ModelType = {
   currentSessionId: string | null;
   selectedGenreIds: number[];
   minRating: number;
+  prefetchWindowPrmsState: PromiseState;
   initiateStart: () => void;
   setId: (id: number) => void;
   setCurrentMovieId: (id: number) => void;
@@ -40,7 +40,7 @@ export type ModelType = {
   movieDetailsById: { [id: number]: PromiseState };
   PREFETCH_SIZE: number;
 
-  prefetchMovieDetails: (id: number) => void;
+  prefetchMovieDetails: (id: number) => Promise<void | object> | void;
   ensurePrefetchWindow: () => void;
   fetchGenres: () => void;
 
@@ -72,13 +72,13 @@ export const model: ModelType = {
     minRating: 0,
     curMovieId: 550,
     movieDetailsPrmsState: {promise: null, data: null, error: null}, 
-    nextMovieDetailPrmsState: {promise: null, data: null, error: null}, 
     movieVideosPrmsState: {promise: null, data: null, error: null}, 
     movieIdQueuePrmsState: {promise: null, data: null, error: null},
     popularMoviesPrmsState: {promise: null, data: null, error: null},
     movieCreditsPrmsState: {promise: null, data: null, error: null},
     imdbRatingPrmsState: {promise: null, data: null, error: null},
     watchProvidersPrmsState: {promise: null, data: null, error: null},
+    prefetchWindowPrmsState: {promise: null, data: null, error: null},
 
     // NEW:
     movieDetailsById: {},
@@ -104,23 +104,19 @@ export const model: ModelType = {
             return;
         }
 
-        this.getCurMovieTrailer();
-        this.getCurMovieCredits();
-        this.getMovieImdbRating(this.curMovieId);
-        this.getCurWatchProviders();
-        // 1) Ensure current movie is prefetched
         this.prefetchMovieDetails(this.curMovieId);
-
         // 2) Point the "active" PromiseState to the one for curMovieId
         const currentState = this.movieDetailsById[this.curMovieId];
         if (currentState) {
             this.movieDetailsPrmsState = currentState;
         }
 
-        // this.getMovieVideos();
-
-        // 3) Make sure we have a buffer of upcoming movies prefetched
         this.ensurePrefetchWindow();
+
+        this.getCurMovieTrailer();
+        this.getCurMovieCredits();
+        this.getMovieImdbRating(this.curMovieId);
+        this.getCurWatchProviders();
     },
 
     getCurMovieCredits() {
@@ -158,7 +154,7 @@ export const model: ModelType = {
     },
 
     filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
-        const ids: number[] = movies.map(m => m.id);
+        const ids: number[] =  [this.curMovieId, ...movies.map(m => m.id)];
         return ids;
     },
 
@@ -169,7 +165,7 @@ export const model: ModelType = {
         resolvePromise(prms, this.popularMoviesPrmsState);
 
         // Gets IDs for the queue
-        const idPrms = prms.then(this.filterAndGetIdsFromMoviesACB);
+        const idPrms = prms.then(movies => this.filterAndGetIdsFromMoviesACB(movies));
         resolvePromise(idPrms, this.movieIdQueuePrmsState);
 
         return idPrms;
@@ -205,8 +201,8 @@ export const model: ModelType = {
     nextMovie() {
         const movieIdsQueue = this.movieIdQueuePrmsState.data;
         if (!movieIdsQueue) { return };
-
-        this.curMovieId = movieIdsQueue.shift(); 
+        movieIdsQueue.shift(); 
+        this.curMovieId = movieIdsQueue[0];
     },
 
     prefetchMovieDetails(id: number) {
@@ -214,7 +210,7 @@ export const model: ModelType = {
         // Already have a state for this id? Then skip.
         const existing = this.movieDetailsById[id];
         if (existing && (existing.promise || existing.data || existing.error)) {
-            return;
+            return existing.promise;
         }
 
         if (!this.movieDetailsById[id]) {
@@ -225,6 +221,7 @@ export const model: ModelType = {
 
         const prms = getMovieDetails(id);
         resolvePromise(prms, state);  // This now updates a MobX-observable object
+        return prms
     },
 
     ensurePrefetchWindow() {
@@ -233,10 +230,14 @@ export const model: ModelType = {
 
         const n = Math.min(this.PREFETCH_SIZE, movieIdsQueue.length);
 
-        for (let i = 0; i < n; i++) {
-            const id = movieIdsQueue[i];
-            this.prefetchMovieDetails(id);
-        }
+        const ids = movieIdsQueue.slice(0, n);
+        const promises = ids.map((id) => this.prefetchMovieDetails(id));
+
+        // This Promise resolves only when ALL of them are done
+        const allPrms = Promise.all(promises);
+
+        // allPrms resolves to an array of movie details (same order as ids)
+        resolvePromise(allPrms, this.prefetchWindowPrmsState);
     },
 
     fetchGenres() {

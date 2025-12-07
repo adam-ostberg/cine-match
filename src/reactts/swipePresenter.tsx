@@ -3,27 +3,28 @@ import { observer } from "mobx-react-lite";
 import { SwipeView } from "../views/SwipeView";
 import type { ModelType } from "../MovieModel";
 import { NavBarView } from "../views/NavbarView";
+import type { PromiseState } from "../resolvePromise";
+import type { MovieDetails } from "../apiConfig";
+import { SuspenseSwipeView } from "../views/SuspenseSwipeView";
 
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
 export type SwipePresenterProps = {
-	model: ModelType;
+	prefetchWindowPrmsState: PromiseState;
+	movieIdQueuePrmsState: PromiseState
+	nextMovieEvt: () => void;
 }
 
 const Swipe = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
 	function SwipeRender(props: SwipePresenterProps) {
-		const model = props.model;
-		/* if (!props.model.currentMovie) {
-				return <SuspenseView />;
-		} */
 
 		function swipeDislikeACB() {
-			props.model.nextMovie();
+			props.nextMovieEvt();
 			console.log("Disliked");
 		}
 
 		function swipeLikeACB() {
-			props.model.nextMovie();
+			props.nextMovieEvt();
 			console.log("Liked");
 		}
 		function navBarlogoClickedACB() {
@@ -33,8 +34,10 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			document.location.hash = "/details";
 		}
 
-		const ALL_DATA_FETCHED = !! model.movieIdQueuePrmsState.data && !!model.movieDetailsPrmsState.data;
-		const view = ALL_DATA_FETCHED ? <SwipeView model={model} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB}/> : "__loading__";
+		const data = props.prefetchWindowPrmsState.data as MovieDetails[];
+		const ALL_DATA_FETCHED = !!data && data.length >= 2 && !!data[0] && !!data[1];
+		
+		const view = ALL_DATA_FETCHED ? <SwipeView prefetchWindowPrmsState={props.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB}/> : <SuspenseSwipeView prefetchWindowPrmsState={props.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB}/>;
 
 		return (
 			<div className="swipe-flex-parent">

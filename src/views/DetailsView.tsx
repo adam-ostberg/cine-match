@@ -71,7 +71,7 @@ const DetailsView = observer(
         }
         i += 1;
       }
-      return <li>{headerText}{text}</li>
+      return <li><b>{headerText}</b>{text}</li>
     }
     function outputSpokenLanguagesCB(language: SpokenLanguages, index: number, array: SpokenLanguages[]) {
       if (!language) { return };
@@ -85,7 +85,7 @@ const DetailsView = observer(
     }
     function outputBudget(budget: number) {
       if (!budget || budget <= 0) { return };
-      return <li>Budget: {budget.toLocaleString()}</li>;
+      return <li><b>Budget: </b>{budget.toLocaleString()}$</li>;
     }
     function filterAndSortWatchProviders(options: CountryWatchOptions) {
       if (!options) {
@@ -173,7 +173,7 @@ const DetailsView = observer(
 
           <h2>Cast & Crew</h2>
           <ul>
-            <li>Director: {director?.name}</li>
+            <li><b>Director: </b>{director?.name}</li>
             {peopleTextOutput(writers, "Writer: ")}
             {peopleTextOutput(actors, "Actors: ")}
           </ul>
@@ -181,7 +181,7 @@ const DetailsView = observer(
           <h2>Box Office</h2>
           <ul>
             {outputBudget(details.budget)}
-            <li>Gross Revenue: {details.revenue.toLocaleString()}$</li>
+            <li><b>Gross Revenue: </b>{details.revenue.toLocaleString()}$</li>
           </ul>
         </div>
         </div>

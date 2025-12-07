@@ -13,6 +13,13 @@ export const reactiveModel = observable(model);
 const idQueuePrms = reactiveModel.setMovieIdQueue();
 idQueuePrms.then(() => reactiveModel.currentMovieEffect());
 
+export const modelActions = {
+  nextMovie: reactiveModel.nextMovie.bind(reactiveModel),
+  setMovieIdQueue: reactiveModel.setMovieIdQueue.bind(reactiveModel),
+  currentMovieEffect: reactiveModel.currentMovieEffect.bind(reactiveModel),
+};
+
+
 function currentMovieIdACB() {
   return reactiveModel.curMovieId;
 }

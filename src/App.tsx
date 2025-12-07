@@ -6,6 +6,7 @@ import { Details } from "./reactts/detailsPresenter";
 import { observer } from "mobx-react-lite";
 import { Swipe } from "./reactts/swipePresenter";
 import { Options } from "./reactts/optionsPresenter";
+import { modelActions } from "./mobxReactiveModel";
 
 export type AppRenderProps = {
 	model: ModelType
@@ -116,7 +117,7 @@ const App = observer(
 				},
 				{
 					path: "/swipe",
-					element: <Swipe model={props.model} />,
+					element: <Swipe prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} movieIdQueuePrmsState={props.model.movieIdQueuePrmsState} nextMovieEvt={modelActions.nextMovie} />,
 				},
 
 				{
