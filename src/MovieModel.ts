@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList} from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
@@ -21,6 +21,9 @@ export type ModelType = {
     currentSessionId: string | null;
     selectedGenreIds: number[];
     minRating: number;
+    minRuntime: number;
+    maxRuntime: number;
+    setRuntime: (min: number, max: number) => void;
     initiateStart: () => void;
     setId: (id: string | null) => void;
     setCurrentMovieId: (id: number) => void;
@@ -73,6 +76,8 @@ export const model: ModelType = {
     currentSessionId: null, /* Added for it to work for me, might class with other implementation */
     selectedGenreIds: [],
     minRating: 0,
+    minRuntime: 0,
+    maxRuntime: 400,
     curMovieId: 550,
     movieDetailsPrmsState: {promise: null, data: null, error: null}, 
     nextMovieDetailPrmsState: {promise: null, data: null, error: null}, 
@@ -194,15 +199,24 @@ export const model: ModelType = {
 
     toggleAllGenres() {
         // If all are currently selected, clear them. Otherwise, select all.
+        function selectAllCB(genre: TMDBGenre) {
+            return genre.id;
+        }
+
         if (this.selectedGenreIds.length === this.genres.length) {
             this.selectedGenreIds = [];
         } else {
-            this.selectedGenreIds = this.genres.map(g => g.id);
+            this.selectedGenreIds = this.genres.map(selectAllCB);
         }
     },
 
     setMinRating(rating: number) {
         this.minRating = rating;
+    },
+
+    setRuntime(min: number, max: number) {
+        this.minRuntime = min;
+        this.maxRuntime = max;
     },
 
     nextMovie() {

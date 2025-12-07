@@ -18,6 +18,10 @@ html, body {
     height: 100%;
 }
 
+.vertical-line {
+    color: white;
+    margin: 40px 0;
+}
 
 .home {
     display: flex;
@@ -437,14 +441,42 @@ html, body {
     border-radius: 10px;
 }
 
-/* Range Slider */ /* [TODO] Not wokring for webkit */
-.options-container input[type=range] {
-    width: 100%;
+/* Uses MuiSlider-root, bad practice? */
+.MuiSlider-root.slider {
+    /* Sets main color, affects track and thumb */
+    color: var(--btn-green); 
     max-width: 500px;
-    height: 8px;
-    accent-color: #F2DB83; /* imdB color */
-    cursor: pointer;
-    transition: all 0.5s;
+}
+
+.MuiSlider-root.slider .MuiSlider-valueLabel {
+    /* Sets color of valueLabel */
+    background-color: var(--btn-green);
+}
+
+/* From https://stackoverflow.com/a/67770685 */
+.MuiSlider-root.slider .MuiSlider-thumb:hover {
+      box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.2) !important;
+    }
+
+/* Recolor imdB slider – should it? */
+.MuiSlider-root.imdb-slider{
+    /* Sets main color, affects track and thumb */
+    color: #F2DB83; 
+    max-width: 500px;
+}
+
+.MuiSlider-root.imdb-slider .MuiSlider-valueLabel{
+    /* Sets color of valueLabel */
+    background-color: #DBA506; 
+}
+
+.MuiSlider-root.imdb-slider .MuiSlider-thumb:hover {
+      box-shadow: 0 0 0 10px #dba60664 !important;
+    }
+
+.options-container input[type=range]:hover {
+    font-weight: bold;
+    box-shadow: 0 0 10px #dba60664; /* Glow */
 }
 
 .genre-list {
@@ -479,10 +511,36 @@ html, body {
     box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
-.options-container input[type=range]:hover {
+.genre-option.selected:hover {
+    border: 2px solid rgb(179, 81, 81);
+    background-color: rgba(179, 81, 81, 0.2); /* Transparent green */
+    color: white;
     font-weight: bold;
-    box-shadow: 0 0 10px #dba60664; /* Glow */
+    box-shadow: 0 0 10px rgba(179, 81, 81, 0.7); /* Glow */
 }
+
+.genre-option {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 1px solid gray;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+.genre-option.all {
+    margin-bottom: 20px;
+}
+
+/* Najs med green highlight or not? */
+/* .genre-option.all:hover:not(.selected) {
+    border: 2px solid var(--btn-green);
+    background-color: rgba(81, 179, 81, 0.2); 
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(81, 179, 81, 0.7);
+} */
 
 .account-section {
     display: flex;
