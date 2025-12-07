@@ -48,6 +48,8 @@ html, body {
     overflow: hidden;
     padding: 30px;
     margin: 0 0 30px;
+    /* Adds mask from left to right */
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
 
 .carousel-track {
@@ -78,6 +80,9 @@ html, body {
 
 .carousel-track .movie-card:hover {
     transform: scale(1.05);
+    /* Using two shadows creates realistic depth */
+    /* From https://www.w3schools.com/css/css3_shadows.asp */
+    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
 }
 
 @keyframes scrolling {
@@ -206,18 +211,22 @@ html, body {
     justify-content: center;
 }
 
+/* Styled like genre-option buttons */
 .primary-button {
-    font-size: 15px;
-    padding: 12px;
-    border-style: none;
-    border-radius: 5px;
+    border: 2px solid var(--btn-green);
+    background-color: rgba(81, 179, 81, 0.2); /* Transparent green */
     color: white;
-    background-color: var(--btn-green);
+    font-weight: bold;
+    font-size: 15px;
+    padding: 10px 16px;
+    border-radius: 5px;
+    /* background-color: var(--btn-green); */ /* <--Uncomment here: better? */
     transition: transform 0.3s ease;
 }
 
 .primary-button:hover {
     transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
 .details-container {
