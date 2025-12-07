@@ -50,10 +50,24 @@ export function OptionsView(props: OptionsViewProps) {
 
   const isAllSelected = props.availableGenres.length > 0 && props.selectedGenreIds.length === props.availableGenres.length;
 
+  /*   function handleSimilarMoviesACB() {
+      if (!props.similarMoviesTo) {
+        <div></div>
+      }
+      <div className="similar-movies-to">
+  
+      </div>
+    } */
 
   return (
     <div className="options-container">
-      <h2>Preferences</h2>
+      <h2>Filters</h2>
+      {/* 
+      <div className="section">
+        <h3>Filter by movies similar to:</h3>
+        <input id="movie-id" type="text" placeholder="Search for movie, actor, director..." inputMode="text" />
+        {handleSimilarMoviesACB}
+      </div> */}
 
       <div className="section">
         <h3>Minimum IMDB Rating: {props.currentMinRating}</h3>
@@ -67,7 +81,6 @@ export function OptionsView(props: OptionsViewProps) {
         />
       </div>
       <div className="section">
-        <h2>Filters</h2>
         <h3>Genres</h3>
         <button className={`genre-option ${isAllSelected ? "selected" : ""} all`} onClick={props.onToggleAll}>
           {isAllSelected ? "Deselect All" : "Select All"}
@@ -75,7 +88,8 @@ export function OptionsView(props: OptionsViewProps) {
         <div className="genre-list">
           {props.availableGenres.map(renderGenreCB)}
         </div>
-        <hr className="vertical-line"></hr>
+      </div>
+      <div className="section">
         <h3>Movie Runtime</h3>
         <div>
           <p>
