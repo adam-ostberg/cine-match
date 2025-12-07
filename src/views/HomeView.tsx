@@ -22,12 +22,15 @@ export function HomeView(props: HomeViewProps) {
 
   function onStartSessionClickACB() {
     props.onStartSession();
+    window.location.hash = "#/swipe";
   }
 
   function onJoinSessionClickACB() {
     const sessionIdInput = document.getElementById("session-id-input") as HTMLInputElement;
     const sessionId = sessionIdInput.value;
     props.onJoinSession(sessionId);
+
+    window.location.hash = "#/swipe";
   }
 
   /* function onStartSessionClickCB() { // For future implementation
@@ -61,6 +64,8 @@ export function HomeView(props: HomeViewProps) {
     <div className="home">
       <h1 onClick={onLogoClickACB}>CineMatch</h1>
       <p>Swipe to find your perfect movie</p>
+      {/*TODO: PUT THIS BUTTON SOMEWHERE ELSE*/}
+      <button onClick={() => window.location.hash="#/account"}>Go To Account Page</button>
       <div className="carousel-view">
         <div className="carousel-track">
           {infiniteMovies.map(renderMovieCardCB)}

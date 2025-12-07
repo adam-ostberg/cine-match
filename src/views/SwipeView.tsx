@@ -12,6 +12,7 @@ import { useState } from "react";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
+  currentSessionId: string | null;
   onDislike: () => void;
   onLike: () => void;
   onMoreInfo: () => void;
@@ -21,6 +22,15 @@ type SwipeDir = "left" | "right" | null;
 
 const SwipeView = observer(
   function SwipeViewRender(props: SwipeViewProps) {
+
+  useEffect(() => {
+    const hasReloaded = sessionStorage.getItem("my-page-reloaded");
+
+    if (!hasReloaded) {
+      sessionStorage.setItem("my-page-reloaded", "true");
+      window.location.reload();
+    }
+  }, []);
 
     const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
     const POSTER_WIDTH_URL = "w780/";
@@ -68,6 +78,7 @@ const SwipeView = observer(
 
     return (
       <div className="swipe-container">
+        <p>Current Session id: {props.currentSessionId}</p>
         {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection))}
         <h3>{outputTitle(firstDetail)}</h3>
         <div className="controls">

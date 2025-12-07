@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig: Record<string, string> = {
@@ -16,6 +17,8 @@ export const firebaseConfig: Record<string, string> = {
 // uncomment the following lines when you have your firebaseConfig. Understand what the lines are doing!
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const auth = getAuth(app);
+
 window.db = db;
 
 // make doc and setDoc available at the Console for testing

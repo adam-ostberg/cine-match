@@ -8,10 +8,10 @@ import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { details } from "motion/react-client";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
+  currentSessionId: string | null;
   onDislike: () => void;
   onLike: () => void;
   onMoreInfo: () => void;
@@ -63,6 +63,7 @@ const SuspenseSwipeView = observer(
 
     return (
       <div className="swipe-container">
+        <p>Current Session id: {props.currentSessionId}</p>
         {detailsQueue?.map(outputCardsCB)}
         <h3>{outputTitle(firstDetail)}</h3>
         <div className="controls">

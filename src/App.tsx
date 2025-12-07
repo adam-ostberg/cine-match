@@ -6,7 +6,7 @@ import { Details } from "./reactts/detailsPresenter";
 import { observer } from "mobx-react-lite";
 import { Swipe } from "./reactts/swipePresenter";
 import { Options } from "./reactts/optionsPresenter";
-import { modelActions } from "./mobxReactiveModel";
+import { Account } from "./reactts/accountPresenter";
 
 export type AppRenderProps = {
 	model: ModelType
@@ -123,7 +123,11 @@ const App = observer(
 				{
 					path: "/details",
 					element: <Details model={props.model} />
-				}
+				},
+				{
+					path: "/account",
+					element: <Account />
+				},
 			]);
 		}
 		const router = makeRouter();

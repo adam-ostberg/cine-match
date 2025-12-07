@@ -30,14 +30,21 @@ const Options = observer(
             props.model.setMinRating(newRating);
         }
 
+        function onRuntimeChangeACB(min: number, max: number) {
+            props.model.setRuntime(min, max);
+        }
+
         return (
             <OptionsView
                 availableGenres={props.model.genres}
                 selectedGenreIds={props.model.selectedGenreIds}
                 currentMinRating={props.model.minRating}
+                currentMinRuntime={props.model.minRuntime}
+                currentMaxRuntime={props.model.maxRuntime}
                 onGenreChange={onGenreChangeACB}
                 onToggleAll={onToggleAllGenresACB}
                 onRatingChange={onRatingChangeACB}
+                onRuntimeChange={onRuntimeChangeACB}
             />
         );
     }

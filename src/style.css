@@ -18,6 +18,10 @@ html, body {
     height: 100%;
 }
 
+.vertical-line {
+    color: white;
+    margin: 40px 0;
+}
 
 .home {
     display: flex;
@@ -44,6 +48,8 @@ html, body {
     overflow: hidden;
     padding: 30px;
     margin: 0 0 30px;
+    /* Adds mask from left to right */
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
 
 .carousel-track {
@@ -74,6 +80,9 @@ html, body {
 
 .carousel-track .movie-card:hover {
     transform: scale(1.05);
+    /* Using two shadows creates realistic depth */
+    /* From https://www.w3schools.com/css/css3_shadows.asp */
+    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
 }
 
 @keyframes scrolling {
@@ -210,18 +219,22 @@ html, body {
 
 
 
+/* Styled like genre-option buttons */
 .primary-button {
-    font-size: 15px;
-    padding: 12px;
-    border-style: none;
-    border-radius: 5px;
+    border: 2px solid var(--btn-green);
+    background-color: rgba(81, 179, 81, 0.2); /* Transparent green */
     color: white;
-    background-color: var(--btn-green);
+    font-weight: bold;
+    font-size: 15px;
+    padding: 10px 16px;
+    border-radius: 5px;
+    /* background-color: var(--btn-green); */ /* <--Uncomment here: better? */
     transition: transform 0.3s ease;
 }
 
 .primary-button:hover {
     transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
 .details-container {
@@ -438,20 +451,48 @@ html, body {
 }
 
 .options-container .section {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.05); /* Subtle background */
     border-radius: 10px;
 }
 
-/* Range Slider */ /* [TODO] Not wokring for webkit */
-.options-container input[type=range] {
-    width: 100%;
+/* Uses MuiSlider-root, bad practice? */
+.MuiSlider-root.slider {
+    /* Sets main color, affects track and thumb */
+    color: var(--btn-green); 
     max-width: 500px;
-    height: 8px;
-    accent-color: #F2DB83; /* imdB color */
-    cursor: pointer;
-    transition: all 0.5s;
+}
+
+.MuiSlider-root.slider .MuiSlider-valueLabel {
+    /* Sets color of valueLabel */
+    background-color: var(--btn-green);
+}
+
+/* From https://stackoverflow.com/a/67770685 */
+.MuiSlider-root.slider .MuiSlider-thumb:hover {
+      box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.2) !important;
+    }
+
+/* Recolor imdB slider – should it? */
+.MuiSlider-root.imdb-slider{
+    /* Sets main color, affects track and thumb */
+    color: #F2DB83; 
+    max-width: 500px;
+}
+
+.MuiSlider-root.imdb-slider .MuiSlider-valueLabel{
+    /* Sets color of valueLabel */
+    background-color: #DBA506; 
+}
+
+.MuiSlider-root.imdb-slider .MuiSlider-thumb:hover {
+      box-shadow: 0 0 0 10px #dba60664 !important;
+    }
+
+.options-container input[type=range]:hover {
+    font-weight: bold;
+    box-shadow: 0 0 10px #dba60664; /* Glow */
 }
 
 .genre-list {
@@ -486,7 +527,59 @@ html, body {
     box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
-.options-container input[type=range]:hover {
+.genre-option.selected:hover {
+    border: 2px solid rgb(179, 81, 81);
+    background-color: rgba(179, 81, 81, 0.2); /* Transparent green */
+    color: white;
     font-weight: bold;
-    box-shadow: 0 0 10px #dba60664; /* Glow */
+    box-shadow: 0 0 10px rgba(179, 81, 81, 0.7); /* Glow */
+}
+
+.genre-option {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 1px solid gray;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+.genre-option.all {
+    margin-bottom: 20px;
+}
+
+/* Najs med green highlight or not? */
+/* .genre-option.all:hover:not(.selected) {
+    border: 2px solid var(--btn-green);
+    background-color: rgba(81, 179, 81, 0.2); 
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(81, 179, 81, 0.7);
+} */
+
+.account-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+.account-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10vh;
+    background-color: #3a3851;
+    padding: 30px;
+    border-radius: 10px;
+    width: 350px;
+}
+
+.account-form input {
+    width: 70%;
+}
+
+.account-form button {
+    margin-top: 20px;
+    width: 50%
 }
