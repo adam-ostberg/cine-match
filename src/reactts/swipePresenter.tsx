@@ -3,28 +3,25 @@ import { observer } from "mobx-react-lite";
 import { SwipeView } from "../views/SwipeView";
 import type { ModelType } from "../MovieModel";
 import { NavBarView } from "../views/NavbarView";
-import type { PromiseState } from "../resolvePromise";
 import type { MovieDetails } from "../apiConfig";
 import { SuspenseSwipeView } from "../views/SuspenseSwipeView";
 
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
-export type SwipePresenterProps = {
-	prefetchWindowPrmsState: PromiseState;
-	movieIdQueuePrmsState: PromiseState
-	nextMovieEvt: () => void;
+export type SwipePresenterProps = {	
+	model: ModelType
 }
 
 const Swipe = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
 	function SwipeRender(props: SwipePresenterProps) {
 
 		function swipeDislikeACB() {
-			props.nextMovieEvt();
+			props.model.nextMovie();
 			console.log("Disliked");
 		}
 
 		function swipeLikeACB() {
-			props.nextMovieEvt();
+			props.model.nextMovie();
 			console.log("Liked");
 		}
 		function navBarlogoClickedACB() {
@@ -34,10 +31,10 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			document.location.hash = "/details";
 		}
 
-		const data = props.prefetchWindowPrmsState.data as MovieDetails[];
+		const data = props.model.prefetchWindowPrmsState.data as MovieDetails[];
 		const ALL_DATA_FETCHED = !!data && data.length >= 2 && !!data[0] && !!data[1];
 		
-		const view = ALL_DATA_FETCHED ? <SwipeView prefetchWindowPrmsState={props.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB}/> : <SuspenseSwipeView prefetchWindowPrmsState={props.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB}/>;
+		const view = ALL_DATA_FETCHED ? <SwipeView prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB}/> : <SuspenseSwipeView prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB}/>;
 
 		return (
 			<div className="swipe-flex-parent">

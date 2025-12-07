@@ -117,7 +117,7 @@ const App = observer(
 				},
 				{
 					path: "/swipe",
-					element: <Swipe prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} movieIdQueuePrmsState={props.model.movieIdQueuePrmsState} nextMovieEvt={modelActions.nextMovie} />,
+					element: <Swipe model={props.model}/>,
 				},
 
 				{
