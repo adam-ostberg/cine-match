@@ -483,3 +483,29 @@ html, body {
     font-weight: bold;
     box-shadow: 0 0 10px #dba60664; /* Glow */
 }
+
+.account-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+}
+
+.account-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10vh;
+    background-color: #3a3851;
+    padding: 30px;
+    border-radius: 10px;
+    width: 350px;
+}
+
+.account-form input {
+    width: 70%;
+}
+
+.account-form button {
+    margin-top: 20px;
+    width: 50%
+}

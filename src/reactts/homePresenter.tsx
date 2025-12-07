@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { HomeView } from "../views/HomeView.tsx";
 import type { TMDBPopularMovieResult } from "../apiConfig.ts";
 import type { PromiseState } from "../resolvePromise.ts";
-import { createSession, joinSession } from "../firestoreModel.ts";
+import { createSession, joinSession, listenToSession } from "../firestoreModel.ts";
 import { type ModelType } from "../MovieModel.ts";
 
 /*
@@ -22,11 +22,23 @@ const Home = observer(
     function HomeRender(props: HomePresenterProps) {
 
         async function sessionStartACB() {
-            await createSession(props.model);
+            if (!props.model.userId) {
+                alert("Please log in first.");
+                return;
+            }
+            const sessionId = await createSession(props.model);
+            const unsubscribe = listenToSession(sessionId, props.model);
         }
 
         async function sessionJoinACB(sessionId: string) {
+            if (!props.model.userId) {
+                alert("Please log in first.");
+                return;
+            }
             await joinSession(props.model, sessionId); // TODO get session ID from user input
+            
+            // TODO add this to the model so we can stop listening when leaving the home view
+            const unsubscribe = listenToSession(sessionId, props.model);
         }
 
         if (!props.model.popularMoviesPrmsState.data) {

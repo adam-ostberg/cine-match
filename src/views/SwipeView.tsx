@@ -30,22 +30,25 @@ const SwipeView = observer(
     } */
 
     return (
-      <div className="swipe-container">
-        <img className="movie-poster"
-          src={poster_path}
-          alt={details.title}
-        />
-        <h3>{details.title}</h3>
-        <div className="controls">
-          <button className="dislike-btn" onClick={props.onDislike}>
-            Dislike
-          </button>
-          <button className="like-btn" onClick={props.onLike}>
-            Like
-          </button>
-          <button onClick={props.onMoreInfo}>more info...</button> {/* 2 buttons for more info – one outside one inside the card? */}
+      <>
+      <p>Session ID: {props.model.currentSessionId}</p>
+        <div className="swipe-container">
+          <img className="movie-poster"
+            src={poster_path}
+            alt={details.title}
+          />
+          <h3>{details.title}</h3>
+          <div className="controls">
+            <button className="dislike-btn" onClick={props.onDislike}>
+              Dislike
+            </button>
+            <button className="like-btn" onClick={props.onLike}>
+              Like
+            </button>
+            <button onClick={props.onMoreInfo}>more info...</button> {/* 2 buttons for more info – one outside one inside the card? */}
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 );

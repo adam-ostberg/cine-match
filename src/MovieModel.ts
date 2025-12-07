@@ -1,51 +1,54 @@
 import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
+import { handleSwipeInSession } from "./firestoreModel";
 
 export type ModelType = {
-  userId: number;
-  genres: [];
-  genresPrmsState: PromiseState;
-  likes: [];
-  dislikes: [];
-  curMovieId: number;
-  movieDetailsPrmsState: PromiseState;
-  nextMovieDetailPrmsState: PromiseState;
-  movieVideosPrmsState: PromiseState;
-  movieIdQueuePrmsState: PromiseState;
-  popularMoviesPrmsState: PromiseState;
-  movieCreditsPrmsState: PromiseState; 
-  imdbRatingPrmsState: PromiseState;
-  watchProvidersPrmsState: PromiseState;
-  currentSessionId: string | null;
-  selectedGenreIds: number[];
-  minRating: number;
-  initiateStart: () => void;
-  setId: (id: number) => void;
-  setCurrentMovieId: (id: number) => void;
-  currentMovieEffect: () => void;
-  getCurMovieCredits: () => void;
-  getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
-  getCurWatchProviders: () => Promise<WatchProvidersResponse | any>;
-  getMovieImdbRating: (id: number) => void;
-  /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
-  setMovieIdQueue: () => Promise<any>;
-  filterAndGetIdsFromMoviesACB: (data: any) => number[];
-  nextMovie: () => void;
-  toggleGenre: (id: number) => void;
-  toggleAllGenres: () => void;
-  setMinRating: (rating: number) => void;
+    userId: string | null;
+    genres: [];
+    genresPrmsState: PromiseState;
+    likes: [];
+    dislikes: [];
+    curMovieId: number;
+    movieDetailsPrmsState: PromiseState;
+    nextMovieDetailPrmsState: PromiseState;
+    movieVideosPrmsState: PromiseState;
+    movieIdQueuePrmsState: PromiseState;
+    popularMoviesPrmsState: PromiseState;
+    movieCreditsPrmsState: PromiseState; 
+    imdbRatingPrmsState: PromiseState;
+    watchProvidersPrmsState: PromiseState;
+    currentSessionId: string | null;
+    selectedGenreIds: number[];
+    minRating: number;
+    initiateStart: () => void;
+    setId: (id: string | null) => void;
+    setCurrentMovieId: (id: number) => void;
+    currentMovieEffect: () => void;
+    getCurMovieCredits: () => void;
+    getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
+    getCurWatchProviders: () => Promise<WatchProvidersResponse | any>;
+    getMovieImdbRating: (id: number) => void;
+    /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
+    setMovieIdQueue: () => Promise<any>;
+    filterAndGetIdsFromMoviesACB: (data: any) => number[];
+    nextMovie: () => void;
+    toggleGenre: (id: number) => void;
+    toggleAllGenres: () => void;
+    setMinRating: (rating: number) => void;
 
-  // NEW:
-  movieDetailsById: { [id: number]: PromiseState };
-  PREFETCH_SIZE: number;
+    // NEW:
+    movieDetailsById: { [id: number]: PromiseState };
+    PREFETCH_SIZE: number;
 
-  prefetchMovieDetails: (id: number) => void;
-  ensurePrefetchWindow: () => void;
-  fetchGenres: () => void;
+    prefetchMovieDetails: (id: number) => void;
+    ensurePrefetchWindow: () => void;
+    fetchGenres: () => void;
 
-  // Session management
-  setSessionId: (sessionId: string | null) => void;
+    // Session management
+    setSessionId: (sessionId: string | null) => void;
+
+    reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
 }
 
 export type Video = {
@@ -62,7 +65,7 @@ export type Video = {
 }
 
 export const model: ModelType = {
-    userId: 0,
+    userId: null,
     genres: [],
     genresPrmsState: {promise: null, data: null, error: null},
     likes: [],
@@ -84,7 +87,7 @@ export const model: ModelType = {
     movieDetailsById: {},
     PREFETCH_SIZE: 5,
 
-    setId(id: number) {
+    setId(id: string | null) {
         this.userId = id;
     },
 
@@ -251,5 +254,11 @@ export const model: ModelType = {
 
     setSessionId(sessionId: string | null) {
         this.currentSessionId = sessionId;
+    },
+
+    async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
+        if (this.currentSessionId && this.userId) {
+            await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
+        }
     }
 }

@@ -23,9 +23,16 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		}
 
 		function swipeLikeACB() {
+			const currentMovie = props.model.movieDetailsPrmsState.data;
+
+			// Report the swipe to the model
+			if (currentMovie) {
+				props.model.reportSwipe(currentMovie.id, currentMovie.title, currentMovie.poster_path || "", true);
+			}
 			props.model.nextMovie();
 			console.log("Liked");
 		}
+
 		function navBarlogoClickedACB() {
 
 		}
