@@ -18,9 +18,11 @@ export const firebaseConfig: Record<string, string> = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
-
+// @ts-ignore
 window.db = db;
 
 // make doc and setDoc available at the Console for testing
+// @ts-ignore
 window.doc = doc;
+// @ts-ignore
 window.setDoc = setDoc;
