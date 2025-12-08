@@ -112,13 +112,17 @@ export function getGenres() {
     .catch(handleErrorACB);
 }
 
-/* export */ type searchData = {
+export type TMDBsearchData = {
   query: string;
+  include_adult?: boolean;
+  language?: string;
+  primary_release_year?: string;
+  page?: number;
   region?: string;
   year?: string;
 };
 
-export function searchMovies(searchParams: searchData) {
+export function searchTMDBMovies(searchParams: string | Record<string, string> | string[][] | URLSearchParams | undefined) {
   /* OBS: Det finns en distinkt skillnad mellan "discover"
     och "search" (Discover kan bl.a. ha fler parametrar)
     Beroende på kanske denna ändras till discover. */
