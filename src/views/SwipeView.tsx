@@ -23,14 +23,14 @@ type SwipeDir = "left" | "right" | null;
 const SwipeView = observer(
   function SwipeViewRender(props: SwipeViewProps) {
 
-  useEffect(() => {
-    const hasReloaded = sessionStorage.getItem("my-page-reloaded");
+    useEffect(() => {
+      const hasReloaded = sessionStorage.getItem("my-page-reloaded");
 
-    if (!hasReloaded) {
-      sessionStorage.setItem("my-page-reloaded", "true");
-      window.location.reload();
-    }
-  }, []);
+      if (!hasReloaded) {
+        sessionStorage.setItem("my-page-reloaded", "true");
+        window.location.reload();
+      }
+    }, []);
 
     const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
     const POSTER_WIDTH_URL = "w780/";
@@ -44,7 +44,7 @@ const SwipeView = observer(
 
     const [swipeDirection, setSwipeDirection] = useState<SwipeDir>(null);
     const detailsQueue = getDetailsQueue(props.prefetchWindowPrmsState.data);
-    const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length-1] : undefined;
+    const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
     const swipeLockedRef = useRef(false);   // prevents spam
     function handleSwipe(dir: "left" | "right") {
 
@@ -62,18 +62,18 @@ const SwipeView = observer(
         } else {
           props.onDislike();
         }
-        
+
       }, 0); // match your animation duration
     }
-
+    // @ts-ignore [TODO] remove
     function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
       if (!detail) { return };
-      return <SwipeCard key={detail.id} id={detail.id} detailsQueue={array} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} swipeDirection={swipeDirection}/>
+      return <SwipeCard key={detail.id} id={detail.id} detailsQueue={array} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} swipeDirection={swipeDirection} />
     }
     function outputTitle(firstDetail: MovieDetails | undefined) {
       if (!firstDetail?.title) { return "" };
       const title = firstDetail?.title ?? "";
-      return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
+      return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "...";
     }
 
     return (
@@ -83,10 +83,10 @@ const SwipeView = observer(
         <h3>{outputTitle(firstDetail)}</h3>
         <div className="controls">
           <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
-            <CloseRoundedIcon id="dislike-icon"/>
+            <CloseRoundedIcon id="dislike-icon" />
           </IconButton>
           <IconButton className="like-btn" onClick={() => setSwipeDirection("right")}>
-            <FavoriteIcon id="like-icon"/>
+            <FavoriteIcon id="like-icon" />
           </IconButton>
           <IconButton className="more-info-btn" onClick={props.onMoreInfo}>
             <MoreHorizIcon />
@@ -97,8 +97,8 @@ const SwipeView = observer(
   }
 );
 
-
-const SwipeCard = ({id, detailsQueue, url, rightSwipeCB, leftSwipeCB, swipeDirection} : {id: number, detailsQueue: MovieDetails[], url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, swipeDirection: SwipeDir}) => {
+// @ts-ignore [TODO] remove
+const SwipeCard = ({ id, detailsQueue, url, rightSwipeCB, leftSwipeCB, swipeDirection }: { id: number, detailsQueue: MovieDetails[], url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, swipeDirection: SwipeDir }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0)
 
@@ -116,7 +116,7 @@ const SwipeCard = ({id, detailsQueue, url, rightSwipeCB, leftSwipeCB, swipeDirec
       onComplete: () => {
         if (swipeDirection === "right") rightSwipeCB();
         else leftSwipeCB();
-      },    
+      },
     });
     // cleanup if component unmounts mid-animation
     return () => controls.stop();

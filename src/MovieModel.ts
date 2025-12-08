@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type MovieDetails} from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";

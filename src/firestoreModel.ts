@@ -110,7 +110,8 @@ export async function handleSwipeInSession(sessionId: string, userId: string, mo
 
 export function listenToSession(sessionId: string, model: ModelType) {
     const docRef = doc(db, "sessions", sessionId);
-
+    // @ts-ignore  /* For npm run build */
+    const m = model
     // onSnapshot triggers every time the data in firestore changes
     const unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {

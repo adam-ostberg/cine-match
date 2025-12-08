@@ -39,10 +39,12 @@ export function OptionsView(props: OptionsViewProps) {
   }
 
   function handleRatingChangeACB(event: Event, newValue: number | number[]) {
+    event
     props.onRatingChange(Number(newValue));
   }
 
   function handleRuntimeChangeACB(event: Event, newValue: number | number[]) {
+    event
     if (Array.isArray(newValue)) {
       props.onRuntimeChange(newValue[0], newValue[1]);
     }

@@ -30,7 +30,7 @@ const SuspenseSwipeView = observer(
     }
 
     const detailsQueue = getDetailsQueue(props.prefetchWindowPrmsState.data);
-    const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length-1] : undefined;
+    const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
     const swipeLockedRef = useRef(false);   // prevents spam
     function handleSwipe(dir: "left" | "right") {
       if (swipeLockedRef.current) return;  // BLOCK duplicates
@@ -47,18 +47,18 @@ const SuspenseSwipeView = observer(
         } else {
           props.onDislike();
         }
-        
+
       }, 15); // match your animation duration
     }
-
+    // @ts-ignore [TODO] remove
     function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[]) {
       if (!detail) { return };
-      return <Card key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")}/>
+      return <Card key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} />
     }
     function outputTitle(firstDetail: MovieDetails | undefined) {
       if (!firstDetail?.title) { return "" };
       const title = firstDetail?.title ?? "";
-      return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
+      return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "...";
     }
 
     return (
@@ -68,10 +68,10 @@ const SuspenseSwipeView = observer(
         <h3>{outputTitle(firstDetail)}</h3>
         <div className="controls">
           <IconButton className="dislike-btn" onClick={() => handleSwipe("left")}>
-            <CloseRoundedIcon id="dislike-icon"/>
+            <CloseRoundedIcon id="dislike-icon" />
           </IconButton>
           <IconButton className="like-btn" onClick={() => handleSwipe("right")}>
-            <FavoriteIcon id="like-icon"/>
+            <FavoriteIcon id="like-icon" />
           </IconButton>
           <IconButton className="more-info-btn" onClick={props.onMoreInfo}>
             <MoreHorizIcon />
@@ -82,8 +82,8 @@ const SuspenseSwipeView = observer(
   }
 );
 
-
-const Card = ({id, url, rightSwipeCB, leftSwipeCB} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction}) => {
+// @ts-ignore [TODO] remove
+const Card = ({ id, url, rightSwipeCB, leftSwipeCB }: { id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction }) => {
   const x = useMotionValue(0);
 
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
