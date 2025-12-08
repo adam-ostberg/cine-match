@@ -122,7 +122,7 @@ export type TMDBsearchData = {
   year?: string;
 };
 
-export function searchTMDBMovies(searchParams: string | Record<string, string> | string[][] | URLSearchParams | undefined) {
+export function searchTMDBMovies(searchParams: TMDBsearchData) {
   /* OBS: Det finns en distinkt skillnad mellan "discover"
     och "search" (Discover kan bl.a. ha fler parametrar)
     Beroende på kanske denna ändras till discover. */
@@ -146,7 +146,7 @@ export function searchTMDBMovies(searchParams: string | Record<string, string> |
   }
 
   return fetch(
-    BASE_URL + ENDPOINT + "?" + new URLSearchParams(searchParams),
+    BASE_URL + ENDPOINT + "?" + new URLSearchParams(searchParams as any),
     optionsGET
   )
     .then(handleResponseACB)
