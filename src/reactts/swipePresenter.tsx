@@ -4,7 +4,6 @@ import { SwipeView } from "../views/SwipeView";
 import type { ModelType } from "../MovieModel";
 import { NavBarView } from "../views/NavbarView";
 import type { MovieDetails } from "../apiConfig";
-import { SuspenseSwipeView } from "../views/SuspenseSwipeView";
 
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
