@@ -41,7 +41,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		const data = props.model.prefetchWindowPrmsState.data as MovieDetails[];
 		const ALL_DATA_FETCHED = !!data && data.length >= 2 && !!data[0] && !!data[1];
 		
-		const view = ALL_DATA_FETCHED ? <SwipeView prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB} currentSessionId={props.model.currentSessionId}/> : <SuspenseSwipeView prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB} currentSessionId={props.model.currentSessionId}/>;
+		const view = <SwipeView prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB} currentSessionId={props.model.currentSessionId}/>;
 
 		return (
 			<div className="swipe-flex-parent">

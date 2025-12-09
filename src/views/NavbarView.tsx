@@ -1,4 +1,7 @@
 import { observer } from "mobx-react-lite";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { IconButton } from "@mui/material";
 import "../style.css"
 
 export type navbarViewProps = {
@@ -17,12 +20,12 @@ const NavBarView = observer(
 				<h1 onClick={logoClickACB} className="logo-text">
 					CineMatch
 				</h1>
-				<div className="settingsIcon">
-					<img src="src/assets/settings_icon.png" alt="" />
-				</div>
-				<div className="profile">
-					<img src="src/assets/user_profile.png" alt="" />
-				</div>
+				<IconButton className="settings-button">
+					<SettingsIcon/>	
+				</IconButton>
+				<IconButton className="profile-button">
+					<AccountCircleIcon/>	
+				</IconButton>
 			</div>
 		);
 	}
