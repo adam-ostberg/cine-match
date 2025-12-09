@@ -31,8 +31,9 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		}
 
 		function navBarlogoClickedACB() {
-
+			window.location.hash = "#/";
 		}
+
 		function moreInfoClickedACB() {
 			document.location.hash = "/details";
 		}

@@ -113,14 +113,16 @@ html, body {
     background-color: var(--bg-color);
 }
 
-.header h1 {
+.logo-text {
     font-size: 5vh;
     margin: 0;
-    flex: 1;
+    margin-left: 20px;
+    margin-right: auto;
+    cursor: pointer;
 }
 
 .settings-button {
-    flex: 1;
+    align-self: right;
 }
 .settings-button svg {
     color: gray;
