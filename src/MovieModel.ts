@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type MovieDetails} from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
@@ -17,6 +17,7 @@ export type ModelType = {
     movieCreditsPrmsState: PromiseState; 
     imdbRatingPrmsState: PromiseState;
     watchProvidersPrmsState: PromiseState;
+    searchMoviesPrmsState: PromiseState;
     currentSessionId: string | null;
     selectedGenreIds: number[];
     minRating: number;
@@ -40,6 +41,8 @@ export type ModelType = {
     toggleGenre: (id: number) => void;
     toggleAllGenres: () => void;
     setMinRating: (rating: number) => void;
+    searchMovie: (q: string) => void;
+    selectSeedMovie: (id: number) => void;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
@@ -88,6 +91,7 @@ export const model: ModelType = {
     imdbRatingPrmsState: {promise: null, data: null, error: null},
     watchProvidersPrmsState: {promise: null, data: null, error: null},
     prefetchWindowPrmsState: {promise: null, data: null, error: null},
+    searchMoviesPrmsState: {promise: null, data: null, error: null},
 
     // NEW:
     movieDetailsById: {},
@@ -190,6 +194,26 @@ export const model: ModelType = {
     },
 
     /* For OptionsView */
+    searchMovie(q: string) {
+        if (!q) return;
+        const searchData: TMDBsearchData = {
+                query: q,
+                include_adult: false,
+                // Add other options [?]
+            }
+        const prms = searchTMDBMovies(searchData);
+        resolvePromise(prms, this.searchMoviesPrmsState);
+    },
+
+    selectSeedMovie(id: number) {
+        // [TODO] Placeholder: this will fetch recommendations
+        // based on this ID and populate the queue.
+        console.log("Seed movie selected:", id);
+        
+        // this.currentMovieId = id;
+        // this.getRecommendations(id);
+    },
+
     toggleGenre(id: number) {
         function keepOtherGenresCB(existingId: number) {
             return existingId !== id;

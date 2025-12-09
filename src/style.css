@@ -470,7 +470,7 @@ html, body {
 
 /* From https://stackoverflow.com/a/67770685 */
 .MuiSlider-root.slider .MuiSlider-thumb:hover {
-      box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.2) !important;
+      box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.2);
     }
 
 /* Recolor imdB slider – should it? */
@@ -486,7 +486,7 @@ html, body {
 }
 
 .MuiSlider-root.imdb-slider .MuiSlider-thumb:hover {
-      box-shadow: 0 0 0 10px #dba60664 !important;
+      box-shadow: 0 0 0 10px #dba60664;
     }
 
 .options-container input[type=range]:hover {

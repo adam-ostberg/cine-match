@@ -2,6 +2,7 @@
 import { observer } from "mobx-react-lite";
 import { OptionsView } from "../views/OptionsView.tsx";
 import type { ModelType } from "../MovieModel.ts";
+import type { TMDBPopularResponse } from "../apiConfig.ts";
 // import type { TMDBGenre } from "../apiConfig.ts";
 
 export type OptionsPresenterProps = {
@@ -34,6 +35,14 @@ const Options = observer(
             props.model.setRuntime(min, max);
         }
 
+        function onSearchTextACB(q: string) {
+            props.model.searchMovie(q);
+        }
+
+        function onSelectSeedMovieACB(id: number) {
+            props.model.selectSeedMovie(id);
+        }
+
         return (
             <OptionsView
                 availableGenres={props.model.genres}
@@ -41,10 +50,14 @@ const Options = observer(
                 currentMinRating={props.model.minRating}
                 currentMinRuntime={props.model.minRuntime}
                 currentMaxRuntime={props.model.maxRuntime}
+                searchResults={props.model.searchMoviesPrmsState.data as TMDBPopularResponse || null}
+                searchStatus={props.model.searchMoviesPrmsState}
                 onGenreChange={onGenreChangeACB}
                 onToggleAll={onToggleAllGenresACB}
                 onRatingChange={onRatingChangeACB}
                 onRuntimeChange={onRuntimeChangeACB}
+                onSearch={onSearchTextACB}
+                onSelectMovie={onSelectSeedMovieACB}
             />
         );
     }

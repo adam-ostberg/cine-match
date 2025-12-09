@@ -2,7 +2,7 @@
 import { observer } from "mobx-react-lite";
 import { HomeView } from "../views/HomeView.tsx";
 import type { TMDBPopularMovieResult } from "../apiConfig.ts";
-import type { PromiseState } from "../resolvePromise.ts";
+// import type { PromiseState } from "../resolvePromise.ts";
 import { createSession, joinSession, listenToSession } from "../firestoreModel.ts";
 import { type ModelType } from "../MovieModel.ts";
 
@@ -28,6 +28,7 @@ const Home = observer(
                 return;
             }
             const sessionId = await createSession(props.model);
+            // @ts-ignore  /* [TODO] for npm build, remove */
             const unsubscribe = listenToSession(sessionId, props.model);
         }
 
@@ -37,8 +38,9 @@ const Home = observer(
                 return;
             }
             await joinSession(props.model, sessionId); // TODO get session ID from user input
-            
+
             // TODO add this to the model so we can stop listening when leaving the home view
+            // @ts-ignore
             const unsubscribe = listenToSession(sessionId, props.model);
         }
 

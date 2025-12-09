@@ -61,7 +61,7 @@ function SwipeView(props: SwipeViewProps) {
   function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
     if (!detail) { return };
     const is_top_card = index === array.length-1;
-    return <SwipeCard key={detail.id} id={detail.id} detailsQueue={array} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card}/>
+    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card}/>
   }
   function outputTitle(firstDetail: MovieDetails | undefined) {
     if (!firstDetail?.title) { return "" };
@@ -89,8 +89,8 @@ function SwipeView(props: SwipeViewProps) {
   );
 }
 
-
-const SwipeCard = ({id, detailsQueue, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card} : {id: number, detailsQueue: MovieDetails[], url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean}) => {
+// @ts-ignore [TODO] remove
+const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0)
 
@@ -108,7 +108,7 @@ const SwipeCard = ({id, detailsQueue, url, rightSwipeCB, leftSwipeCB, upSwipeCB,
       onComplete: () => {
         if (swipeDirection === "right") rightSwipeCB();
         else leftSwipeCB();
-      },    
+      },
     });
     // cleanup if component unmounts mid-animation
     return () => controls.stop();
