@@ -103,7 +103,7 @@ html, body {
 
 .header {
     width: 100%;
-    height: 75px;
+    height: 10vh;
     position: sticky;
     top: 0;
     display: flex;
@@ -113,36 +113,27 @@ html, body {
     background-color: var(--bg-color);
 }
 
-.header h1 {
+.logo-text {
+    font-size: 5vh;
     margin: 0;
+    margin-left: 20px;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+.settings-button {
+    align-self: right;
+}
+.settings-button svg {
+    color: gray;
+    font-size: 8vh;
+}
+.profile-button {
     flex: 1;
 }
-
-.settingsIcon {
-    width: 90px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-}
-
-.settingsIcon img {
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-}
-
-.profile {
-    width: 90px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.profile img {
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
+.profile-button svg {
+    color: gray;
+    font-size: 8vh;
 }
 
 .swipe-flex-parent {
@@ -155,12 +146,12 @@ html, body {
     flex: 1;
     display: grid;
     place-items: center;
-    padding-top: 50px;
-    grid-template-rows: 600px 95px 80px;
+    padding-top: 2vh;
+    grid-template-rows: 65vh 12vh 6vh;
 }
 
 .swipe-container .swipe-card {
-    height: 600px;
+    height: 65vh;
     width: auto;
     object-fit: cover;
     border-radius: 8px;
@@ -174,9 +165,19 @@ html, body {
     cursor: grabbing;
 }
 
+.swipe-title {
+    font-size: 5vh;
+}
+
+#current-session {
+    position: fixed;
+    top: 100px;
+    left: 0;
+}
+
 .dislike-btn svg {
     color: rgb(189, 58, 58);
-    font-size: 80px;
+    font-size: 12vh;
     transition: transform 0.3s ease;
 }
 .dislike-btn svg:hover {
@@ -184,12 +185,12 @@ html, body {
 }
 .like-btn svg {
     color: rgb(146, 226, 71);
-    font-size: 70px;
+    font-size: 9vh;
     transition: transform 0.3s ease;
 }
 .more-info-btn svg {
     color: gray;
-    font-size: 80px;
+    font-size: 11vh;
     transition: transform 0.3s ease;
 }
 
@@ -211,13 +212,10 @@ html, body {
     border-radius: 5px;
 }
 
-
 .swipe-sidebar {
     width: 300px;
     background-color: var(--bg-color);
 }
-
-
 
 /* Styled like genre-option buttons */
 .primary-button {
@@ -238,10 +236,12 @@ html, body {
 }
 
 .details-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    transition: all 0.5s;
 }
 
 .details-container .close-button {
@@ -264,12 +264,13 @@ html, body {
     z-index: 0;  /* above background, but behind content */
     min-height: 100vh;
     padding-bottom: 50px;
+    margin: 0 auto;
 }
 
 
 .movie-bg {
   position: fixed;        /* stays put while scrolling, like IMDb */
-  object-fit: cover;
+  object-fit:none;
   inset: 0;               /* top:0; right:0; bottom:0; left:0 */
   z-index: -1;            /* behind all content */
 }

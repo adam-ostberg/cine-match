@@ -16,8 +16,20 @@ export type DetailsViewProps = {
   //trailerKey: string | null;
 };
 
+function openDetailsViewAnimation() {
+  const detailContainer = document.getElementById("details-container");
+  const movieBg = document.getElementById("movie-bg");
+  if (!!detailContainer) { detailContainer.style.top = "100%";}
+  setTimeout(() => {
+    if (!!detailContainer) { detailContainer.style.top = "0";}
+  }, 200);
+}
+
 const DetailsView = observer(
   function DetailsViewRender(props: DetailsViewProps) {
+
+    openDetailsViewAnimation();
+
     const details = props.details;
     const cast = props.credits.cast;
     const crew = props.credits.crew;
@@ -115,75 +127,73 @@ const DetailsView = observer(
     const runtimeText = minutesToHourAndMinutesText(Number(details.runtime));
 
     return (
-      <div className="details-container">
+      <div className="details-container" id="details-container">
 
-        <div className="movie-bg">
+        <div className="movie-bg" id="movie-bg">
           <img src={POSTER_URL} alt="Movie poster background" />
         </div>
         <div className="details-content">
+          <IconButton className="close-button" onClick={closeACB} aria-label="close">
+            <CloseIcon/>
+          </IconButton>
 
-        <IconButton className="close-button" onClick={closeACB} aria-label="close">
-          <CloseIcon/>
-        </IconButton>
-
-
-        <div className="details-header">
-          <div className="details-header-info">
-            <h1>{details.title}</h1>
-            <div>{details.release_date.split("-")[0]} - {runtimeText}</div>
-          </div>
-          <div className="details-header-metrics">
-            <div className="imdb-rating">
-              <img src='src/assets/imdb_logo.png' alt="IMDB Rating"/> {/* [TODO] Use imdB logo for the src */}
-              <span>{imdbRating}</span>
+          <div className="details-header">
+            <div className="details-header-info">
+              <h1>{details.title}</h1>
+              <div>{details.release_date.split("-")[0]} - {runtimeText}</div>
             </div>
-            <div className="popularity">
-              <img src="src/assets/popularity.png" alt="TMDB Popularity" />
-              <span>{details.popularity.toFixed(2)}</span>
+            <div className="details-header-metrics">
+              <div className="imdb-rating">
+                <img src='src/assets/imdb_logo.png' alt="IMDB Rating"/> {/* [TODO] Use imdB logo for the src */}
+                <span>{imdbRating}</span>
+              </div>
+              <div className="popularity">
+                <img src="src/assets/popularity.png" alt="TMDB Popularity" />
+                <span>{details.popularity.toFixed(2)}</span>
+              </div>
             </div>
-          </div>
-        </div>
-        
-        <div className="media-section">
-          <img className="poster"
-            src={POSTER_URL}
-          />
-          {videoBox}
-          <div className="media-section-sidebar">
-            <p>JustWatch Providers:</p>
-            {filterAndSortWatchProviders(watchProviders).slice(0, 8).map(outputWatchProviders)}
-          </div>
-
-        </div>
-        <div className="details-info">
-          <div className="genre-boxes">
-            {details.genres.map(genreBoxesCB)}
           </div>
           
-          <p className="overview">
-            {details.overview}
-          </p>
+          <div className="media-section">
+            <img className="poster"
+              src={POSTER_URL}
+            />
+            {videoBox}
+            <div className="media-section-sidebar">
+              <p>JustWatch Providers:</p>
+              {filterAndSortWatchProviders(watchProviders).slice(0, 8).map(outputWatchProviders)}
+            </div>
 
-          <h2>Details</h2>
-          <ul>
-            <li><b>Release date: </b>{dateFormatter.format(new Date(details.release_date))}</li>
-            <li><b>Origin Country: </b>{details.origin_country.map(outputOriginCountryCB)}</li>
-            <li><b>Languages: </b> {details.spoken_languages.map(outputSpokenLanguagesCB)}</li>
-          </ul>
+          </div>
+          <div className="details-info">
+            <div className="genre-boxes">
+              {details.genres.map(genreBoxesCB)}
+            </div>
+            
+            <p className="overview">
+              {details.overview}
+            </p>
 
-          <h2>Cast & Crew</h2>
-          <ul>
-            <li><b>Director: </b>{director?.name}</li>
-            {peopleTextOutput(writers, "Writer: ")}
-            {peopleTextOutput(actors, "Actors: ")}
-          </ul>
-          
-          <h2>Box Office</h2>
-          <ul>
-            {outputBudget(details.budget)}
-            <li><b>Gross Revenue: </b>{details.revenue.toLocaleString()}$</li>
-          </ul>
-        </div>
+            <h2>Details</h2>
+            <ul>
+              <li><b>Release date: </b>{dateFormatter.format(new Date(details.release_date))}</li>
+              <li><b>Origin Country: </b>{details.origin_country.map(outputOriginCountryCB)}</li>
+              <li><b>Languages: </b> {details.spoken_languages.map(outputSpokenLanguagesCB)}</li>
+            </ul>
+
+            <h2>Cast & Crew</h2>
+            <ul>
+              <li><b>Director: </b>{director?.name}</li>
+              {peopleTextOutput(writers, "Writer: ")}
+              {peopleTextOutput(actors, "Actors: ")}
+            </ul>
+            
+            <h2>Box Office</h2>
+            <ul>
+              {outputBudget(details.budget)}
+              <li><b>Gross Revenue: </b>{details.revenue.toLocaleString()}$</li>
+            </ul>
+          </div>
         </div>
       </div>
     );

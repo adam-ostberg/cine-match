@@ -22,6 +22,7 @@ const Home = observer(
     function HomeRender(props: HomePresenterProps) {
 
         async function sessionStartACB() {
+            props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
             if (!props.model.userId) {
                 alert("Please log in first.");
                 return;

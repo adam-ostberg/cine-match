@@ -1,4 +1,3 @@
-import { observer } from "mobx-react-lite";
 import "../style.css"
 import type { MovieDetails } from "../apiConfig";
 import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion"
@@ -9,6 +8,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useState } from "react";
+import { type PanInfo } from "framer-motion";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -20,85 +20,77 @@ export type SwipeViewProps = {
 
 type SwipeDir = "left" | "right" | null;
 
-const SwipeView = observer(
-  function SwipeViewRender(props: SwipeViewProps) {
 
-    useEffect(() => {
-      const hasReloaded = sessionStorage.getItem("my-page-reloaded");
+function SwipeView(props: SwipeViewProps) {
 
-      if (!hasReloaded) {
-        sessionStorage.setItem("my-page-reloaded", "true");
-        window.location.reload();
-      }
-    }, []);
+  const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
+  const POSTER_WIDTH_URL = "w780/";
 
-    const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
-    const POSTER_WIDTH_URL = "w780/";
-
-
-    function getDetailsQueue(details: MovieDetails[]) {
-      if (!details) { return };
-      const detailsQueue = [...details].reverse();
-      return detailsQueue
-    }
-
-    const [swipeDirection, setSwipeDirection] = useState<SwipeDir>(null);
-    const detailsQueue = getDetailsQueue(props.prefetchWindowPrmsState.data);
-    const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
-    const swipeLockedRef = useRef(false);   // prevents spam
-    function handleSwipe(dir: "left" | "right") {
-
-      if (swipeLockedRef.current) return;  // BLOCK duplicates
-      swipeLockedRef.current = true;
-
-      const likeIcon = document.getElementById("like-icon");
-      const dislikeIcon = document.getElementById("dislike-icon");
-      if (dir === "right" && !!likeIcon) { likeIcon.style.fontSize = "90px" };
-      if (dir === "left" && !!dislikeIcon) { dislikeIcon.style.fontSize = "90px" };
-
-      setTimeout(() => {
-        if (dir === "right") {
-          props.onLike();     // calls nextMovieEvt indirectly
-        } else {
-          props.onDislike();
-        }
-
-      }, 0); // match your animation duration
-    }
-    // @ts-ignore [TODO] remove
-    function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
-      if (!detail) { return };
-      return <SwipeCard key={detail.id} id={detail.id} detailsQueue={array} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} swipeDirection={swipeDirection} />
-    }
-    function outputTitle(firstDetail: MovieDetails | undefined) {
-      if (!firstDetail?.title) { return "" };
-      const title = firstDetail?.title ?? "";
-      return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "...";
-    }
-
-    return (
-      <div className="swipe-container">
-        <p>Current Session id: {props.currentSessionId}</p>
-        {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection))}
-        <h3>{outputTitle(firstDetail)}</h3>
-        <div className="controls">
-          <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
-            <CloseRoundedIcon id="dislike-icon" />
-          </IconButton>
-          <IconButton className="like-btn" onClick={() => setSwipeDirection("right")}>
-            <FavoriteIcon id="like-icon" />
-          </IconButton>
-          <IconButton className="more-info-btn" onClick={props.onMoreInfo}>
-            <MoreHorizIcon />
-          </IconButton>
-        </div>
-      </div>
-    );
+  function getDetailsQueue(details: MovieDetails[] | null) {
+    if (!details) { return };
+    const detailsQueue = [...details].reverse();
+    return detailsQueue
   }
-);
+
+  const [cachedDetails, setCachedDetails] = useState<MovieDetails[] | null>(null);
+
+  // Whenever new data arrives, store it
+  useEffect(() => {
+    const data = props.prefetchWindowPrmsState.data as MovieDetails[] | null;
+    if (data && Array.isArray(data) && data.length > 0) {
+      setCachedDetails(data);
+    }
+  }, [props.prefetchWindowPrmsState.data]);
+
+  // Prefer the latest non-null data, but fall back to cached
+  const effectiveDetails = (props.prefetchWindowPrmsState.data as MovieDetails[] | null) || cachedDetails;
+  const detailsQueue = getDetailsQueue(effectiveDetails);
+
+  const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
+  const [swipeDirection, setSwipeDirection] = useState<SwipeDir>(null);
+  function handleSwipe(dir: "left" | "right") {
+
+    if (dir === "right") {
+      props.onLike();     
+    } else {
+      props.onDislike();
+    }
+    setSwipeDirection(null);
+  }
+
+  function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
+    if (!detail) { return };
+    const is_top_card = index === array.length-1;
+    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card}/>
+  }
+  function outputTitle(firstDetail: MovieDetails | undefined) {
+    if (!firstDetail?.title) { return "" };
+    const title = firstDetail?.title ?? "";
+    return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
+  }
+
+  return (
+    <div className="swipe-container">
+      <p id="current-session">Current Session id: {props.currentSessionId}</p>
+      {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection))}
+      <div className="swipe-title">{outputTitle(firstDetail)}</div>
+      <div className="controls">
+        <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
+          <CloseRoundedIcon id="dislike-icon"/>
+        </IconButton>
+        <IconButton className="like-btn" onClick={() => setSwipeDirection("right")}>
+          <FavoriteIcon id="like-icon"/>
+        </IconButton>
+        <IconButton className="more-info-btn" onClick={props.onMoreInfo}>
+          <MoreHorizIcon />
+        </IconButton>
+      </div>
+    </div>
+  );
+}
 
 // @ts-ignore [TODO] remove
-const SwipeCard = ({ id, detailsQueue, url, rightSwipeCB, leftSwipeCB, swipeDirection }: { id: number, detailsQueue: MovieDetails[], url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, swipeDirection: SwipeDir }) => {
+const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0)
 
@@ -106,13 +98,13 @@ const SwipeCard = ({ id, detailsQueue, url, rightSwipeCB, leftSwipeCB, swipeDire
   const rotate = useTransform(x, [150, -150], [-18, 18]);
 
   useEffect(() => {
-    if (!swipeDirection) return;
-    const targetX = swipeDirection === "right" ? 300 : -300;
+    if (!swipeDirection || !is_top_card) return;
+    const targetX = swipeDirection === "right" ? 110 : -110;
 
     const controls = animate(x, targetX, {
-      type: "spring",
-      stiffness: 300,
-      damping: 30,
+      type: "tween",
+      duration: 0.07,
+      ease: "easeOut",
       onComplete: () => {
         if (swipeDirection === "right") rightSwipeCB();
         else leftSwipeCB();
@@ -122,29 +114,43 @@ const SwipeCard = ({ id, detailsQueue, url, rightSwipeCB, leftSwipeCB, swipeDire
     return () => controls.stop();
   }, [swipeDirection, x, id, rightSwipeCB, leftSwipeCB]);
 
+  // inside SwipeCard
+  const handleDragEnd = (
+    _event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    // don't react if a programmatic swipe (button) is already happening
+    if (swipeDirection) return;
+    if (!is_top_card) return;  // optional: only let top card swipe
 
-  const handleDragEndCB = () => {
-    if (x.get() > 80) {
+
+    if (info.offset.x > 80) {
       rightSwipeCB();
-      console.log()
-    }
-    else if (x.get() < -80) {
+    } else if (info.offset.x < -80) {
       leftSwipeCB();
     }
-  }
-  useMotionValueEvent(x, "change", handleDragEndCB);
-
-  return <motion.img
+    else if (info.offset.y < -80 && Math.abs(info.offset.x) < 80) {
+      upSwipeCB();
+    }
+    else {
+      // snap back to center if not far enough
+      animate(x, 0, {
+        type: "tween",
+        duration: 0.15,
+        ease: "easeOut",
+      });
+    }
+  };
+  
+return (
+  <motion.img
     src={url}
     alt={"Placeholder"}
     className="swipe-card"
     drag
-    dragConstraints={{
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-    }}
+    dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
+    dragMomentum={false}
+    onDragEnd={handleDragEnd}
     style={{
       gridRow: 1,
       gridColumn: 1,
@@ -154,6 +160,7 @@ const SwipeCard = ({ id, detailsQueue, url, rightSwipeCB, leftSwipeCB, swipeDire
       rotate,
     }}
   />
+);
 }
 
 export { SwipeView, SwipeCard };

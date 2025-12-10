@@ -27,7 +27,8 @@ export type ModelType = {
     setRuntime: (min: number, max: number) => void;
     initiateStart: () => void;
     setId: (id: string | null) => void;
-    setCurrentMovieId: (id: number) => void;
+    setCurrentMovieId: (id: number | undefined | void | null) => void;
+    getLatestPrefetchMovieId: () => number | void;
     currentMovieEffect: () => void;
     getCurMovieCredits: () => void;
     getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
@@ -105,8 +106,17 @@ export const model: ModelType = {
         console.log("Session started");
     },
 
-    setCurrentMovieId(id: number) {
+    setCurrentMovieId(id: number | undefined | void | null) {
+        if (!id) return;
         this.curMovieId = id;
+    },
+
+    getLatestPrefetchMovieId() {
+        if (!this.prefetchWindowPrmsState.data || !Array.isArray(this.prefetchWindowPrmsState.data)) return;
+        if (this.prefetchWindowPrmsState.data.length === 0) return;
+
+        const latestId = this.prefetchWindowPrmsState.data[0].id;
+        return latestId;
     },
 
     currentMovieEffect() {
