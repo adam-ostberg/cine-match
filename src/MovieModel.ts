@@ -21,6 +21,7 @@ export type ModelType = {
     getRecPrmsState: PromiseState;
     currentSessionId: string | null;
     selectedGenreIds: number[];
+    selectedSeededIds: number[];
     minRating: number;
     minRuntime: number;
     maxRuntime: number;
@@ -45,6 +46,7 @@ export type ModelType = {
     searchMovie: (q: string) => void;
     getRecommendations: (id: number) => Promise<void | object>;
     selectSeedMovie: (id: number) => void;
+    toggleSeededIconToMovie: (id: number) => void;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
@@ -81,6 +83,7 @@ export const model: ModelType = {
     dislikes: [],
     currentSessionId: null, /* Added for it to work for me, might class with other implementation */
     selectedGenreIds: [],
+    selectedSeededIds: [],
     minRating: 0,
     minRuntime: 0,
     maxRuntime: 400,
@@ -222,8 +225,10 @@ export const model: ModelType = {
     },
 
     selectSeedMovie(id: number) { /* async? */
-        // [TODO] This will fetch recommendations
+        /* [TODO!!!] Maybe instead use with reaction to a change in selectedSeededId, to be able to remove it. */
+        // This will fetch recommendations
         // based on this ID and populate the queue.
+        if (!this.selectedSeededIds.includes(id)) return; /* [TODO!!!] Ta bort rekommendationerna från Swipe queue */
         function getDataACB(response: any) {
             return response as TMDBMoviePage; 
         }
@@ -232,10 +237,24 @@ export const model: ModelType = {
         }
         console.log("Seed movie selected:", id);
         /* [TODO] Use this to populate the swipe queue */
+        
         return this.getRecommendations(id).then(getDataACB).then(getMovieResultsACB)
 
         /* [TODO] Use conversion to IDs to populate the queue
         movies.map(m => m.id) */
+    },
+
+    toggleSeededIconToMovie(id: number) {
+        function keepOtherSeededCB(existingId: number) {
+            return existingId !== id;
+        }
+        if (this.selectedSeededIds.includes(id)) {
+            // If it was already selected, we want to remove it.
+            this.selectedSeededIds = this.selectedSeededIds.filter(keepOtherSeededCB);
+        } else {
+            // If it wasn't selected, we want to add it.
+            this.selectedSeededIds = [...this.selectedSeededIds, id];
+        }
     },
 
     toggleGenre(id: number) {

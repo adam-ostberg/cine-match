@@ -40,6 +40,7 @@ const Options = observer(
         }
 
         function onSelectSeedMovieACB(id: number) {
+            props.model.toggleSeededIconToMovie(id);
             props.model.selectSeedMovie(id);
         }
 
@@ -58,6 +59,7 @@ const Options = observer(
                 onRuntimeChange={onRuntimeChangeACB}
                 onSearch={onSearchTextACB}
                 onSelectMovie={onSelectSeedMovieACB}
+                seededMovieIds={props.model.selectedSeededIds}
             />
         );
     }
