@@ -62,6 +62,8 @@ export type ModelType = {
     reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
 }
 
+const recommendedCacheMap = new Map();
+
 export type Video = {
     "iso_639_1": string,
     "iso_3166_1": string,
@@ -228,11 +230,16 @@ export const model: ModelType = {
         /* [TODO!!!] Maybe instead use with reaction to a change in selectedSeededId, to be able to remove it. */
         // This will fetch recommendations
         // based on this ID and populate the queue.
-        if (!this.selectedSeededIds.includes(id)) return; /* [TODO!!!] Ta bort rekommendationerna från Swipe queue */
+        if (!this.selectedSeededIds.includes(id)){
+            // Använd recommendedCacheMap istället för att call:a API.
+            // recommendedCacheMap.get(id);
+            return;
+        }; /* [TODO!!!] Ta bort rekommendationerna från Swipe queue */
         function getDataACB(response: any) {
             return response as TMDBMoviePage; 
         }
         function getMovieResultsACB(data: TMDBMoviePage) {
+            recommendedCacheMap.set(id, data.results)
             return data.results as TMDBMoviePageResult[];
         }
         console.log("Seed movie selected:", id);
