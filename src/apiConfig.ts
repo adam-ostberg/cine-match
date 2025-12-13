@@ -337,12 +337,12 @@ export async function fetchPopularMoviesPages(
 }
 
 
-export function getSimilarMovie(movie_id: number): Promise<void | object> {
+export function getRecommendedMovie(movie_id: number): Promise<void | object> {
   /* From this we can get related movie IDs, image paths, etc. */
   /* Sort by original_language to ensure english movies? */
   /* Sort by popularity? */
 
-  const ENDPOINT = `/movie/${movie_id}/similar`;
+  const ENDPOINT = `/movie/${movie_id}/recommendations`;
 
   function handleResponseACB(response: Response) {
     if (response.ok !== true) {
@@ -352,6 +352,7 @@ export function getSimilarMovie(movie_id: number): Promise<void | object> {
   }
 
   function handleSuccessACB(data: object) {
+    console.log('Data:', data)
     return data;
   }
 
