@@ -643,6 +643,9 @@ html, body {
     cursor: pointer;
     border-radius: 10px;
     transition: transform 0.3s ease;
+
+    /* Ensures the absolute child (checkmark) stays inside this card */
+    position: relative; 
 }
 
 .seed-result-card img {
@@ -661,4 +664,16 @@ html, body {
     /* Using two shadows creates realistic depth */
     /* From https://www.w3schools.com/css/css3_shadows.asp */
     box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
+}
+
+.seed-result-card .checkmark {
+    /* Position it over the image */
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    
+    font-size: 24px; /* Size of the icon */
+    color: var(--btn-green);
+    /* The only way I thought to make the checkmark white on the inside only: */
+    background: radial-gradient(white 45%, transparent 50%);
 }
