@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies} from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, type TMDBPopularResponse, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
@@ -18,6 +18,7 @@ export type ModelType = {
     imdbRatingPrmsState: PromiseState;
     watchProvidersPrmsState: PromiseState;
     searchMoviesPrmsState: PromiseState;
+    getRecPrmsState: PromiseState;
     currentSessionId: string | null;
     selectedGenreIds: number[];
     minRating: number;
@@ -42,6 +43,7 @@ export type ModelType = {
     toggleAllGenres: () => void;
     setMinRating: (rating: number) => void;
     searchMovie: (q: string) => void;
+    getRecommendations: (id: number) => Promise<void | object>;
     selectSeedMovie: (id: number) => void;
 
     // NEW:
@@ -92,6 +94,7 @@ export const model: ModelType = {
     watchProvidersPrmsState: {promise: null, data: null, error: null},
     prefetchWindowPrmsState: {promise: null, data: null, error: null},
     searchMoviesPrmsState: {promise: null, data: null, error: null},
+    getRecPrmsState: {promise: null, data: null, error: null},
 
     // NEW:
     movieDetailsById: {},
@@ -205,13 +208,24 @@ export const model: ModelType = {
         resolvePromise(prms, this.searchMoviesPrmsState);
     },
 
-    selectSeedMovie(id: number) {
-        // [TODO] Placeholder: this will fetch recommendations
+    getRecommendations(id: number): Promise<void | object> {
+        const prms = getRecommendedMovie(id)
+        resolvePromise(prms, this.getRecPrmsState)
+        return prms
+    },
+
+    selectSeedMovie(id: number) { /* async? */
+        // [TODO] This will fetch recommendations
         // based on this ID and populate the queue.
+        function getDataACB(response: any) {
+            return response as TMDBPopularResponse; 
+        }
+        function getMovieResultsACB(data: TMDBPopularResponse) {
+            return data.results as TMDBPopularMovieResult[];
+        }
         console.log("Seed movie selected:", id);
-        
-        // this.currentMovieId = id;
-        // this.getRecommendations(id);
+        /* [TODO] Use this to populate the swipe queue */
+        return this.getRecommendations(id).then(getDataACB).then(getMovieResultsACB)
     },
 
     toggleGenre(id: number) {
