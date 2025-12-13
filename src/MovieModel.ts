@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie } from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
@@ -11,7 +11,7 @@ export type ModelType = {
     dislikes: [];
     curMovieId: number;
     movieDetailsPrmsState: PromiseState;
-      movieVideosPrmsState: PromiseState;
+    movieVideosPrmsState: PromiseState;
     movieIdQueuePrmsState: PromiseState;
     popularMoviesPrmsState: PromiseState;
     movieCreditsPrmsState: PromiseState; 
@@ -184,7 +184,7 @@ export const model: ModelType = {
     },
 
     setMovieIdQueue() {
-        const prms = fetchPopularMoviesPages(1, 1);
+        const prms = fetchMoviesPages(getPopularMovies, 1, 1);
         
         // Gets list for Home View
         resolvePromise(prms, this.popularMoviesPrmsState);
@@ -209,9 +209,16 @@ export const model: ModelType = {
     },
 
     getRecommendations(id: number): Promise<void | object> {
-        const prms = getRecommendedMovie(id)
-        resolvePromise(prms, this.getRecPrmsState)
-        return prms
+        // wrapper function that matches the signature: (page) => Promise
+        // Cast Promise<TMDBMoviePage> because API return type includes 'void' (fix? [TODO])
+        function fetcherFnCB(pageToFetch: number) {
+            return getRecommendedMovie(id, pageToFetch) as Promise<TMDBMoviePage>; 
+        };
+        // Now pass the wrapper function
+        const prms = fetchMoviesPages(fetcherFnCB, 1, 1); /* [TODO] Fetch max pages? */
+        
+        resolvePromise(prms, this.getRecPrmsState);
+        return prms;
     },
 
     selectSeedMovie(id: number) { /* async? */
@@ -226,6 +233,9 @@ export const model: ModelType = {
         console.log("Seed movie selected:", id);
         /* [TODO] Use this to populate the swipe queue */
         return this.getRecommendations(id).then(getDataACB).then(getMovieResultsACB)
+
+        /* [TODO] Use conversion to IDs to populate the queue
+        movies.map(m => m.id) */
     },
 
     toggleGenre(id: number) {
