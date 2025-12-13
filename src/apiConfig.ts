@@ -258,7 +258,7 @@ export function getMovieVideos(movie_id: number): Promise<TMDBVideoResults | any
 }
 
 
-export interface TMDBPopularMovieResult {
+export interface TMDBMoviePageResult {
   id: number;
   title: string;
   overview: string;
@@ -275,9 +275,9 @@ export interface TMDBPopularMovieResult {
   genre_ids: number[];
 }
 
-export interface TMDBPopularResponse {
+export interface TMDBMoviePage {
   page: number;
-  results: TMDBPopularMovieResult[];
+  results: TMDBMoviePageResult[];
   total_pages: number;
   total_results: number;
 }
@@ -313,7 +313,7 @@ export function getPopularMovies(page: number): Promise<any>{
 export async function fetchPopularMoviesPages(
   pagesToFetch: number,
   startPage = 1
-): Promise<TMDBPopularMovieResult[]> {
+): Promise<TMDBMoviePageResult[]> {
 
   if (pagesToFetch < 1) {
     return [];
@@ -322,7 +322,7 @@ export async function fetchPopularMoviesPages(
   const endPage = startPage + pagesToFetch - 1;
 
   // Build an array of promises for each page
-  const pagePromises: Promise<TMDBPopularResponse>[] = [];
+  const pagePromises: Promise<TMDBMoviePage>[] = [];
   for (let page = startPage; page <= endPage; page++) {
     pagePromises.push(getPopularMovies(page));
   }

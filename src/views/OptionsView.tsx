@@ -1,6 +1,6 @@
 import "../style.css"
 import type { TMDBGenre } from "../apiConfig.ts";
-import { type TMDBPopularResponse, type TMDBPopularMovieResult } from "../apiConfig.ts";
+import { type TMDBMoviePage, type TMDBMoviePageResult } from "../apiConfig.ts";
 import type { PromiseState } from "../resolvePromise";
 /* From https://mui.com/material-ui/react-slider/ */
 /* Inspired by https://www.themoviedb.org/movie */
@@ -13,7 +13,7 @@ export type OptionsViewProps = {
   currentMinRuntime: number;
   currentMaxRuntime: number;
 
-  searchResults: TMDBPopularResponse | null;
+  searchResults: TMDBMoviePage | null;
   searchStatus: PromiseState;
   onSearch: (query: string) => void;
   onSelectMovie: (id: number) => void;
@@ -40,7 +40,7 @@ export function OptionsView(props: OptionsViewProps) {
     }
   }
 
-  function renderSearchResultCB(movie: TMDBPopularMovieResult) {
+  function renderSearchResultCB(movie: TMDBMoviePageResult) {
     console.log("movie: ", movie)
     if (!movie.poster_path) return null; // Skip movies without images for UI
     function selectMovieACB() {

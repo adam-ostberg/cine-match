@@ -2,7 +2,7 @@
 import { observer } from "mobx-react-lite";
 import { OptionsView } from "../views/OptionsView.tsx";
 import type { ModelType } from "../MovieModel.ts";
-import type { TMDBPopularResponse } from "../apiConfig.ts";
+import type { TMDBMoviePage } from "../apiConfig.ts";
 // import type { TMDBGenre } from "../apiConfig.ts";
 
 export type OptionsPresenterProps = {
@@ -50,7 +50,7 @@ const Options = observer(
                 currentMinRating={props.model.minRating}
                 currentMinRuntime={props.model.minRuntime}
                 currentMaxRuntime={props.model.maxRuntime}
-                searchResults={props.model.searchMoviesPrmsState.data as TMDBPopularResponse || null}
+                searchResults={props.model.searchMoviesPrmsState.data as TMDBMoviePage || null}
                 searchStatus={props.model.searchMoviesPrmsState}
                 onGenreChange={onGenreChangeACB}
                 onToggleAll={onToggleAllGenresACB}

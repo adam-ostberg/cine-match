@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, type TMDBPopularResponse, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie } from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
@@ -35,7 +35,7 @@ export type ModelType = {
     getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
     getCurWatchProviders: () => Promise<WatchProvidersResponse | any>;
     getMovieImdbRating: (id: number) => void;
-    /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
+    /* getPopularMovies: () => Promise<TMDBMoviePageResult[]>; */
     setMovieIdQueue: () => Promise<any>;
     filterAndGetIdsFromMoviesACB: (data: any) => number[];
     nextMovie: () => void;
@@ -178,7 +178,7 @@ export const model: ModelType = {
         resolvePromise(imdbRatingPrms, this.imdbRatingPrmsState);
     },
 
-    filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
+    filterAndGetIdsFromMoviesACB(movies: TMDBMoviePageResult[]) {
         const ids: number[] =  [this.curMovieId, ...movies.map(m => m.id)];
         return ids;
     },
@@ -218,10 +218,10 @@ export const model: ModelType = {
         // [TODO] This will fetch recommendations
         // based on this ID and populate the queue.
         function getDataACB(response: any) {
-            return response as TMDBPopularResponse; 
+            return response as TMDBMoviePage; 
         }
-        function getMovieResultsACB(data: TMDBPopularResponse) {
-            return data.results as TMDBPopularMovieResult[];
+        function getMovieResultsACB(data: TMDBMoviePage) {
+            return data.results as TMDBMoviePageResult[];
         }
         console.log("Seed movie selected:", id);
         /* [TODO] Use this to populate the swipe queue */
