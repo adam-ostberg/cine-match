@@ -157,6 +157,13 @@ html, body {
     border-radius: 8px;
 }
 
+.swipe-like-img, .swipe-dislike-img {
+    height: 65vh;
+    width: auto;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
 .swipe-container .swipe-card:hover {
     cursor: grab;
 }
@@ -164,6 +171,13 @@ html, body {
 .swipe-container .swipe-card:active {
     cursor: grabbing;
 }
+
+.swipe-card-wrapper {
+    height: 65vh;
+    width: auto;
+    border-radius: 8px;
+}
+
 
 .swipe-title {
     font-size: 5vh;

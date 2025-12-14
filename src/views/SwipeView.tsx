@@ -9,6 +9,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useState } from "react";
 import { type PanInfo } from "framer-motion";
+import { div } from "motion/react-client";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -95,6 +96,8 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
   const y = useMotionValue(0)
 
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
+  const dislikeOpacity = useTransform(x, [-130 ,-70, 0, 70] , [0, 1, 0, 0]);
+  const likeOpacity = useTransform(x, [-70, 0, 70, 130] , [0, 0, 0.9, 0]);
   const rotate = useTransform(x, [150, -150], [-18, 18]);
 
   useEffect(() => {
@@ -103,7 +106,7 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
 
     const controls = animate(x, targetX, {
       type: "tween",
-      duration: 0.07,
+      duration: 0.1,
       ease: "easeOut",
       onComplete: () => {
         if (swipeDirection === "right") rightSwipeCB();
@@ -114,52 +117,104 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
     return () => controls.stop();
   }, [swipeDirection, x, id, rightSwipeCB, leftSwipeCB]);
 
-  // inside SwipeCard
-  const handleDragEnd = (
-    _event: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
-  ) => {
-    // don't react if a programmatic swipe (button) is already happening
+    // inside SwipeCard
+  const handleDragEnd = (_event: any, info: PanInfo) => {
     if (swipeDirection) return;
-    if (!is_top_card) return;  // optional: only let top card swipe
-
+    if (!is_top_card) return;
 
     if (info.offset.x > 80) {
-      rightSwipeCB();
-    } else if (info.offset.x < -80) {
-      leftSwipeCB();
-    }
-    else if (info.offset.y < -80 && Math.abs(info.offset.x) < 80) {
-      upSwipeCB();
-    }
-    else {
-      // snap back to center if not far enough
-      animate(x, 0, {
+      const controls = animate(x, 150, {
         type: "tween",
-        duration: 0.15,
+        duration: 0.1,
         ease: "easeOut",
+        onComplete: () => rightSwipeCB(),
       });
+    } else if (info.offset.x < -80) {
+      const controls = animate(x, -150, {
+        type: "tween",
+        duration: 0.1,
+        ease: "easeOut",
+        onComplete: () => leftSwipeCB(),
+      });
+    } else if (info.offset.y < -80 && Math.abs(info.offset.x) < 80) {
+      // you might want a vertical animation here too
+      upSwipeCB();
+    } else {
+      animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     }
   };
-  
+    
 return (
-  <motion.img
-    src={url}
-    alt={"Placeholder"}
-    className="swipe-card"
-    drag
-    dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
-    dragMomentum={false}
-    onDragEnd={handleDragEnd}
+  <motion.div className="swipe-card-wrapper"
     style={{
       gridRow: 1,
       gridColumn: 1,
       x,
       y,
-      opacity,
       rotate,
-    }}
-  />
+      position: "relative",
+    }}  
+  >
+    <motion.img
+      src={url}
+      alt={"Placeholder"}
+      className="swipe-card"
+      drag
+      dragConstraints={{left: -50, right: 50, top: 0, bottom: 0}}
+      dragMomentum={false}
+      onDragEnd={handleDragEnd}
+      style={{
+        gridRow: 1,
+        gridColumn: 1,
+        x,
+        y,
+        opacity,
+        rotate,
+        zIndex: -1,
+        
+      }} 
+    />
+    <motion.img
+      src={"src/assets/heartImg.png"}
+      alt={"Placeholder"}
+      className="swipe-like-img"
+      drag
+      dragConstraints={{left: -50, right: 50, top: 0, bottom: 0}}
+      dragMomentum={false}
+      onDragEnd={handleDragEnd}
+      style={{
+        gridRow: 1,
+        gridColumn: 1,
+        x,
+        y,
+        opacity: likeOpacity,
+        rotate,
+        position: "absolute",
+        top: 0,
+        right: 0,
+      }} 
+    />
+    <motion.img
+      src={"src/assets/dislikeImg.png"}
+      alt={"Placeholder"}
+      className="swipe-dislike-img"
+      drag
+      dragConstraints={{left: -50, right: 50, top: 0, bottom: 0}}
+      dragMomentum={false}
+      onDragEnd={handleDragEnd}
+      style={{
+        gridRow: 1,
+        gridColumn: 1,
+        x,
+        y,
+        opacity: dislikeOpacity,
+        rotate,
+        position: "absolute",
+        top: 0,
+        right: 0,
+      }} 
+    />
+  </motion.div>
 );
 }
 
