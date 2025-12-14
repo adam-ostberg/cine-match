@@ -1,19 +1,22 @@
 import "../style.css"
 import type { TMDBGenre } from "../apiConfig.ts";
-import { type TMDBPopularResponse, type TMDBPopularMovieResult } from "../apiConfig.ts";
+import { type TMDBMoviePage, type TMDBMoviePageResult } from "../apiConfig.ts";
 import type { PromiseState } from "../resolvePromise";
 /* From https://mui.com/material-ui/react-slider/ */
 /* Inspired by https://www.themoviedb.org/movie */
 import Slider from '@mui/material/Slider';
+/* npm install react-icons */
+import { FaCheckCircle } from "react-icons/fa";
 
 export type OptionsViewProps = {
   availableGenres: TMDBGenre[];
   selectedGenreIds: number[];
+  seededMovieIds: number[];
   currentMinRating: number;
   currentMinRuntime: number;
   currentMaxRuntime: number;
 
-  searchResults: TMDBPopularResponse | null;
+  searchResults: TMDBMoviePage | null;
   searchStatus: PromiseState;
   onSearch: (query: string) => void;
   onSelectMovie: (id: number) => void;
@@ -40,15 +43,17 @@ export function OptionsView(props: OptionsViewProps) {
     }
   }
 
-  function renderSearchResultCB(movie: TMDBPopularMovieResult) {
-    console.log("movie: ", movie)
+  function renderSearchResultCB(movie: TMDBMoviePageResult) {
+    const isSelected = props.seededMovieIds.includes(movie.id);
     if (!movie.poster_path) return null; // Skip movies without images for UI
     function selectMovieACB() {
       props.onSelectMovie(movie.id)
     }
     return (
       <div key={movie.id} className="seed-result-card" onClick={selectMovieACB}>
-        <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
+        <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title}>
+        </img>
+        {isSelected ? <FaCheckCircle className="checkmark" /> : <></>}
         <span className="seed-result-title">{movie.title}</span>
       </div>
     )

@@ -1,4 +1,4 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBPopularMovieResult, getMovieVideos, fetchPopularMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies} from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
@@ -11,15 +11,17 @@ export type ModelType = {
     dislikes: [];
     curMovieId: number;
     movieDetailsPrmsState: PromiseState;
-      movieVideosPrmsState: PromiseState;
+    movieVideosPrmsState: PromiseState;
     movieIdQueuePrmsState: PromiseState;
     popularMoviesPrmsState: PromiseState;
     movieCreditsPrmsState: PromiseState; 
     imdbRatingPrmsState: PromiseState;
     watchProvidersPrmsState: PromiseState;
     searchMoviesPrmsState: PromiseState;
+    getRecPrmsState: PromiseState;
     currentSessionId: string | null;
     selectedGenreIds: number[];
+    selectedSeededIds: number[];
     minRating: number;
     minRuntime: number;
     maxRuntime: number;
@@ -34,7 +36,7 @@ export type ModelType = {
     getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
     getCurWatchProviders: () => Promise<WatchProvidersResponse | any>;
     getMovieImdbRating: (id: number) => void;
-    /* getPopularMovies: () => Promise<TMDBPopularMovieResult[]>; */
+    /* getPopularMovies: () => Promise<TMDBMoviePageResult[]>; */
     setMovieIdQueue: () => Promise<any>;
     filterAndGetIdsFromMoviesACB: (data: any) => number[];
     nextMovie: () => void;
@@ -42,7 +44,9 @@ export type ModelType = {
     toggleAllGenres: () => void;
     setMinRating: (rating: number) => void;
     searchMovie: (q: string) => void;
+    getRecommendations: (id: number) => Promise<void | object>;
     selectSeedMovie: (id: number) => void;
+    toggleSeededIconToMovie: (id: number) => void;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
@@ -57,6 +61,8 @@ export type ModelType = {
 
     reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
 }
+
+const recommendedCacheMap = new Map();
 
 export type Video = {
     "iso_639_1": string,
@@ -79,6 +85,7 @@ export const model: ModelType = {
     dislikes: [],
     currentSessionId: null, /* Added for it to work for me, might class with other implementation */
     selectedGenreIds: [],
+    selectedSeededIds: [],
     minRating: 0,
     minRuntime: 0,
     maxRuntime: 400,
@@ -92,6 +99,7 @@ export const model: ModelType = {
     watchProvidersPrmsState: {promise: null, data: null, error: null},
     prefetchWindowPrmsState: {promise: null, data: null, error: null},
     searchMoviesPrmsState: {promise: null, data: null, error: null},
+    getRecPrmsState: {promise: null, data: null, error: null},
 
     // NEW:
     movieDetailsById: {},
@@ -175,13 +183,13 @@ export const model: ModelType = {
         resolvePromise(imdbRatingPrms, this.imdbRatingPrmsState);
     },
 
-    filterAndGetIdsFromMoviesACB(movies: TMDBPopularMovieResult[]) {
+    filterAndGetIdsFromMoviesACB(movies: TMDBMoviePageResult[]) {
         const ids: number[] =  [this.curMovieId, ...movies.map(m => m.id)];
         return ids;
     },
 
     setMovieIdQueue() {
-        const prms = fetchPopularMoviesPages(1, 1);
+        const prms = fetchMoviesPages(getPopularMovies, 1, 1);
         
         // Gets list for Home View
         resolvePromise(prms, this.popularMoviesPrmsState);
@@ -205,13 +213,55 @@ export const model: ModelType = {
         resolvePromise(prms, this.searchMoviesPrmsState);
     },
 
-    selectSeedMovie(id: number) {
-        // [TODO] Placeholder: this will fetch recommendations
-        // based on this ID and populate the queue.
-        console.log("Seed movie selected:", id);
+    getRecommendations(id: number): Promise<void | object> {
+        // wrapper function that matches the signature: (page) => Promise
+        // Cast Promise<TMDBMoviePage> because API return type includes 'void' (fix? [TODO])
+        function fetcherFnCB(pageToFetch: number) {
+            return getRecommendedMovie(id, pageToFetch) as Promise<TMDBMoviePage>; 
+        };
+        // Now pass the wrapper function
+        const prms = fetchMoviesPages(fetcherFnCB, 1, 1); /* [TODO] Fetch max pages? */
         
-        // this.currentMovieId = id;
-        // this.getRecommendations(id);
+        resolvePromise(prms, this.getRecPrmsState);
+        return prms;
+    },
+
+    selectSeedMovie(id: number) { /* async? */
+        /* [TODO!!!] Maybe instead use with reaction to a change in selectedSeededId, to be able to remove it. */
+        // This will fetch recommendations
+        // based on this ID and populate the queue.
+        if (!this.selectedSeededIds.includes(id)){
+            // Använd recommendedCacheMap istället för att call:a API.
+            // recommendedCacheMap.get(id);
+            return;
+        }; /* [TODO!!!] Ta bort rekommendationerna från Swipe queue */
+        function getDataACB(response: any) {
+            return response as TMDBMoviePage; 
+        }
+        function getMovieResultsACB(data: TMDBMoviePage) {
+            recommendedCacheMap.set(id, data.results)
+            return data.results as TMDBMoviePageResult[];
+        }
+        console.log("Seed movie selected:", id);
+        /* [TODO] Use this to populate the swipe queue */
+        
+        return this.getRecommendations(id).then(getDataACB).then(getMovieResultsACB)
+
+        /* [TODO] Use conversion to IDs to populate the queue
+        movies.map(m => m.id) */
+    },
+
+    toggleSeededIconToMovie(id: number) {
+        function keepOtherSeededCB(existingId: number) {
+            return existingId !== id;
+        }
+        if (this.selectedSeededIds.includes(id)) {
+            // If it was already selected, we want to remove it.
+            this.selectedSeededIds = this.selectedSeededIds.filter(keepOtherSeededCB);
+        } else {
+            // If it wasn't selected, we want to add it.
+            this.selectedSeededIds = [...this.selectedSeededIds, id];
+        }
     },
 
     toggleGenre(id: number) {

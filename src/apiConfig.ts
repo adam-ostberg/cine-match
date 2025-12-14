@@ -258,7 +258,7 @@ export function getMovieVideos(movie_id: number): Promise<TMDBVideoResults | any
 }
 
 
-export interface TMDBPopularMovieResult {
+export interface TMDBMoviePageResult {
   id: number;
   title: string;
   overview: string;
@@ -275,9 +275,9 @@ export interface TMDBPopularMovieResult {
   genre_ids: number[];
 }
 
-export interface TMDBPopularResponse {
+export interface TMDBMoviePage {
   page: number;
-  results: TMDBPopularMovieResult[];
+  results: TMDBMoviePageResult[];
   total_pages: number;
   total_results: number;
 }
@@ -310,10 +310,11 @@ export function getPopularMovies(page: number): Promise<any>{
     .catch(handleErrorACB);
 }
 
-export async function fetchPopularMoviesPages(
+export async function fetchMoviesPages(
+  fetcherFn: (page: number) => Promise<TMDBMoviePage>,
   pagesToFetch: number,
   startPage = 1
-): Promise<TMDBPopularMovieResult[]> {
+): Promise<TMDBMoviePageResult[]> {
 
   if (pagesToFetch < 1) {
     return [];
@@ -322,9 +323,9 @@ export async function fetchPopularMoviesPages(
   const endPage = startPage + pagesToFetch - 1;
 
   // Build an array of promises for each page
-  const pagePromises: Promise<TMDBPopularResponse>[] = [];
+  const pagePromises: Promise<TMDBMoviePage>[] = [];
   for (let page = startPage; page <= endPage; page++) {
-    pagePromises.push(getPopularMovies(page));
+    pagePromises.push(fetcherFn(page));
   }
 
   // Fetch all pages in parallel
@@ -337,34 +338,30 @@ export async function fetchPopularMoviesPages(
 }
 
 
-export function getSimilarMovie(movie_id: number): Promise<void | object> {
-  /* From this we can get related movie IDs, image paths, etc. */
-  /* Sort by original_language to ensure english movies? */
-  /* Sort by popularity? */
-
-  const ENDPOINT = `/movie/${movie_id}/similar`;
+export function getRecommendedMovie(movie_id: number, page: number = 1): Promise<void | TMDBMoviePage> {
+  const ENDPOINT = `/movie/${movie_id}/recommendations`;
+  // Add the page parameter to the URL
+  const PARAMS = `?page=${page}`; 
 
   function handleResponseACB(response: Response) {
-    if (response.ok !== true) {
-      throw new Error();
-    }
+    if (response.ok !== true) throw new Error();
     return response.json();
   }
 
-  function handleSuccessACB(data: object) {
-    return data;
+  function handleSuccessACB(data: any) {
+    return data as TMDBMoviePage;
   }
 
   function handleErrorACB(error: unknown) {
     console.error(error);
+    throw error;
   }
 
-  return fetch(BASE_URL + ENDPOINT, optionsGET)
+  return fetch(BASE_URL + ENDPOINT + PARAMS, optionsGET)
     .then(handleResponseACB)
     .then(handleSuccessACB)
     .catch(handleErrorACB);
 }
-
 
 
 /* export */ type ExternalIDs = {
