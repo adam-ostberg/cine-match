@@ -2,7 +2,7 @@
 import { observer } from "mobx-react-lite";
 import { OptionsView } from "../views/OptionsView.tsx";
 import type { ModelType } from "../MovieModel.ts";
-import type { TMDBMoviePage } from "../apiConfig.ts";
+import type { TMDBMoviePage, TMDBMoviePageResult } from "../apiConfig.ts";
 // import type { TMDBGenre } from "../apiConfig.ts";
 
 export type OptionsPresenterProps = {

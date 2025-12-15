@@ -19,7 +19,7 @@ export type OptionsViewProps = {
   searchResults: TMDBMoviePage | null;
   searchStatus: PromiseState;
   onSearch: (query: string) => void;
-  onSelectMovie: (id: number) => void;
+  onSelectMovie: (movie: TMDBMoviePageResult) => void;
 
   onGenreChange: (id: number) => void;
   onToggleAll: () => void;
@@ -29,10 +29,12 @@ export type OptionsViewProps = {
 
 export function OptionsView(props: OptionsViewProps) {
 
-  function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleSearchKeyDownACB(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       const input = e.currentTarget;
       props.onSearch(input.value);
+      // Clears focus after enterd
+      input.blur();
     }
   }
 
@@ -47,7 +49,7 @@ export function OptionsView(props: OptionsViewProps) {
     const isSelected = props.seededMovieIds.includes(movie.id);
     if (!movie.poster_path) return null; // Skip movies without images for UI
     function selectMovieACB() {
-      props.onSelectMovie(movie.id)
+      props.onSelectMovie(movie)
     }
     return (
       <div key={movie.id} className="seed-result-card" onClick={selectMovieACB}>
@@ -104,7 +106,7 @@ export function OptionsView(props: OptionsViewProps) {
             id="seed-search-input"
             type="text"
             placeholder="Search for a movie (e.g. Inception)"
-            onKeyDown={handleSearchKeyDown}
+            onKeyDown={handleSearchKeyDownACB}
           />
           <button className="secondary-button" onClick={handleSearchClick}>Search</button>
         </div>
