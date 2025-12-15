@@ -4,6 +4,7 @@ import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
 
 export type ModelType = {
+    username: string;
     userId: string | null;
     genres: [];
     genresPrmsState: PromiseState;
@@ -26,6 +27,9 @@ export type ModelType = {
     minRuntime: number;
     maxRuntime: number;
     prefetchWindowPrmsState: PromiseState;
+    alltimeLikedMovieIds: number[]; 
+    alltimeLikedMoviesArray: TMDBMoviePageResult[];
+    profilePic: string | undefined;
     setRuntime: (min: number, max: number) => void;
     initiateStart: () => void;
     setId: (id: string | null) => void;
@@ -47,6 +51,8 @@ export type ModelType = {
     getRecommendations: (id: number) => Promise<void | object>;
     selectSeedMovie: (id: number) => void;
     toggleSeededIconToMovie: (id: number) => void;
+    toggleAlltimeLike: (movie: TMDBMoviePageResult, removePossible?: boolean) => void
+    setUsername: (id: number) => void;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
@@ -100,6 +106,10 @@ export const model: ModelType = {
     prefetchWindowPrmsState: {promise: null, data: null, error: null},
     searchMoviesPrmsState: {promise: null, data: null, error: null},
     getRecPrmsState: {promise: null, data: null, error: null},
+    username: "", // temp placeholder
+    alltimeLikedMovieIds: [],
+    alltimeLikedMoviesArray: [],
+    profilePic: undefined,
 
     // NEW:
     movieDetailsById: {},
@@ -231,7 +241,7 @@ export const model: ModelType = {
         // This will fetch recommendations
         // based on this ID and populate the queue.
         this.toggleSeededIconToMovie(id)
-        
+
         if (!this.selectedSeededIds.includes(id)){
             // Använd recommendedCacheMap istället för att call:a API.
             // recommendedCacheMap.get(id);
@@ -361,5 +371,26 @@ export const model: ModelType = {
         if (this.currentSessionId && this.userId) {
             await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
         }
-    }
+    },
+
+    setUsername() {
+        /* [TODO] */
+    },
+    toggleAlltimeLike(movie: TMDBMoviePageResult, removePossible: boolean = true) { /* [TODO] Make a reaction to add movie details to AlltimeLiked */
+        const targetId = movie.id;
+
+        function matchesTargetIdCB(existingMovie: TMDBMoviePageResult) {
+            return existingMovie.id === targetId;
+        }
+        if (removePossible && this.alltimeLikedMoviesArray.some(matchesTargetIdCB)) { // if we should remove & its already liked
+            // If it was already selected, we want to remove it.
+            function keepOthersCB(existingMovie: TMDBMoviePageResult) {
+                return existingMovie.id !== targetId;
+            }
+            this.alltimeLikedMoviesArray = this.alltimeLikedMoviesArray.filter(keepOthersCB);
+        } else {
+            // If it wasn't selected, we want to add it.
+            this.alltimeLikedMoviesArray = [...this.alltimeLikedMoviesArray, movie];
+        }
+    },
 }

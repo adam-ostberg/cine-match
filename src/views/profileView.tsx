@@ -1,0 +1,104 @@
+import "../style.css"
+import { type TMDBMoviePageResult } from "../apiConfig.ts";
+/* npm install react-icons */
+import { FaUserCircle } from "react-icons/fa";
+
+export type ProfileViewProps = {
+  username: string;
+  profilePic?: string; // Optional URL
+  likedMovies: TMDBMoviePageResult[];
+  matchedMovies: TMDBMoviePageResult[];
+
+  onUsernameChange: (name: string) => void;
+  onRemoveLike: (movie: TMDBMoviePageResult) => void
+  onMovieClick: (id: number) => void;
+}
+
+export function ProfileView(props: ProfileViewProps) {
+
+  function handleSearchKeyDownACB(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      const input = e.currentTarget;
+      props.onUsernameChange(input.value);
+      // Clears focus after enterd
+      input.blur();
+    }
+  }
+
+  function handleSaveClickCB() {
+    const input = document.getElementById("username-input") as HTMLInputElement;
+    if (input) {
+      props.onUsernameChange(input.value);
+    }
+  }
+
+  function renderLikedMovieCB(movie: TMDBMoviePageResult) {
+    if (!movie.poster_path) return null;
+
+    function movieClickACB() {
+      props.onMovieClick(movie.id);
+    }
+
+    function removeLikeACB(e: React.MouseEvent) {
+      e.stopPropagation(); // Prevent triggering the movie click
+      if (window.confirm(`Are you sure you want to remove "${movie.title}" from your likes?`)) {
+        props.onRemoveLike(movie);
+      }
+    }
+
+    return (
+      <div key={movie.id} className="seed-result-card profile" onClick={movieClickACB}>
+        <img
+          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          alt={movie.title}
+        />
+        <div className="movie-overlay">
+          <span className="movie-title">{movie.title}</span>
+          <button className="remove-btn" onClick={removeLikeACB}>
+            X
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="profile-container">
+      <h2>My Profile</h2>
+
+      <div className="section profile-header">
+        {(props.profilePic) ? /* Renders profilePic */
+          <img src={props.profilePic} className="profile-pic" />
+          :
+          <FaUserCircle size={100} className="profile-pic-placeholder" />}
+
+        <div className="profile-info">
+          <label htmlFor="username-input">Display Name</label>
+          <div className="search-row">
+            <input
+              id="username-input"
+              type="text"
+              defaultValue={props.username}
+              placeholder="Enter your name"
+              onKeyDown={handleSearchKeyDownACB}
+            />
+            <button className="secondary-button" onClick={handleSaveClickCB}>
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="section">
+        <h3>Liked Movies (All Time)</h3>
+        {props.likedMovies.length === 0 ? (
+          <p>You haven't liked any movies yet. Go explore!</p>
+        ) : (
+          <div className="seed-results-container">
+            {props.likedMovies.map(renderLikedMovieCB)}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
