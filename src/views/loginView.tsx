@@ -1,11 +1,11 @@
 import "/src/style.css";
 
-type AccountViewProps = {
+type LoginViewProps = {
     onLogin: (email: string, password: string) => void;
-    onSignup: (email: string, password: string) => void;
+    onToCreateAccount: () => void;
 };
 
-export function AccountView({onLogin, onSignup}: AccountViewProps) {
+export function LoginView({onLogin, onToCreateAccount}: LoginViewProps) {
   // Gets and returns the current values of the email and password input fields
   function getValues() {
     const emailInput = document.getElementById("email") as HTMLInputElement;
@@ -22,15 +22,14 @@ export function AccountView({onLogin, onSignup}: AccountViewProps) {
     onLogin(loginValues.email, loginValues.password);
   }
 
-  function signUpACB() {
-    const signupValues = getValues();
-    onSignup(signupValues.email, signupValues.password);
+  function switchToCreateAccountACB() {
+    onToCreateAccount();
   }
 
   return (
     <div className="account-section">
         <div className="account-form">
-          <h1>Login or Sign Up</h1>
+          <h1>Login</h1>
           <label>
             E-Mail:
             <input id="email" type="email" placeholder="example@address.com" required />
@@ -41,9 +40,10 @@ export function AccountView({onLogin, onSignup}: AccountViewProps) {
           </label>
           <div className="button-row">
             <button className="primary-button" onClick={loginACB}>Login</button>
-            <button className="secondary-button" onClick={signUpACB}>Sign Up</button>
           </div>
         </div>
+        <p>or</p>
+        <a href="#/account" onClick={switchToCreateAccountACB}>Create account</a>
       </div>
   );
 }
