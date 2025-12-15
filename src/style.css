@@ -470,7 +470,7 @@ html, body {
     margin-bottom: 20px;
 }
 
-.options-container .section {
+.section {
     margin-bottom: 20px;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.05); /* Subtle background */
@@ -491,6 +491,10 @@ html, body {
 
 /* From https://stackoverflow.com/a/67770685 */
 .MuiSlider-root.slider .MuiSlider-thumb:hover {
+      box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.1);
+    }
+
+.MuiSlider-root.slider .MuiSlider-active {
       box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.2);
     }
 
@@ -507,13 +511,12 @@ html, body {
 }
 
 .MuiSlider-root.imdb-slider .MuiSlider-thumb:hover {
-      box-shadow: 0 0 0 10px #dba60664;
+      box-shadow: 0 0 0 10px #dba60624;
     }
 
-.options-container input[type=range]:hover {
-    font-weight: bold;
-    box-shadow: 0 0 10px #dba60664; /* Glow */
-}
+.MuiSlider-root.imdb-slider .MuiSlider-thumb:active {
+      box-shadow: 0 0 0 10px #dba60664;
+    }
 
 .genre-list {
     display: flex;

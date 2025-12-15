@@ -10,13 +10,14 @@ import {
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 // Function for signing up a new user with email and password
-export async function signUpWithEmail(email: string, password: string) {
+export async function signUpWithEmail(username: string, email: string, password: string) {
     // First create the use in Firebase Auth with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     // Set up the new user document in Firestore
     await setDoc(doc(db, "users", user.uid), {
+    username: username,
     email,
     createdAt: serverTimestamp(),
     likes: [],

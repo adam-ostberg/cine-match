@@ -7,6 +7,7 @@ import { observer } from "mobx-react-lite";
 import { Swipe } from "./reactts/swipePresenter";
 import { Options } from "./reactts/optionsPresenter";
 import { Account } from "./reactts/accountPresenter";
+import { Profile } from "./reactts/profilePresenter";
 
 export type AppRenderProps = {
 	model: ModelType
@@ -117,7 +118,7 @@ const App = observer(
 				},
 				{
 					path: "/swipe",
-					element: <Swipe model={props.model}/>,
+					element: <Swipe model={props.model} />,
 				},
 
 				{
@@ -127,6 +128,10 @@ const App = observer(
 				{
 					path: "/account",
 					element: <Account />
+				},
+				{
+					path: "/profile",
+					element: <Profile model={props.model} />
 				},
 			]);
 		}

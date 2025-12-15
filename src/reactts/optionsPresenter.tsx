@@ -2,7 +2,7 @@
 import { observer } from "mobx-react-lite";
 import { OptionsView } from "../views/OptionsView.tsx";
 import type { ModelType } from "../MovieModel.ts";
-import type { TMDBMoviePage } from "../apiConfig.ts";
+import type { TMDBMoviePage, TMDBMoviePageResult } from "../apiConfig.ts";
 // import type { TMDBGenre } from "../apiConfig.ts";
 
 export type OptionsPresenterProps = {
@@ -39,9 +39,9 @@ const Options = observer(
             props.model.searchMovie(q);
         }
 
-        function onSelectSeedMovieACB(id: number) {
-            props.model.toggleSeededIconToMovie(id);
-            props.model.selectSeedMovie(id);
+        function onSelectSeedMovieACB(movie: TMDBMoviePageResult) {
+            props.model.selectSeedMovie(movie.id);
+            props.model.toggleAlltimeLike(movie);
         }
 
         return (
