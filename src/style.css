@@ -152,23 +152,23 @@ html, body {
 
 .swipe-container .swipe-card {
     height: 65vh;
-    width: auto;
+    width: 43vh;
     object-fit: cover;
     border-radius: 8px;
 }
 
-.swipe-like-img, .swipe-dislike-img {
+.swipe-like-img, .swipe-dislike-img, .swipe-settings-img {
     height: 65vh;
     width: auto;
     object-fit: cover;
     border-radius: 8px;
 }
 
-.swipe-container .swipe-card:hover {
+.swipe-container .swipe-card-wrapper:hover {
     cursor: grab;
 }
 
-.swipe-container .swipe-card:active {
+.swipe-container .swipe-card-wrapper:active {
     cursor: grabbing;
 }
 
@@ -178,6 +178,11 @@ html, body {
     border-radius: 8px;
 }
 
+.swipe-more-info-img {
+    filter: brightness(0.9);
+    height: 9vh;
+    width: auto;
+}
 
 .swipe-title {
     font-size: 5vh;
@@ -199,7 +204,7 @@ html, body {
 }
 .like-btn svg {
     color: rgb(146, 226, 71);
-    font-size: 9vh;
+    font-size: 10vh;
     transition: transform 0.3s ease;
 }
 .more-info-btn svg {
