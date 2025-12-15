@@ -14,8 +14,8 @@ import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
   currentSessionId: string | null;
-  onDislike: () => void;
-  onLike: () => void;
+  onDislike: (id: number) => void;
+  onLike: (id: number) => void;
   onMoreInfo: () => void;
 }
 
@@ -49,12 +49,12 @@ function SwipeView(props: SwipeViewProps) {
 
   const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
   const [swipeDirection, setSwipeDirection] = useState<SwipeDir>(null);
-  function handleSwipe(dir: "left" | "right") {
+  function handleSwipe(dir: "left" | "right", id: number) {
 
     if (dir === "right") {
-      props.onLike();     
+      props.onLike(id);     
     } else {
-      props.onDislike();
+      props.onDislike(id);
     }
     setSwipeDirection(null);
   }
@@ -62,7 +62,7 @@ function SwipeView(props: SwipeViewProps) {
   function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
     if (!detail) { return };
     const is_top_card = index === array.length-1;
-    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card}/>
+    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right", detail.id)} leftSwipeCB={() => handleSwipe("left", detail.id)} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card}/>
   }
   function outputTitle(firstDetail: MovieDetails | undefined) {
     if (!firstDetail?.title) { return "" };

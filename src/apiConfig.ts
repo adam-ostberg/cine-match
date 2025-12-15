@@ -277,6 +277,7 @@ export interface TMDBMoviePageResult {
 
   imdbRating?: number; // appended after fetch
   runtime?: number; // appended after fetch
+  sourceType: string; // either "recommended" | "popular" | "liked" (from another user)
 }
 
 export interface TMDBMoviePage {

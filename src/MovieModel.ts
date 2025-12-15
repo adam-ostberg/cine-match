@@ -1,16 +1,16 @@
 import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie, type MovieDetails } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
-import { getImdbRating } from "./imdbApiConfig";
+import { getBatchImdbRating, getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
-import { number } from "motion";
+import { chunk } from "./helperFunctions";
 
 export type ModelType = {
     username: string;
     userId: string | null;
     genres: [];
     genresPrmsState: PromiseState;
-    likes: [];
-    dislikes: [];
+    likes: number[];
+    dislikes: number[];
     curMovieId: number;
     movieDetailsPrmsState: PromiseState;
     movieVideosPrmsState: PromiseState;
@@ -49,12 +49,13 @@ export type ModelType = {
     toggleAllGenres: () => void;
     setMinRating: (rating: number) => void;
     searchMovie: (q: string) => void;
-    getRecommendations: (id: number) => Promise<void | object>;
+    getRecommendations: (id: number) => Promise<TMDBMoviePageResult[]>;
     toggleSeededIconToMovie: (id: number) => void;
     toggleAlltimeLike: (movie: TMDBMoviePageResult, removePossible?: boolean) => void
     setUsername: (id: number) => void;
     filterMoviesByOptionParams: (data: TMDBMoviePageResult[]) => void;
     fetchPopularMovies: () => Promise<any>;
+    insertRecommendedMovieIntoQueue: (movieId: number) => void;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
@@ -68,9 +69,9 @@ export type ModelType = {
     setSessionId: (sessionId: string | null) => void;
 
     reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
+    addToLiked: (movieId: number) => void;
+    addToDisliked: (movieId: number) => void;
 }
-
-const recommendedCacheMap = new Map();
 
 export type Video = {
     "iso_639_1": string,
@@ -210,14 +211,19 @@ export const model: ModelType = {
             return response as Array<TMDBMoviePageResult[]>; 
         }
         function getMovieResultsACB(data: Array<TMDBMoviePageResult[]>): TMDBMoviePageResult[] {
+            const recommendedMovies = data.slice(0, data.length-1).flat().map(movie => ({...movie, sourceType: "recommended"})) // every element but the last
+            const popularMovies = data[data.length-1].flat().map(movie => ({...movie, sourceType: "popular"})) // the last element
+
+            const allMovies = [...recommendedMovies, ...popularMovies];
+
             const seen = new Set<number | string>();
-            const allMovies = data.flat().filter(movie => { // Flattens the array of arrays and removes duplicates
+            const allMoviesNonDuplicates = allMovies.filter(movie => { // removes duplicates
                 if (seen.has(movie.id)) return false;
                 seen.add(movie.id);
                 return true;
             });
 
-            return allMovies;
+            return allMoviesNonDuplicates;
         }
         const prms = Promise.all(fetchPrmses)
             .then(getDataACB)
@@ -227,6 +233,32 @@ export const model: ModelType = {
         resolvePromise(prms, this.movieIdQueuePrmsState);
 
         return prms;
+    },
+
+    async insertRecommendedMovieIntoQueue(movieId: number) {
+
+        const movies = await this.getRecommendations(movieId);
+        const establishedIdQueue = this.movieIdQueuePrmsState.data ?? [];
+
+        const selMoviesIds = movies
+            .map(movie => movie.id)
+            .filter(
+                id => !this.likes.includes(id) // not in liked
+                && !this.dislikes.includes(id) // not in disliked
+                && !establishedIdQueue.includes(id) // not in the queue already
+            )
+            .slice(0, 4);
+
+        
+        if (!!this.movieIdQueuePrmsState.data) {
+            const idQueue = [...this.movieIdQueuePrmsState.data]
+            idQueue.splice(6, 0, ...selMoviesIds) // insert 5 movies into position 6 of the queue
+            this.movieIdQueuePrmsState.data = idQueue;
+        }
+        else {
+            const idQueue = selMoviesIds;
+            this.movieIdQueuePrmsState.data = idQueue;                
+        }
     },
 
     fetchPopularMovies() {
@@ -250,7 +282,7 @@ export const model: ModelType = {
         resolvePromise(prms, this.searchMoviesPrmsState);
     },
 
-    getRecommendations(id: number): Promise<any> {
+    getRecommendations(id: number): Promise<TMDBMoviePageResult[]> {
         // wrapper function that matches the signature: (page) => Promise
         // Cast Promise<TMDBMoviePage> because API return type includes 'void' (fix? [TODO])
         function fetcherFnCB(pageToFetch: number) {
@@ -263,13 +295,15 @@ export const model: ModelType = {
         return prms;
     },
 
-    async filterMoviesByOptionParams(data: TMDBMoviePageResult[]): Promise<number[]> {
-        const filteredData = data.filter(movie =>
-            movie.genre_ids.some(genre => this.selectedGenreIds.includes(genre))
+    async filterMoviesByOptionParams(data: TMDBMoviePageResult[]): Promise<number[] | undefined>  {
+        let filteredData = data.filter(movie =>
+            movie.genre_ids.some(genre => this.selectedGenreIds.includes(genre)) // filter by selected gebres
+            && !this.likes.includes(movie.id) // not in liked
+            && !this.dislikes.includes(movie.id) // not in disliked
         );
+        if (filteredData.length === 0) return;
 
-        const ratings: Array<number | null> = [];
-        const details: Array<MovieDetails | null> = [];
+        const details: MovieDetails[] = [];
 
         function sleep(ms: number): Promise<void> {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -278,21 +312,34 @@ export const model: ModelType = {
         for (const movie of filteredData) {
             const detail = await getMovieDetails(movie.id) as MovieDetails;
             if (!detail) {
-                ratings.push(null);
-                details.push(null);
                 continue;
             }
-            ratings.push(await getImdbRating(detail.imdb_id));
             details.push(detail);
             await sleep(10); // Do this to avoid API Rate limiting
         }
 
+        const imdbIds = details.map(detail => detail.imdb_id)
+        const imdbIdsChunks = chunk(imdbIds, 5); 
+
+        const ratings: number[] = []
+        const successfullImdbIds: string[] = [];
+        for (const titleIds of imdbIdsChunks) {
+            const ratingChunk = await getBatchImdbRating(titleIds);
+            if (ratingChunk === null) continue;
+            ratings.push(...ratingChunk)
+            successfullImdbIds.push(...titleIds);
+            await sleep(2000); // Do this to avoid API Rate limiting
+        }
+
+        const filteredDetailIds = details.filter(detail => successfullImdbIds.includes(detail.imdb_id)).map(detail => detail.id);
+        filteredData = filteredData.filter(movie => filteredDetailIds.includes(movie.id));
+
         // Attach rating + filter movies directly
         const result = filteredData
             .map((movie, i) => {
-            const r = ratings[i];
+            const r = ratings ? ratings[i] : undefined;
             const detail = details[i];
-            return r !== null && detail !== null ? { ...movie, imdbRating: r, runtime: detail.runtime } : movie;
+            return !!r && !!detail  ? { ...movie, imdbRating: r, runtime: detail.runtime } : movie;
             })
             .filter((movie) => movie.imdbRating !== undefined && movie.imdbRating >= this.minRating && movie.runtime !== undefined && movie.runtime >= this.minRuntime && movie.runtime <= this.maxRuntime);
 
@@ -430,4 +477,11 @@ export const model: ModelType = {
             this.alltimeLikedMoviesArray = [...this.alltimeLikedMoviesArray, movie];
         }
     },
+
+    addToLiked(id: number) {
+        this.likes.push(id);
+    },
+    addToDisliked(id: number) {
+        this.dislikes.push(id);
+    }
 }
