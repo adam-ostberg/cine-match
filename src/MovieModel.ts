@@ -230,6 +230,8 @@ export const model: ModelType = {
         /* [TODO!!!] Maybe instead use with reaction to a change in selectedSeededId, to be able to remove it. */
         // This will fetch recommendations
         // based on this ID and populate the queue.
+        this.toggleSeededIconToMovie(id)
+        
         if (!this.selectedSeededIds.includes(id)){
             // Använd recommendedCacheMap istället för att call:a API.
             // recommendedCacheMap.get(id);
