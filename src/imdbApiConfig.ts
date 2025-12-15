@@ -14,7 +14,7 @@ const optionsGET = {
   };
 };
 
-export function getImdbRating(titleId: string): Promise<number | void> {
+export function getImdbRating(titleId: string): Promise<number | null> {
   const ENDPOINT = `/titles/${titleId}`;
 
   function handleResponseACB(response: Response) {
@@ -30,6 +30,7 @@ export function getImdbRating(titleId: string): Promise<number | void> {
 
   function handleErrorACB(error: unknown) {
     console.error(error);
+    return null
   }
 
   return fetch(BASE_URL + ENDPOINT, optionsGET)

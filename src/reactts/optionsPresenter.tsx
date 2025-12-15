@@ -40,7 +40,7 @@ const Options = observer(
         }
 
         function onSelectSeedMovieACB(id: number) {
-            props.model.selectSeedMovie(id);
+            props.model.toggleSeededIconToMovie(id);
         }
 
         return (

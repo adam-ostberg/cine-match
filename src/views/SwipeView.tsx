@@ -73,7 +73,7 @@ function SwipeView(props: SwipeViewProps) {
   return (
     <div className="swipe-container">
       <p id="current-session">Current Session id: {props.currentSessionId}</p>
-      {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection))}
+      {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <p>__loading__</p>}
       <div className="swipe-title">{outputTitle(firstDetail)}</div>
       <div className="controls">
         <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>

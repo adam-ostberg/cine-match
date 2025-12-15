@@ -1,7 +1,7 @@
 
 import { observer } from "mobx-react-lite";
 import { HomeView } from "../views/HomeView.tsx";
-import type { TMDBPopularMovieResult } from "../apiConfig.ts";
+import type { TMDBMoviePageResult } from "../apiConfig.ts";
 // import type { PromiseState } from "../resolvePromise.ts";
 import { createSession, joinSession, listenToSession } from "../firestoreModel.ts";
 import { type ModelType } from "../MovieModel.ts";
@@ -57,7 +57,7 @@ const Home = observer(
             <HomeView
                 onStartSession={sessionStartACB}
                 onJoinSession={sessionJoinACB}
-                movies={(props.model.popularMoviesPrmsState.data as TMDBPopularMovieResult[]) || []}
+                movies={(props.model.popularMoviesPrmsState.data as TMDBMoviePageResult[]) || []}
                 onMovieClick={onMovieClickedACB}
             />
         );

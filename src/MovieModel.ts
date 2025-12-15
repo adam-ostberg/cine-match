@@ -1,7 +1,8 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie } from "./apiConfig"
+import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie, type MovieDetails } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
+import { number } from "motion";
 
 export type ModelType = {
     userId: string | null;
@@ -45,16 +46,17 @@ export type ModelType = {
     setMinRating: (rating: number) => void;
     searchMovie: (q: string) => void;
     getRecommendations: (id: number) => Promise<void | object>;
-    selectSeedMovie: (id: number) => void;
     toggleSeededIconToMovie: (id: number) => void;
+    filterMoviesByOptionParams: (data: TMDBMoviePageResult[]) => void;
+    fetchPopularMovies: () => Promise<any>;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
     PREFETCH_SIZE: number;
 
-  prefetchMovieDetails: (id: number) => Promise<void | object> | void;
-  ensurePrefetchWindow: () => void;
-  fetchGenres: () => void;
+    prefetchMovieDetails: (id: number) => Promise<void | object> | void;
+    ensurePrefetchWindow: () => void;
+    fetchGenres: () => Promise<any>;
 
     // Session management
     setSessionId: (sessionId: string | null) => void;
@@ -189,16 +191,41 @@ export const model: ModelType = {
     },
 
     setMovieIdQueue() {
+
+        const recommendationPrmses = this.selectedSeededIds.map(id => this.getRecommendations(id))
+        const popularMoviesPrms = fetchMoviesPages(getPopularMovies, 1, 1);
+        const fetchPrmses = [...recommendationPrmses, popularMoviesPrms]
+
+        function getDataACB(response: any) {
+            return response as Array<TMDBMoviePageResult[]>; 
+        }
+        function getMovieResultsACB(data: Array<TMDBMoviePageResult[]>): TMDBMoviePageResult[] {
+            const seen = new Set<number | string>();
+            const allMovies = data.flat().filter(movie => { // Flattens the array of arrays and removes duplicates
+                if (seen.has(movie.id)) return false;
+                seen.add(movie.id);
+                return true;
+            });
+
+            return allMovies;
+        }
+        const prms = Promise.all(fetchPrmses)
+            .then(getDataACB)
+            .then(getMovieResultsACB)
+            .then(this.filterMoviesByOptionParams.bind(this))
+        
+        resolvePromise(prms, this.movieIdQueuePrmsState);
+
+        return prms;
+    },
+
+    fetchPopularMovies() {
         const prms = fetchMoviesPages(getPopularMovies, 1, 1);
         
         // Gets list for Home View
         resolvePromise(prms, this.popularMoviesPrmsState);
 
-        // Gets IDs for the queue
-        const idPrms = prms.then(movies => this.filterAndGetIdsFromMoviesACB(movies));
-        resolvePromise(idPrms, this.movieIdQueuePrmsState);
-
-        return idPrms;
+        return prms;
     },
 
     /* For OptionsView */
@@ -213,7 +240,7 @@ export const model: ModelType = {
         resolvePromise(prms, this.searchMoviesPrmsState);
     },
 
-    getRecommendations(id: number): Promise<void | object> {
+    getRecommendations(id: number): Promise<any> {
         // wrapper function that matches the signature: (page) => Promise
         // Cast Promise<TMDBMoviePage> because API return type includes 'void' (fix? [TODO])
         function fetcherFnCB(pageToFetch: number) {
@@ -226,31 +253,40 @@ export const model: ModelType = {
         return prms;
     },
 
-    selectSeedMovie(id: number) { /* async? */
-        /* [TODO!!!] Maybe instead use with reaction to a change in selectedSeededId, to be able to remove it. */
-        // This will fetch recommendations
-        // based on this ID and populate the queue.
-        this.toggleSeededIconToMovie(id)
-        
-        if (!this.selectedSeededIds.includes(id)){
-            // Använd recommendedCacheMap istället för att call:a API.
-            // recommendedCacheMap.get(id);
-            return;
-        }; /* [TODO!!!] Ta bort rekommendationerna från Swipe queue */
-        function getDataACB(response: any) {
-            return response as TMDBMoviePage; 
-        }
-        function getMovieResultsACB(data: TMDBMoviePage) {
-            recommendedCacheMap.set(id, data.results)
-            return data.results as TMDBMoviePageResult[];
-        }
-        console.log("Seed movie selected:", id);
-        /* [TODO] Use this to populate the swipe queue */
-        
-        return this.getRecommendations(id).then(getDataACB).then(getMovieResultsACB)
+    async filterMoviesByOptionParams(data: TMDBMoviePageResult[]): Promise<number[]> {
+        const filteredData = data.filter(movie =>
+            movie.genre_ids.some(genre => this.selectedGenreIds.includes(genre))
+        );
 
-        /* [TODO] Use conversion to IDs to populate the queue
-        movies.map(m => m.id) */
+        const ratings: Array<number | null> = [];
+        const details: Array<MovieDetails | null> = [];
+
+        function sleep(ms: number): Promise<void> {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        for (const movie of filteredData) {
+            const detail = await getMovieDetails(movie.id) as MovieDetails;
+            if (!detail) {
+                ratings.push(null);
+                details.push(null);
+                continue;
+            }
+            ratings.push(await getImdbRating(detail.imdb_id));
+            details.push(detail);
+            await sleep(10); // Do this to avoid API Rate limiting
+        }
+
+        // Attach rating + filter movies directly
+        const result = filteredData
+            .map((movie, i) => {
+            const r = ratings[i];
+            const detail = details[i];
+            return r !== null && detail !== null ? { ...movie, imdbRating: r, runtime: detail.runtime } : movie;
+            })
+            .filter((movie) => movie.imdbRating !== undefined && movie.imdbRating >= this.minRating && movie.runtime !== undefined && movie.runtime >= this.minRuntime && movie.runtime <= this.maxRuntime);
+
+        return result.map(movie => movie.id);
     },
 
     toggleSeededIconToMovie(id: number) {
@@ -351,6 +387,7 @@ export const model: ModelType = {
             return data;
         });
         resolvePromise(genresPrms, this.genresPrmsState);
+        return genresPrms
     },
 
     setSessionId(sessionId: string | null) {
