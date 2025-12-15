@@ -3,7 +3,6 @@ import { LoginView } from "../views/loginView";
 import { SignupView } from "../views/signupView";
 import { signInWithEmail, signUpWithEmail } from "../authService";
 import { useState } from "react";
-import { addUsernameToProfile } from "../firestoreModel";
 
 const Account = observer(
   function AccountRender() {
