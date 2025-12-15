@@ -95,9 +95,22 @@ const DetailsView = observer(
       const country = countryName.of(countryCode);
       return index < array.length-1 ? `${country}, ` : `${country}`; 
     }
-    function outputBudget(budget: number) {
-      if (!budget || budget <= 0) { return };
-      return <li><b>Budget: </b>{budget.toLocaleString()}$</li>;
+    function outputBoxOfficeValue(value: number, header: string) {
+      if (!value || value <= 0) { return };
+      return <li><b>{header}: </b>{value.toLocaleString("en-us")}$</li>;
+    }
+    function outputBoxOffice(budget: number, revenue: number) {
+      if (budget <= 0 && revenue < 0) return;
+
+      return (
+        <div>
+          <h2>Box Office</h2>
+          <ul>
+            {outputBoxOfficeValue(details.budget, "Budget")}
+            {outputBoxOfficeValue(details.revenue, "Revenue")}
+          </ul>
+        </div>
+      );
     }
     function filterAndSortWatchProviders(options: CountryWatchOptions) {
       if (!options) {
@@ -188,11 +201,7 @@ const DetailsView = observer(
               {peopleTextOutput(actors, "Actors: ")}
             </ul>
             
-            <h2>Box Office</h2>
-            <ul>
-              {outputBudget(details.budget)}
-              <li><b>Gross Revenue: </b>{details.revenue.toLocaleString()}$</li>
-            </ul>
+            {outputBoxOffice(details.budget, details.revenue)}
           </div>
         </div>
       </div>
