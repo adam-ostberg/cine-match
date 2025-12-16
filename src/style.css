@@ -113,7 +113,7 @@ html, body {
     flex-direction: row;
     margin: 0;
     padding: 0;
-    background-color: var(--bg-color);
+    background-color: #201f29;;
 }
 
 .logo-text {
@@ -166,22 +166,56 @@ html, body {
     opacity: 1;
 }
 
-
-
 .swipe-container {
+    position: relative;
     flex: 1;
+    height: 100%
+}
+
+.swipe-content {
+    flex: 1;
+    height: 100%;
     display: grid;
     place-items: center;
     padding-top: 2vh;
     grid-template-rows: 65vh 12vh 6vh;
 }
 
-.swipe-container .swipe-card {
+.swipe-content .swipe-card {
     height: 65vh;
     width: 43vh;
-    object-fit: cover;
     border-radius: 8px;
 }
+
+.swipe-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background-color: #201f29;
+    transition: transform ease 0.2s;
+}
+
+.sidebar-toggle {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(-50%, -50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 0;
+    cursor: pointer;
+}
+.swipe-sidebar:not(.is-open) {
+  transform: translateX(100%);
+}
+
+.swipe-sidebar:not(.is-open) .sidebar-toggle {
+  transform: translate(-50%, -50%) rotate(180deg); 
+}
+
 
 .swipe-like-img, .swipe-dislike-img, .swipe-settings-img {
     height: 65vh;
@@ -257,11 +291,6 @@ html, body {
     border-radius: 5px;
 }
 
-.swipe-sidebar {
-    width: 300px;
-    background-color: var(--bg-color);
-}
-
 /* Styled like genre-option buttons */
 .primary-button {
     border: 2px solid var(--btn-green);
@@ -291,6 +320,7 @@ html, body {
     left: 50%;
     transform: translateX(-50%);
     color: white;
+    background-color: black;
     font-family: 'Inter', system-ui, sans-serif;
     transition: top 0.3s ease-in-out;
     border-bottom: 0px;
@@ -314,6 +344,10 @@ html, body {
 @media (max-width: 1023px) {
     .details-container {
         max-width: 100vw;
+    }
+    .swipe-sidebar {
+        width: 100vw;
+        transition: none;
     }
 }
 

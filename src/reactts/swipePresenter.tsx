@@ -6,7 +6,6 @@ import { NavBarView } from "../views/NavbarView";
 import type { MovieDetails } from "../apiConfig";
 import { DetailsView } from "../views/DetailsView";
 import { useState } from "react";
-
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
 export type SwipePresenterProps = {	
@@ -46,6 +45,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			//document.location.hash = "/details";
 		}
         function closeDetailsACB() {
+			if (!showDetails) return;
 			const background = document.querySelector(".details-view-background");
 			background?.classList.remove("is-dark");
             setShowDetails(false); // Hide details overlay
@@ -66,7 +66,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 
 		return (
 			<div className="swipe-flex-parent">
-				<div className="details-view-background">
+				<div className="details-view-background" onClick={closeDetailsACB}>
 					<NavBarView onLogoClick={navBarlogoClickedACB}/>
 					{view}
 				</div>

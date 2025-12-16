@@ -56,6 +56,7 @@ const Home = observer(
         }
         
         function closeDetailsACB() {
+            if (!showDetails) return;
 			const background = document.querySelector(".details-view-background");
 			background?.classList.remove("is-dark");
             setShowDetails(false); // Hide details overlay
@@ -74,7 +75,7 @@ const Home = observer(
 
         return (
             <div className="home-presenter-parent">
-                <div className="details-view-background">
+                <div className="details-view-background" onClick={closeDetailsACB}>
                     <HomeView
                         onStartSession={sessionStartACB}
                         username={username}
