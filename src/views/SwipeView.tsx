@@ -168,6 +168,8 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
     } else if (info.offset.y < -80 && Math.abs(info.offset.x) < 80) {
       // you might want a vertical animation here too
       upSwipeCB();
+      animate(y, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
+      animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     } else {
       animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     }

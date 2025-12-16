@@ -26,14 +26,31 @@ const DetailsView = observer(
     const [isMuted, setIsMuted] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
-
+    const background = document.querySelector(".details-view-background");
+    
     function openDetailsViewAnimation() {
       const detailContainer = document.getElementById(`details-container ${details.id}`);
-      if (!!detailContainer) { detailContainer.style.top = "100%"; }
+      
+      if (!!detailContainer) { 
+        //detailsScrollableArea?.classList.add("hide-scrollbar");
+        detailContainer.style.top = "100%";
+        detailContainer.style.scrollbarWidth = "none";
+        background?.classList.add("is-dark");
+       }
       setTimeout(() => {
-        if (!!detailContainer) { detailContainer.style.top = "0"; }
-      }, 200);
+        if (!!detailContainer) { 
+          detailContainer.style.top = "0"; 
+        }
+      }, 50);
     }
+    function hideScrollbarDuringAnimation() {
+      const detailsScrollableArea = document.querySelector(".details-scrollable-area");
+      detailsScrollableArea?.classList.add("hide-scrollbar");
+      setTimeout(() => {
+        detailsScrollableArea?.classList.remove("hide-scrollbar");
+      }, 800);
+    }
+    //hideScrollbarDuringAnimation();
 
     // https://stackoverflow.com/q/74245335
     useEffect(() => {
@@ -221,7 +238,7 @@ const DetailsView = observer(
           <div className="details-overlay-gradient"></div>
         </div>
 
-        <div className="details-scrollable-area">
+        <div className="details-scrollable-area hide-scrollbar">
 
           {/* Main section */}
           <div className="details-content-layer">
