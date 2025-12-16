@@ -13,12 +13,14 @@ export function LobbyView(props: LobbyViewProps) {
   }
 
   return (
-    <div>
-      <h1>Lobby View</h1>
-      <p>LobbyId: {props.lobbyId}</p>
-      <p>Users in session: </p>
-      <Userlist usernames={props.usernames} />
-      {props.isHost && <button className="primary-button" onClick={startSwipingACB}>Begin swiping</button>}
+    <div className="lobby-container">
+      <div className="lobby-content">
+        <h1>Lobby</h1>
+        <p>LobbyId: {props.lobbyId}</p>
+        <p>Connected users:</p>
+        <Userlist usernames={props.usernames} />
+        {props.isHost && <button className="primary-button" onClick={startSwipingACB}>Begin swiping</button>}
+      </div>
     </div>
   );
 }
