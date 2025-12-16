@@ -43,14 +43,6 @@ const DetailsView = observer(
         }
       }, 50);
     }
-    function hideScrollbarDuringAnimation() {
-      const detailsScrollableArea = document.querySelector(".details-scrollable-area");
-      detailsScrollableArea?.classList.add("hide-scrollbar");
-      setTimeout(() => {
-        detailsScrollableArea?.classList.remove("hide-scrollbar");
-      }, 800);
-    }
-    //hideScrollbarDuringAnimation();
 
     // https://stackoverflow.com/q/74245335
     useEffect(() => {
