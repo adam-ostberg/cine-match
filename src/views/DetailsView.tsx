@@ -38,7 +38,7 @@ const DetailsView = observer(
     // https://stackoverflow.com/q/74245335
     useEffect(() => {
       // Only run animation once on mount
-      setTimeout(openDetailsViewAnimation, 10);
+      openDetailsViewAnimation();
     }, []);
 
     const details = props.details;
@@ -240,9 +240,9 @@ const DetailsView = observer(
             </div>
             {/* All movie info */}
             <div className="details-info-wrapper">
-              <h1 className="details-title">{details.title}</h1>
+              <h1 className={`details-title ${isPlaying ? "hide" : ""}`}>{details.title}</h1>
               {/* The meta info row */}
-              <div className="details-meta-row">
+              <div className={`details-meta-row ${isPlaying ? "hide" : ""}`}>
                 <span className="meta-item">{year}</span>
                 <span className="meta-dot">•</span>
                 <span className="meta-item">{runtimeText}</span>
@@ -258,11 +258,11 @@ const DetailsView = observer(
                 </div>
               </div>
 
-              <div className="details-genres-row">
+              <div className={`details-genres-row ${isPlaying ? "hide" : ""}`}>
                 {details.genres.slice(0, 3).map(renderGenreCB)}
               </div>
 
-              <p className="details-overview">{details.overview}</p>
+              <p className={`details-overview ${isPlaying ? "hide" : ""}`}>{details.overview}</p>
 
               <div className="details-actions-row">
                 {video && (
