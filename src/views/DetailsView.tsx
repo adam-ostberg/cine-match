@@ -27,19 +27,19 @@ const DetailsView = observer(
     const [isPlaying, setIsPlaying] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const background = document.querySelector(".details-view-background");
-    
+
     function openDetailsViewAnimation() {
       const detailContainer = document.getElementById(`details-container ${details.id}`);
-      
-      if (!!detailContainer) { 
+
+      if (!!detailContainer) {
         //detailsScrollableArea?.classList.add("hide-scrollbar");
         detailContainer.style.top = "100%";
         detailContainer.style.scrollbarWidth = "none";
         background?.classList.add("is-dark");
-       }
+      }
       setTimeout(() => {
-        if (!!detailContainer) { 
-          detailContainer.style.top = "0"; 
+        if (!!detailContainer) {
+          detailContainer.style.top = "0";
         }
       }, 50);
     }
@@ -256,10 +256,10 @@ const DetailsView = observer(
                 <span className="meta-dot">•</span>
                 <span className="meta-item">{runtimeText}</span>
                 <span className="meta-dot">•</span>
-                <div className="meta-rating imdb">
+                <a className="meta-rating imdb" href={`https://www.imdb.com/title/${details.imdb_id}`} target="_blank" onClick={isPlaying ? handleMainPlayButtonACB : undefined}>
                   <img src={imdbLogo} alt="IMDb" className="meta-imdb-logo" />
                   <span>{imdbRating ? imdbRating.toFixed(1) : details.vote_average.toFixed(1)}</span>
-                </div>
+                </a>
                 <span className="meta-dot">•</span>
                 <div className="meta-rating popularity" style={{ color: popColor }}>
                   <FaFire />
