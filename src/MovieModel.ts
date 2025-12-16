@@ -53,7 +53,7 @@ export type ModelType = {
     getRecommendations: (id: number) => Promise<TMDBMoviePageResult[]>;
     toggleSeededIconToMovie: (id: number) => void;
     toggleAlltimeLike: (movie: TMDBMoviePageResult, removePossible?: boolean) => void
-    setUsername: (id: number) => void;
+    setUsername: (username: string) => void;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
