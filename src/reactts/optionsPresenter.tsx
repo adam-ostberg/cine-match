@@ -39,9 +39,8 @@ const Options = observer(
             props.model.searchMovie(q);
         }
 
-        function onSelectSeedMovieACB(movie: TMDBMoviePageResult) {
-            props.model.selectSeedMovie(movie.id);
-            props.model.toggleAlltimeLike(movie);
+        function onSelectSeedMovieACB(id: number) {
+            props.model.toggleSeededIconToMovie(id);
         }
 
         return (

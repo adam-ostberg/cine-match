@@ -27,3 +27,14 @@ export function getCountryCode(): string {
   const countryCode = locale.split("-")[1];
   return countryCode
 }
+
+
+export function chunk(array: Array<any>, size: number = 5) {
+  const result = [];
+
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+
+  return result;
+}

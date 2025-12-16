@@ -154,7 +154,7 @@ export function searchTMDBMovies(searchParams: TMDBsearchData) {
     .catch(handleErrorACB);
 }
 
-export function getMovieDetails(movie_id: number) {
+export async function getMovieDetails(movie_id: number): Promise<object | null> {
   const ENDPOINT = `/movie/${movie_id}`;
 
   function handleResponseACB(response: Response) {
@@ -170,6 +170,7 @@ export function getMovieDetails(movie_id: number) {
 
   function handleErrorACB(error: unknown) {
     console.error(error);
+    return null
   }
 
   return fetch(BASE_URL + ENDPOINT, optionsGET)
@@ -273,6 +274,10 @@ export interface TMDBMoviePageResult {
   vote_average: number;
   vote_count: number;
   genre_ids: number[];
+
+  imdbRating?: number; // appended after fetch
+  runtime?: number; // appended after fetch
+  sourceType: string; // either "recommended" | "popular" | "liked" (from another user)
 }
 
 export interface TMDBMoviePage {
@@ -538,3 +543,6 @@ export function getMovieList() {
     .then(handleSuccessACB)
     .catch(handleErrorACB);
 }
+
+const data = await getRecommendedMovie(550, 1);
+console.log(data);

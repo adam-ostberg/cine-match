@@ -9,13 +9,13 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useState } from "react";
 import { type PanInfo } from "framer-motion";
-import { div } from "motion/react-client";
+import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
   currentSessionId: string | null;
-  onDislike: () => void;
-  onLike: () => void;
+  onDislike: (id: number) => void;
+  onLike: (id: number) => void;
   onMoreInfo: () => void;
 }
 
@@ -49,12 +49,12 @@ function SwipeView(props: SwipeViewProps) {
 
   const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
   const [swipeDirection, setSwipeDirection] = useState<SwipeDir>(null);
-  function handleSwipe(dir: "left" | "right") {
+  function handleSwipe(dir: "left" | "right", id: number) {
 
     if (dir === "right") {
-      props.onLike();     
+      props.onLike(id);     
     } else {
-      props.onDislike();
+      props.onDislike(id);
     }
     setSwipeDirection(null);
   }
@@ -62,7 +62,7 @@ function SwipeView(props: SwipeViewProps) {
   function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
     if (!detail) { return };
     const is_top_card = index === array.length-1;
-    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right")} leftSwipeCB={() => handleSwipe("left")} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card}/>
+    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right", detail.id)} leftSwipeCB={() => handleSwipe("left", detail.id)} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card}/>
   }
   function outputTitle(firstDetail: MovieDetails | undefined) {
     if (!firstDetail?.title) { return "" };
@@ -73,7 +73,7 @@ function SwipeView(props: SwipeViewProps) {
   return (
     <div className="swipe-container">
       <p id="current-session">Current Session id: {props.currentSessionId}</p>
-      {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection))}
+      {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <p>__loading__</p>}
       <div className="swipe-title">{outputTitle(firstDetail)}</div>
       <div className="controls">
         <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
@@ -94,10 +94,39 @@ function SwipeView(props: SwipeViewProps) {
 const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0)
-
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
-  const dislikeOpacity = useTransform(x, [-130 ,-70, 0, 70] , [0, 1, 0, 0]);
-  const likeOpacity = useTransform(x, [-70, 0, 70, 130] , [0, 0, 0.9, 0]);
+  const dislikeOpacity = useTransform(x, [-145 ,-70, 0, 70] , [0, 1, 0, 0]);
+  const likeOpacity = useTransform(x, [-70, 0, 70, 145] , [0, 0, 0.9, 0]);
+
+  const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
+
+  const mapRange = (
+      value: number,
+      inMin: number,
+      inMax: number,
+      outMin: number,
+      outMax: number
+    ) => {
+      const t = clamp01((value - inMin) / (inMax - inMin));
+      return outMin + t * (outMax - outMin);
+    };
+
+  const settingsOpacity = useTransform(
+    [x, y],
+    (values: number[]) => {
+      const latestX = values[0] ?? 0;
+      const latestY = values[1] ?? 0;
+
+      const yOpacity = mapRange(latestY, -80, 0, 0.7, 0);
+      let xOpacity = mapRange(Math.abs(latestX), 0, 50, 0.7, 0);
+      if (Math.abs(latestX) > 10) {
+        xOpacity = mapRange(Math.abs(latestX), 0, 30, 0.4, 0);
+      }
+
+      // choose behavior
+      return Math.min(yOpacity, xOpacity);
+    }
+  );
   const rotate = useTransform(x, [150, -150], [-18, 18]);
 
   useEffect(() => {
@@ -139,6 +168,8 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
     } else if (info.offset.y < -80 && Math.abs(info.offset.x) < 80) {
       // you might want a vertical animation here too
       upSwipeCB();
+      animate(y, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
+      animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     } else {
       animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     }
@@ -171,7 +202,6 @@ return (
         opacity,
         rotate,
         zIndex: -1,
-        
       }} 
     />
     <motion.img
@@ -208,6 +238,26 @@ return (
         x,
         y,
         opacity: dislikeOpacity,
+        rotate,
+        position: "absolute",
+        top: 0,
+        right: 0,
+      }} 
+    />
+    <motion.img
+      src={"src/assets/settingsImg.png"}
+      alt={"Placeholder"}
+      className="swipe-settings-img"
+      drag
+      dragConstraints={{left: -50, right: 50, top: 0, bottom: 0}}
+      dragMomentum={false}
+      onDragEnd={handleDragEnd}
+      style={{
+        gridRow: 1,
+        gridColumn: 1,
+        x,
+        y,
+        opacity: settingsOpacity,
         rotate,
         position: "absolute",
         top: 0,
