@@ -14,19 +14,23 @@ export type SwipePresenterProps = {
 const Swipe = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
 	function SwipeRender(props: SwipePresenterProps) {
 
-		function swipeDislikeACB() {
+		function swipeDislikeACB(id: number) {
+			props.model.addToDisliked(id);
 			props.model.nextMovie();
 			console.log("Disliked");
 		}
 
-		function swipeLikeACB() {
+		function swipeLikeACB(id: number) {
 			const currentMovie = props.model.movieDetailsPrmsState.data;
 
 			// Report the swipe to the model
 			if (currentMovie) {
 				props.model.reportSwipe(currentMovie.id, currentMovie.title, currentMovie.poster_path || "", true);
 			}
+			props.model.addToLiked(id);
+			props.model.insertRecommendedMovieIntoQueue(id);
 			props.model.nextMovie();
+
 			console.log("Liked");
 		}
 

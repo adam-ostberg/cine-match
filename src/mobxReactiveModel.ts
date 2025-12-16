@@ -11,6 +11,9 @@ declare global {
 }
 
 export const reactiveModel = observable(model);
+reactiveModel.fetchPopularMovies();
+reactiveModel.fetchGenres().then(() => reactiveModel.toggleAllGenres());
+reactiveModel.toggleSeededIconToMovie(550);
 const idQueuePrms = reactiveModel.setMovieIdQueue();
 idQueuePrms.then(() => reactiveModel.currentMovieEffect());
 
