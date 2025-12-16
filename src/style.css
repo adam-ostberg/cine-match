@@ -201,9 +201,9 @@ html, body {
     position: absolute;
     top: 50%;
     left: 0;
-    transform: translate(-50%, -50%);
-    width: 28px;
-    height: 28px;
+    transform: translate(-75%, -50%);
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     border: 0;
     cursor: pointer;
@@ -213,7 +213,7 @@ html, body {
 }
 
 .swipe-sidebar:not(.is-open) .sidebar-toggle {
-  transform: translate(-50%, -50%) rotate(180deg); 
+  transform: translate(-100%, -50%) rotate(180deg); 
 }
 
 
@@ -348,6 +348,9 @@ html, body {
     .swipe-sidebar {
         width: 100vw;
         transition: none;
+    }
+    .swipe-sidebar.is-open .sidebar-toggle {
+        transform: translate(0%, -50%);
     }
 }
 
