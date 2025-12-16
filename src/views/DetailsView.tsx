@@ -99,6 +99,48 @@ const DetailsView = observer(
       setIsMuted(!isMuted);
     }
 
+    /* function peopleTextOutput(people: TMDBCast[] | TMDBCrew[], headerText: string) {
+      let text = "";
+      let i = 0;
+      for (const person of people) {
+        if (i < people.length-1) {
+          text += person.name + ", ";
+        }
+        else {
+          text += person.name;
+        }
+        i += 1;
+      }
+      return <li><b>{headerText}</b>{text}</li>
+    }
+    function outputSpokenLanguagesCB(language: SpokenLanguages, index: number, array: SpokenLanguages[]) {
+      if (!language) { return };
+
+      return index < array.length-1 ? `${language.english_name}, ` : `${language.english_name}`;
+    }
+    function outputOriginCountryCB(countryCode: string, index: number, array: string[]) {
+      if (!countryCode) { return };
+      const country = countryName.of(countryCode);
+      return index < array.length-1 ? `${country}, ` : `${country}`; 
+    }
+    function outputBoxOfficeValue(value: number, header: string) {
+      if (!value || value <= 0) { return };
+      return <li><b>{header}: </b>{value.toLocaleString("en-us")}$</li>;
+    }
+    function outputBoxOffice(budget: number, revenue: number) {
+      if (budget <= 0 && revenue < 0) return;
+
+      return (
+        <div>
+          <h2>Box Office</h2>
+          <ul>
+            {outputBoxOfficeValue(details.budget, "Budget")}
+            {outputBoxOfficeValue(details.revenue, "Revenue")}
+          </ul>
+        </div>
+      );
+    } */
+
     function filterAndSortWatchProviders(options: CountryWatchOptions) {
       if (!options) {
         return [];
@@ -159,7 +201,6 @@ const DetailsView = observer(
         </div>
       )
     }
-
     return (
       <div className="details-container" id={`details-container ${details.id}`}>
 
