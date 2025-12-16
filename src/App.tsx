@@ -8,10 +8,14 @@ import { Swipe } from "./reactts/swipePresenter";
 import { Options } from "./reactts/optionsPresenter";
 import { Account } from "./reactts/accountPresenter";
 import { Profile } from "./reactts/profilePresenter";
+import { Lobby } from "./reactts/lobbyPresenter";
+import type { SessionType } from "./SessionModel";
 
 export type AppRenderProps = {
 	model: ModelType
+	sessionModel: SessionType
 }
+
 /* 
 // From https://youtu.be/xhURh2RDzzg
 
@@ -103,7 +107,8 @@ function() {
 
 
 		firebase.auth().signInAnonymously()
-	} */
+	} 
+*/
 const App = observer(
 	function AppRender(props: AppRenderProps) {
 		function makeRouter() {
@@ -127,11 +132,15 @@ const App = observer(
 				},
 				{
 					path: "/account",
-					element: <Account />
+					element: <Account model={props.model} />
 				},
 				{
 					path: "/profile",
 					element: <Profile model={props.model} />
+				},
+				{
+					path: "/lobby",
+					element: <Lobby model={props.model} sessionModel={props.sessionModel}/>
 				},
 			]);
 		}

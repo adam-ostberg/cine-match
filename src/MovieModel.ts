@@ -1,7 +1,7 @@
 import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
-import { handleSwipeInSession } from "./firestoreModel";
+import { handleSwipeInSession, type UserType } from "./firestoreModel";
 
 export type ModelType = {
     username: string;
@@ -20,6 +20,7 @@ export type ModelType = {
     watchProvidersPrmsState: PromiseState;
     searchMoviesPrmsState: PromiseState;
     getRecPrmsState: PromiseState;
+    getCurrentSessionUsernamesPrmsState: PromiseState;
     currentSessionId: string | null;
     selectedGenreIds: number[];
     selectedSeededIds: number[];
@@ -52,7 +53,7 @@ export type ModelType = {
     selectSeedMovie: (id: number) => void;
     toggleSeededIconToMovie: (id: number) => void;
     toggleAlltimeLike: (movie: TMDBMoviePageResult, removePossible?: boolean) => void
-    setUsername: (id: number) => void;
+    setUsername: (username: string) => void;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
@@ -64,6 +65,7 @@ export type ModelType = {
 
     // Session management
     setSessionId: (sessionId: string | null) => void;
+    getCurrentSessionId: () => string | null;
 
     reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
 }
@@ -106,6 +108,7 @@ export const model: ModelType = {
     prefetchWindowPrmsState: {promise: null, data: null, error: null},
     searchMoviesPrmsState: {promise: null, data: null, error: null},
     getRecPrmsState: {promise: null, data: null, error: null},
+    getCurrentSessionUsernamesPrmsState: {promise: null, data: null, error: null},
     username: "", // temp placeholder
     alltimeLikedMovieIds: [],
     alltimeLikedMoviesArray: [],
@@ -367,15 +370,20 @@ export const model: ModelType = {
         this.currentSessionId = sessionId;
     },
 
+    getCurrentSessionId() {
+        return this.currentSessionId;
+    },
+
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
             await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
         }
     },
 
-    setUsername() {
-        /* [TODO] */
+    setUsername(username: string) {
+        this.username = username;
     },
+
     toggleAlltimeLike(movie: TMDBMoviePageResult, removePossible: boolean = true) { /* [TODO] Make a reaction to add movie details to AlltimeLiked */
         const targetId = movie.id;
 
