@@ -1,10 +1,11 @@
 import "../style.css"
-import { type CountryWatchOptions, type MovieDetails, type SpokenLanguages, type TMDBCast, type TMDBCrew, type TMDBGenre, type TMDBMovieCredits, type TMDBVideoType, type WatchProvider, type WatchProvidersResponse } from "../apiConfig";
+import { type MovieDetails, type TMDBCast, type TMDBCrew, type WatchProvider, type CountryWatchOptions, type TMDBGenre, type TMDBVideoType, type TMDBMovieCredits, type WatchProvidersResponse, } from "../apiConfig";
 import { observer } from "mobx-react-lite";
-import { getVideoUrl, minutesToHourAndMinutesText, getCountryCode } from "../helperFunctions";
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-
+import { minutesToHourAndMinutesText, getCountryCode } from "../helperFunctions";
+import { useState, useEffect, useRef } from "react";
+/* npm install react-icons */
+import { FaArrowLeft, FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaFire, FaUserCircle } from "react-icons/fa";
+import imdbLogo from "../assets/imdb_logo_2016.svg";
 
 export type DetailsViewProps = {
   details: MovieDetails;
@@ -13,50 +14,67 @@ export type DetailsViewProps = {
   imdb: number;
   watchProviders: WatchProvidersResponse;
   onClose: () => void;
-  //trailerKey: string | null;
 };
 
-function openDetailsViewAnimation() {
-  const detailContainer = document.getElementById("details-container");
-  const movieBg = document.getElementById("movie-bg");
-  if (!!detailContainer) { detailContainer.style.top = "100%";}
-  setTimeout(() => {
-    if (!!detailContainer) { detailContainer.style.top = "0";}
-  }, 200);
-}
+/* Based on https://www.cineby.gd/movie/812583 */
 
 const DetailsView = observer(
   function DetailsViewRender(props: DetailsViewProps) {
 
-    openDetailsViewAnimation();
+    // State
+    const [showVideo, setShowVideo] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+
+    function openDetailsViewAnimation() {
+      const detailContainer = document.getElementById(`details-container ${details.id}`);
+      if (!!detailContainer) { detailContainer.style.top = "100%"; }
+      setTimeout(() => {
+        if (!!detailContainer) { detailContainer.style.top = "0"; }
+      }, 200);
+    }
+
+    // https://stackoverflow.com/q/74245335
+    useEffect(() => {
+      // Only run animation once on mount
+      setTimeout(openDetailsViewAnimation, 10);
+    }, []);
 
     const details = props.details;
     const cast = props.credits.cast;
     const crew = props.credits.crew;
     const countryCode = getCountryCode();
-    const countryName = new Intl.DisplayNames(["en"], { type: "region" });
+    // const countryName = new Intl.DisplayNames(["en"], { type: "region" });
     const watchProviders = props.watchProviders.results[countryCode];
     const imdbRating = props.imdb
     const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
-    const POSTER_WIDTH_URL = "w780/";
-    const LOGO_SIZE_URL = "w185";
-    const POSTER_URL = TMDB_BASE_URL + POSTER_WIDTH_URL + details.poster_path;
+    const video = props.video
+    const LOGO_SIZE_URL = "original";
+    const PROFILE_SIZE_URL = "w185";
+    const BACKDROP_URL = `${TMDB_BASE_URL}/original${details.backdrop_path}`;
+    /* const LOGO_URL = TMDB_BASE_URL + POSTER_WIDTH_URL + details.logo_path; */
 
-    const HAS_TRAILER = !!props.video;
-    const videoUrl = HAS_TRAILER ? getVideoUrl(props.video)?? undefined : undefined;
-    const videoBox = !!videoUrl ? <iframe className="trailer-video" src={videoUrl}></iframe> : "";
+    // enablejsapi=1 is crucial for custom controls to work
+    // from https://avada.com/documentation/youtube-video-parameters/
+    // => https://developers.google.com/youtube/player_parameters#ParametersParameters
+    // https://developers.google.com/youtube/iframe_api_reference
+    const trailerUrl = video
+      ? `https://www.youtube.com/embed/${video.key}?autoplay=1&controls=0&loop=1&playlist=${video.key}&rel=0&iv_load_policy=3&fs=0&modestbranding=1&enablejsapi=1`
+      : null;
 
-    const dateFormatter = new Intl.DateTimeFormat("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric"
-    });
+    const runtimeText = minutesToHourAndMinutesText(Number(details.runtime));
+    const year = details.release_date ? details.release_date.split("-")[0] : "";
+
+    // Popularity Color Logic
+    // [TODO] Make a range
+    const popularityScore = details.popularity;
+    let popColor = "white";
+    if (popularityScore > 400) popColor = "#e50914"; // Red hot
+    else if (popularityScore > 200) popColor = "#ffbf00"; // Orange
 
     function closeACB() {
       props.onClose();
-    }
-    function genreBoxesCB(genre: TMDBGenre) {
-      return <div className="genre-box">{genre.name}</div>;
     }
     function getDirector(crew: TMDBCrew[]): TMDBCrew | undefined {
       const director = crew.find(person => person.job == "Director");
@@ -66,44 +84,26 @@ const DetailsView = observer(
       const writers = crew.filter(person => person.department === "Writing").slice(0, 2);
       return writers;
     }
-    function getTopThreeActors(cast: TMDBCast[]): Array<TMDBCast> {
+    function getTopActors(cast: TMDBCast[]): Array<TMDBCast> {
       const actors = cast.filter(person => person.known_for_department === "Acting"); // Only actors have a .order key
-      const topThreeActors = actors.filter(person => person.order < 3).sort((a, b) => a.order - b.order);
-      return topThreeActors;
+      const topSixActors = actors.filter(person => person.order < 8).sort((a, b) => a.order - b.order);
+      return topSixActors;
     }
-    function peopleTextOutput(people: TMDBCast[] | TMDBCrew[], headerText: string) {
-      let text = "";
-      let i = 0;
-      for (const person of people) {
-        if (i < people.length-1) {
-          text += person.name + ", ";
-        }
-        else {
-          text += person.name;
-        }
-        i += 1;
-      }
-      return <li><b>{headerText}</b>{text}</li>
-    }
-    function outputSpokenLanguagesCB(language: SpokenLanguages, index: number, array: SpokenLanguages[]) {
-      if (!language) { return };
 
-      return index < array.length-1 ? `${language.english_name}, ` : `${language.english_name}`;
+    function toggleMuteACB() {
+      if (!iframeRef.current) return;
+      const action = isMuted ? "unMute" : "mute";
+      // Post message to YouTube Iframe API
+      // from https://medium.com/@mihauco/youtube-iframe-api-without-youtube-iframe-api-f0ac5fcf7c74
+      iframeRef.current.contentWindow?.postMessage(`{"event":"command","func":"${action}"}`, '*');
+      setIsMuted(!isMuted);
     }
-    function outputOriginCountryCB(countryCode: string, index: number, array: string[]) {
-      if (!countryCode) { return };
-      const country = countryName.of(countryCode);
-      return index < array.length-1 ? `${country}, ` : `${country}`; 
-    }
-    function outputBudget(budget: number) {
-      if (!budget || budget <= 0) { return };
-      return <li><b>Budget: </b>{budget.toLocaleString()}$</li>;
-    }
+
     function filterAndSortWatchProviders(options: CountryWatchOptions) {
       if (!options) {
         return [];
       }
-      const providers = [...options.rent?? [], ...options.buy?? [], options.flatrate?? []] as WatchProvider[];
+      const providers = [...options.rent ?? [], ...options.buy ?? [], options.flatrate ?? []] as WatchProvider[];
       const uniqueProviders = [
         ...new Map(providers.map(p => [p.provider_id, p])).values()
       ];
@@ -112,87 +112,160 @@ const DetailsView = observer(
     }
     function outputWatchProviders(provider: WatchProvider) {
       return (
-        <div key={provider.provider_id} className="watch-provider-column">
-          <a href={watchProviders.link}>
-            <img src={TMDB_BASE_URL + LOGO_SIZE_URL + provider.logo_path} alt=""/>
-            {provider.provider_name}
+        <div key={provider.provider_id} className="detail-card provider">
+          <a /* href={watchProviders.link} */> {/* Goes to TMDB site, not correct link */}
+            <img src={TMDB_BASE_URL + LOGO_SIZE_URL + provider.logo_path} alt="" />
+            <span className="name">{provider.provider_name}</span>
           </a>
         </div>
       );
     }
 
     const director = getDirector(crew);
-    const writers = getTopThreeWriters(crew);
-    const actors = getTopThreeActors(cast);
-    const runtimeText = minutesToHourAndMinutesText(Number(details.runtime));
+    const topActors = getTopActors(cast);
+    const validProviders = filterAndSortWatchProviders(watchProviders);
+
+    function handleMainPlayButtonACB() {
+      if (!showVideo) {
+        // First time click: Show video and start state as playing
+        setShowVideo(true);
+        setIsPlaying(true);
+        // iframe will autoplay due to URL param, but state needs to match
+      } else {
+        // Toggle existing video
+        if (!iframeRef.current) return;
+        const action = isPlaying ? "pauseVideo" : "playVideo";
+        // Post message to YouTube Iframe API
+        // from https://medium.com/@mihauco/youtube-iframe-api-without-youtube-iframe-api-f0ac5fcf7c74
+        iframeRef.current.contentWindow?.postMessage(`{"event": "command", "func": "${action}"}`, '*');
+        setIsPlaying(!isPlaying);
+      }
+    }
+
+    function renderGenreCB(genre: TMDBGenre) {
+      return <span key={genre.id} className="details-genre-chip">{genre.name}</span>;
+    }
+
+    function renderActorCB(actor: TMDBCast) {
+      return (
+        <div key={actor.id} className="detail-card actor">
+          {actor.profile_path ? (
+            <img className="headshot" src={TMDB_BASE_URL + PROFILE_SIZE_URL + actor.profile_path} alt={actor.name} />
+          ) : (
+            <FaUserCircle className="no-image" />
+          )}
+          <span className="name">{actor.name}</span>
+          <span className="role">{actor.character}</span>
+        </div>
+      )
+    }
 
     return (
-      <div className="details-container" id="details-container">
+      <div className="details-container" id={`details-container ${details.id}`}>
 
-        <div className="movie-bg" id="movie-bg">
-          <img src={POSTER_URL} alt="Movie poster background" />
-        </div>
-        <div className="details-content">
-          <IconButton className="close-button" onClick={closeACB} aria-label="close">
-            <CloseIcon/>
-          </IconButton>
-
-          <div className="details-header">
-            <div className="details-header-info">
-              <h1>{details.title}</h1>
-              <div>{details.release_date.split("-")[0]} - {runtimeText}</div>
-            </div>
-            <div className="details-header-metrics">
-              <div className="imdb-rating">
-                <img src='src/assets/imdb_logo.png' alt="IMDB Rating"/> {/* [TODO] Use imdB logo for the src */}
-                <span>{imdbRating}</span>
-              </div>
-              <div className="popularity">
-                <img src="src/assets/popularity.png" alt="TMDB Popularity" />
-                <span>{details.popularity.toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="media-section">
-            <img className="poster"
-              src={POSTER_URL}
+        {/* Background layer */}
+        <div className="details-background">
+          {trailerUrl && showVideo ? (
+            <iframe
+              ref={iframeRef}
+              className="details-video-frame"
+              src={trailerUrl}
+              title="Movie Trailer"
+              allow="autoplay; encrypted-media; loop;"
             />
-            {videoBox}
-            <div className="media-section-sidebar">
-              <p>JustWatch Providers:</p>
-              {filterAndSortWatchProviders(watchProviders).slice(0, 8).map(outputWatchProviders)}
-            </div>
+          ) : (
+            <img src={BACKDROP_URL} alt="Background" className="details-fallback-img" />
+          )}
 
+          <div className="details-overlay-gradient"></div>
+        </div>
+
+        <div className="details-scrollable-area">
+
+          {/* Main section */}
+          <div className="details-content-layer">
+
+            <div className="details-top-bar">
+              <button onClick={closeACB} className="details-nav-btn back">
+                <FaArrowLeft />
+              </button>
+              {trailerUrl && showVideo && (
+                <div className="details-video-controls">
+                  <button onClick={toggleMuteACB} className="details-nav-btn control">
+                    {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
+                  </button>
+                </div>
+              )}
+            </div>
+            {/* All movie info */}
+            <div className="details-info-wrapper">
+              <h1 className="details-title">{details.title}</h1>
+              {/* The meta info row */}
+              <div className="details-meta-row">
+                <span className="meta-item">{year}</span>
+                <span className="meta-dot">•</span>
+                <span className="meta-item">{runtimeText}</span>
+                <span className="meta-dot">•</span>
+                <div className="meta-rating imdb">
+                  <img src={imdbLogo} alt="IMDb" className="meta-imdb-logo" />
+                  <span>{imdbRating ? imdbRating.toFixed(1) : details.vote_average.toFixed(1)}</span>
+                </div>
+                <span className="meta-dot">•</span>
+                <div className="meta-rating popularity" style={{ color: popColor }}>
+                  <FaFire />
+                  <span>{Math.round(details.popularity)}</span>
+                </div>
+              </div>
+
+              <div className="details-genres-row">
+                {details.genres.slice(0, 3).map(renderGenreCB)}
+              </div>
+
+              <p className="details-overview">{details.overview}</p>
+
+              <div className="details-actions-row">
+                {video && (
+                  <button className="primary-button" onClick={handleMainPlayButtonACB}>
+                    {isPlaying ? <FaPause /> : <FaPlay />}
+                    <span>{isPlaying ? " Pause Trailer" : " Play Trailer"}</span>
+                  </button>)}
+                <button className="secondary-button" title="Add to Liked">
+                  +
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="details-info">
-            <div className="genre-boxes">
-              {details.genres.map(genreBoxesCB)}
-            </div>
-            
-            <p className="overview">
-              {details.overview}
-            </p>
 
-            <h2>Details</h2>
-            <ul>
-              <li><b>Release date: </b>{dateFormatter.format(new Date(details.release_date))}</li>
-              <li><b>Origin Country: </b>{details.origin_country.map(outputOriginCountryCB)}</li>
-              <li><b>Languages: </b> {details.spoken_languages.map(outputSpokenLanguagesCB)}</li>
-            </ul>
-
-            <h2>Cast & Crew</h2>
-            <ul>
-              <li><b>Director: </b>{director?.name}</li>
-              {peopleTextOutput(writers, "Writer: ")}
-              {peopleTextOutput(actors, "Actors: ")}
-            </ul>
-            
-            <h2>Box Office</h2>
-            <ul>
-              {outputBudget(details.budget)}
-              <li><b>Gross Revenue: </b>{details.revenue.toLocaleString()}$</li>
-            </ul>
+          {/* MORE INFO SECTION */}
+          <div className="details-more-info">
+            {director && (
+              <div className="details-section">
+                <h3>Director</h3>
+                {/* From renderActor */}
+                {director.profile_path ? (
+                  <img className="headshot" src={TMDB_BASE_URL + PROFILE_SIZE_URL + director.profile_path} alt={director.name} />
+                ) : (
+                  <FaUserCircle className="no-image" />
+                )}
+                <p className="director-name">{director ? director?.name : ""}</p>
+              </div>
+            )}
+            {topActors.length > 0 && (
+              <div className="details-section">
+                <h3>Top Cast</h3>
+                <div className="details-grid-row">
+                  {topActors.map(renderActorCB)}
+                </div>
+              </div>
+            )}
+            {validProviders.length > 0 && (
+              <div className="details-section">
+                <h3>Where to Watch</h3>
+                <div className="details-grid-row">
+                  {validProviders.map(outputWatchProviders)}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
