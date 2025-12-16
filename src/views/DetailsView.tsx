@@ -26,13 +26,22 @@ const DetailsView = observer(
     const [isMuted, setIsMuted] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement>(null);
-
+    const background = document.querySelector(".details-view-background");
+    
     function openDetailsViewAnimation() {
       const detailContainer = document.getElementById(`details-container ${details.id}`);
-      if (!!detailContainer) { detailContainer.style.top = "100%"; }
+      
+      if (!!detailContainer) { 
+        //detailsScrollableArea?.classList.add("hide-scrollbar");
+        detailContainer.style.top = "100%";
+        detailContainer.style.scrollbarWidth = "none";
+        background?.classList.add("is-dark");
+       }
       setTimeout(() => {
-        if (!!detailContainer) { detailContainer.style.top = "0"; }
-      }, 200);
+        if (!!detailContainer) { 
+          detailContainer.style.top = "0"; 
+        }
+      }, 50);
     }
 
     // https://stackoverflow.com/q/74245335
@@ -221,7 +230,7 @@ const DetailsView = observer(
           <div className="details-overlay-gradient"></div>
         </div>
 
-        <div className="details-scrollable-area">
+        <div className="details-scrollable-area hide-scrollbar">
 
           {/* Main section */}
           <div className="details-content-layer">

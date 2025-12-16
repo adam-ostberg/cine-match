@@ -5,7 +5,8 @@ import type { TMDBMoviePageResult } from "../apiConfig.ts";
 // import type { PromiseState } from "../resolvePromise.ts";
 import { createSession, joinSession, listenToSession } from "../firestoreModel.ts";
 import { type ModelType } from "../MovieModel.ts";
-
+import { useState } from "react";
+import { DetailsView } from "../views/DetailsView.tsx";
 /*
 export type HomeModel = {
     initiateStart: () => void;
@@ -20,7 +21,7 @@ export type HomePresenterProps = {
 
 const Home = observer(
     function HomeRender(props: HomePresenterProps) {
-
+        const [showDetails, setShowDetails] = useState(false); // State to control details overlay
         async function sessionStartACB() {
             props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
             if (!props.model.userId) {
@@ -49,17 +50,38 @@ const Home = observer(
         }
 
         function onMovieClickedACB(id: number) {
+            setShowDetails(true);
             props.model.setCurrentMovieId(id);
-            window.location.hash = "#/details"; // Navigate to details
+            //window.location.hash = "#/details"; // Navigate to details
+        }
+        
+        function closeDetailsACB() {
+			const background = document.querySelector(".details-view-background");
+			background?.classList.remove("is-dark");
+            setShowDetails(false); // Hide details overlay
         }
 
+		const HAS_ALL_DETAILS_DATA = (
+			!!props.model.movieDetailsPrmsState.data
+			&& !!props.model.movieVideosPrmsState.data
+			&& !!props.model.movieCreditsPrmsState.data
+			&& !!props.model.imdbRatingPrmsState.data
+			&& !!props.model.watchProvidersPrmsState.data
+		)
+		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
+
         return (
-            <HomeView
-                onStartSession={sessionStartACB}
-                onJoinSession={sessionJoinACB}
-                movies={(props.model.popularMoviesPrmsState.data as TMDBMoviePageResult[]) || []}
-                onMovieClick={onMovieClickedACB}
-            />
+            <div className="home-presenter-parent">
+                <div className="details-view-background">
+                    <HomeView
+                        onStartSession={sessionStartACB}
+                        onJoinSession={sessionJoinACB}
+                        movies={(props.model.popularMoviesPrmsState.data as TMDBMoviePageResult[]) || []}
+                        onMovieClick={onMovieClickedACB}
+                    />
+                </div>
+                {details}
+            </div>
         );
     }
 );
