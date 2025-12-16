@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { minutesToHourAndMinutesText, getCountryCode } from "../helperFunctions";
 import { useState, useEffect, useRef } from "react";
 /* npm install react-icons */
-import { FaArrowLeft, FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaFire, FaUserCircle } from "react-icons/fa";
+import { FaArrowLeft, FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaFire, FaUserCircle, FaExternalLinkAlt, /* FaPlus */ } from "react-icons/fa";
 import imdbLogo from "../assets/imdb_logo_2016.svg";
 
 export type DetailsViewProps = {
@@ -269,10 +269,18 @@ const DetailsView = observer(
                   <button className="primary-button" onClick={handleMainPlayButtonACB}>
                     {isPlaying ? <FaPause /> : <FaPlay />}
                     <span>{isPlaying ? " Pause Trailer" : " Play Trailer"}</span>
-                  </button>)}
-                <button className="secondary-button" title="Add to Liked">
-                  +
-                </button>
+                  </button>
+                )}
+                {video && (
+                  <a href={`https://www.youtube.com/watch?v=${video.key}`} target="_blank" onClick={isPlaying ? handleMainPlayButtonACB : undefined} > {/* Makes sure it pauses */}
+                    <button className="secondary-button">
+                      <FaExternalLinkAlt />
+                    </button>
+                  </a>
+                )}
+                {/* <button className="secondary-button" title="Add to Liked"> [TODO]
+                  <FaPlus /> Add to Liked
+                </button> */}
               </div>
             </div>
           </div>
