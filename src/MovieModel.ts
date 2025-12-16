@@ -21,6 +21,7 @@ export type ModelType = {
     watchProvidersPrmsState: PromiseState;
     searchMoviesPrmsState: PromiseState;
     getRecPrmsState: PromiseState;
+    getCurrentSessionUsernamesPrmsState: PromiseState;
     currentSessionId: string | null;
     selectedGenreIds: number[];
     selectedSeededIds: number[];
@@ -53,9 +54,6 @@ export type ModelType = {
     toggleSeededIconToMovie: (id: number) => void;
     toggleAlltimeLike: (movie: TMDBMoviePageResult, removePossible?: boolean) => void
     setUsername: (id: number) => void;
-    filterMoviesByOptionParams: (data: TMDBMoviePageResult[]) => void;
-    fetchPopularMovies: () => Promise<any>;
-    insertRecommendedMovieIntoQueue: (movieId: number) => void;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };
@@ -67,6 +65,7 @@ export type ModelType = {
 
     // Session management
     setSessionId: (sessionId: string | null) => void;
+    getCurrentSessionId: () => string | null;
 
     reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
     addToLiked: (movieId: number) => void;
@@ -109,6 +108,7 @@ export const model: ModelType = {
     prefetchWindowPrmsState: {promise: null, data: null, error: null},
     searchMoviesPrmsState: {promise: null, data: null, error: null},
     getRecPrmsState: {promise: null, data: null, error: null},
+    getCurrentSessionUsernamesPrmsState: {promise: null, data: null, error: null},
     username: "", // temp placeholder
     alltimeLikedMovieIds: [],
     alltimeLikedMoviesArray: [],
@@ -451,15 +451,20 @@ export const model: ModelType = {
         this.currentSessionId = sessionId;
     },
 
+    getCurrentSessionId() {
+        return this.currentSessionId;
+    },
+
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
             await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
         }
     },
 
-    setUsername() {
-        /* [TODO] */
+    setUsername(username: string) {
+        this.username = username;
     },
+
     toggleAlltimeLike(movie: TMDBMoviePageResult, removePossible: boolean = true) { /* [TODO] Make a reaction to add movie details to AlltimeLiked */
         const targetId = movie.id;
 

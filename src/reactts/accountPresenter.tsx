@@ -3,14 +3,19 @@ import { LoginView } from "../views/loginView";
 import { SignupView } from "../views/signupView";
 import { signInWithEmail, signUpWithEmail } from "../authService";
 import { useState } from "react";
+import type { ModelType } from "../MovieModel";
+
+type AccountPresenterProps = {
+  model: ModelType;
+}
 
 const Account = observer(
-  function AccountRender() {
+  function AccountRender(props: AccountPresenterProps) {
     const [showLogin, setShowLogin] = useState(true);
 
     async function handleLoginACB(email: string, password: string) {
       try {
-        await signInWithEmail(email.trim(), password);
+        await signInWithEmail(props.model, email.trim(), password);
         window.location.hash = "#/";
       } catch (err: any) {
         alert(err?.message ?? "Login failed");
@@ -20,7 +25,7 @@ const Account = observer(
     async function handleSignupACB(username: string, email: string, password: string) {
       try {
         // Create the user account and then add the username to the profile
-        await signUpWithEmail(username.trim(), email.trim(), password);
+        await signUpWithEmail(props.model, username.trim(), email.trim(), password);
         window.location.hash = "#/";
       } catch (err: any) {
         alert(err?.message ?? "Signup failed");

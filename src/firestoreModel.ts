@@ -1,6 +1,16 @@
 import { db } from "./firebaseConfig.ts";
 import { type ModelType } from "./MovieModel.ts";
 import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot } from "firebase/firestore";
+import type { UserInfoType } from "./SessionModel.ts";
+
+export type UserType = {
+    username: string,
+    email: string,
+    createdAt: string,
+    likes: string[],
+    dislikes: string[],
+    sessions: string[]
+};
 
 // Create a new session in Firebase and return the session ID
 export async function createSession(model: ModelType) {
@@ -18,9 +28,10 @@ export async function createSession(model: ModelType) {
     try {
         await setDoc(docRef, {
             status: "waiting",
+            hostId: model.userId,
             match: null,
             created: new Date(),
-            participants: [model.userId],
+            participants: [{userId: model.userId, username: model.username}],
         });
         console.log("Session created successfully with ID:", sessionId);
     } catch (error) {
@@ -46,8 +57,13 @@ export async function joinSession(model: ModelType, sessionId: string) {
 
     if (docSnap.exists()) {
         // Add current user to the session
+        const newUserInfo: UserInfoType = {
+            userId: model.userId,
+            username: model.username,
+        };
+
         await updateDoc(docRef, {
-            participants: arrayUnion(model.userId),
+            participants: arrayUnion(newUserInfo),
         });
 
         model.setSessionId(sessionId);
