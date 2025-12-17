@@ -4,6 +4,7 @@ import type { TMDBPopularMovieResult } from "../apiConfig";
 
 export type HomeViewProps = {
   movies: TMDBPopularMovieResult[] | null;
+  username: string | null;
   onStartSession: () => void;
   onJoinSession: (sessionId: string) => void;
   onMovieClick: (id: number) => void;
@@ -62,7 +63,13 @@ export function HomeView(props: HomeViewProps) {
 
   return (
     <div className="home">
-      <h1 onClick={onLogoClickACB}>CineMatch</h1>
+      <nav className="home-nav">
+        <h1 onClick={onLogoClickACB}>CineMatch</h1>
+        {props.username ? 
+          <p>Logged in as {props.username}</p> : 
+          <p>Not signed in</p>
+        }
+      </nav>
       <p>Swipe to find your perfect movie</p>
       {/*TODO: PUT THIS BUTTON SOMEWHERE ELSE*/}
       <button onClick={() => window.location.hash="#/account"}>Go To Account Page</button>

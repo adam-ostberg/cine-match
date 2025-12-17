@@ -56,6 +56,7 @@ const Home = observer(
         }
         
         function closeDetailsACB() {
+            if (!showDetails) return;
 			const background = document.querySelector(".details-view-background");
 			background?.classList.remove("is-dark");
             setShowDetails(false); // Hide details overlay
@@ -70,11 +71,14 @@ const Home = observer(
 		)
 		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
 
+        const username = props.model.userId && props.model.username || null;
+
         return (
             <div className="home-presenter-parent">
-                <div className="details-view-background">
+                <div className="details-view-background" onClick={closeDetailsACB}>
                     <HomeView
                         onStartSession={sessionStartACB}
+                        username={username}
                         onJoinSession={sessionJoinACB}
                         movies={(props.model.popularMoviesPrmsState.data as TMDBMoviePageResult[]) || []}
                         onMovieClick={onMovieClickedACB}

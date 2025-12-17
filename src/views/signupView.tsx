@@ -34,18 +34,18 @@ export function SignupView({onSignup, onToLogin}: SignupViewProps) {
           <h1>Create an account!</h1>
           <label>
             Username:
-            <input id="username" type="text" placeholder="Username" required />
           </label>
+          <input id="username" type="text" placeholder="Username" required />
           <label>
             E-Mail:
-            <input id="email" type="email" placeholder="example@address.com" required />
           </label>
+          <input id="email" type="email" placeholder="example@address.com" required />
           <label>
             Password:
-            <input id="password" type="password" placeholder="password" required />
           </label>
+          <input id="password" type="password" placeholder="password" required />
           <div className="button-row">
-            <button className="secondary-button" onClick={signUpACB}>Sign Up</button>
+            <button className="primary-button" onClick={signUpACB}>Sign Up</button>
           </div>
         </div>
         <p>or</p>
