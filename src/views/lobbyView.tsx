@@ -16,10 +16,24 @@ export function LobbyView(props: LobbyViewProps) {
     <div className="lobby-container">
       <div className="lobby-content">
         <h1>Lobby</h1>
-        <p>LobbyId: {props.lobbyId}</p>
-        <p>Connected users:</p>
-        <Userlist usernames={props.usernames} />
-        {props.isHost && <button className="primary-button" onClick={startSwipingACB}>Begin swiping</button>}
+        
+        <div className="lobby-code-section">
+            <p>Lobby Code</p>
+            <div className="lobby-code">{props.lobbyId}</div>
+        </div>
+
+        <div className="lobby-users-section">
+            <p>Connected Users ({props.usernames.length})</p>
+            <Userlist usernames={props.usernames} />
+        </div>
+
+        <div className="lobby-actions">
+            {props.isHost ? (
+                <button className="primary-button" onClick={startSwipingACB}>Begin Swiping</button>
+            ) : (
+                <p className="waiting-text">Waiting for host to start...</p>
+            )}
+        </div>
       </div>
     </div>
   );
@@ -27,7 +41,7 @@ export function LobbyView(props: LobbyViewProps) {
 
 function Userlist({usernames}: {usernames: string[]}) {
   return (
-    <ul>
+    <ul className="user-list">
       {usernames.map((username, index) => (
         <li key={index}>{username}</li>
       ))}
