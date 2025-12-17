@@ -3,6 +3,7 @@ import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getBatchImdbRating, getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
 import { chunk } from "./helperFunctions";
+import { fetchImdbRatings } from "./testImdbApi";
 
 export type ModelType = {
     username: string;
@@ -300,7 +301,7 @@ export const model: ModelType = {
     },
 
     async filterMoviesByOptionParams(data: TMDBMoviePageResult[]): Promise<number[] | undefined>  {
-        let filteredData = data.filter(movie =>
+        const filteredData = data.filter(movie =>
             movie.genre_ids.some(genre => this.selectedGenreIds.includes(genre)) // filter by selected gebres
             && !this.likes.includes(movie.id) // not in liked
             && !this.dislikes.includes(movie.id) // not in disliked
@@ -322,30 +323,31 @@ export const model: ModelType = {
             await sleep(10); // Do this to avoid API Rate limiting
         }
 
-        const imdbIds = details.map(detail => detail.imdb_id)
-        const imdbIdsChunks = chunk(imdbIds, 5); 
+        const imdbIds = details.map(detail => detail.imdb_id);
 
-        const ratings: number[] = []
-        const successfullImdbIds: string[] = [];
-        for (const titleIds of imdbIdsChunks) {
-            const ratingChunk = await getBatchImdbRating(titleIds);
-            if (ratingChunk === null) continue;
-            ratings.push(...ratingChunk)
-            successfullImdbIds.push(...titleIds);
-            await sleep(2000); // Do this to avoid API Rate limiting
+        const ratings = (await fetchImdbRatings(imdbIds)).data.titles;
+
+        const movieIdToRating = new Map<number, number>();
+        const movieIdToRuntime = new Map<number, number>();
+
+        for (const detail of details) {
+            movieIdToRuntime.set(detail.id, detail.runtime);
+            const rating = ratings.find(movie => movie.id === detail.imdb_id);
+            if (!rating || !rating.ratingsSummary.aggregateRating) continue;
+            movieIdToRating.set(detail.id, rating.ratingsSummary.aggregateRating)
         }
 
-        const filteredDetailIds = details.filter(detail => successfullImdbIds.includes(detail.imdb_id)).map(detail => detail.id);
-        filteredData = filteredData.filter(movie => filteredDetailIds.includes(movie.id));
-
-        // Attach rating + filter movies directly
         const result = filteredData
-            .map((movie, i) => {
-            const r = ratings ? ratings[i] : undefined;
-            const detail = details[i];
-            return !!r && !!detail  ? { ...movie, imdbRating: r, runtime: detail.runtime } : movie;
+            .filter(movie => {
+                const rating = movieIdToRating.get(movie.id);
+                const runtime = movieIdToRuntime.get(movie.id);
+                if (!rating  || rating <= this.minRating) { return false };
+                if (!runtime || runtime <= this.minRuntime || runtime >= this.maxRuntime) { return false };
+                return true
             })
-            .filter((movie) => movie.imdbRating !== undefined && movie.imdbRating >= this.minRating && movie.runtime !== undefined && movie.runtime >= this.minRuntime && movie.runtime <= this.maxRuntime);
+            .map(movie => {
+                return {...movie, imdbRating: movieIdToRating.get(movie.id), runtime: movieIdToRating.get(movie.id)}
+            });
 
         return result.map(movie => movie.id);
     },
