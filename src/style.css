@@ -154,6 +154,7 @@ html, body {
 
 .details-view-background::after {
     content: '';
+    /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
@@ -921,4 +922,51 @@ html, body {
     color: var(--btn-green);
     /* The only way I thought to make the checkmark white on the inside only: */
     background: radial-gradient(white 45%, transparent 50%);
+}
+
+/* Match animation styles */
+
+.matchContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    font-family: "Inter", sans-serif;
+}
+
+.match-vignette {
+    /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
+    position: absolute;
+    inset: 0;
+    background-color: var(--btn-green);
+    pointer-events: none;
+    mask-image: radial-gradient(
+        circle at center, 
+        rgba(0,0,0,0) 50%, 
+        rgba(0,0,0,0.1) 70%,
+        rgba(0,0,0,0.4) 100%);
+}
+
+.match-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--btn-green);
+    /* Glow effect */
+    text-shadow: 0 0 30px var(--btn-green);
+    position: relative;
+}
+
+.heart-text {
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 60px;
+}
+
+.match-text {
+    font-weight: bold;
+    font-size: 24px;
 }

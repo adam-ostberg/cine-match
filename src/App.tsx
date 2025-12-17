@@ -10,105 +10,13 @@ import { Account } from "./reactts/accountPresenter";
 import { Profile } from "./reactts/profilePresenter";
 import { Lobby } from "./reactts/lobbyPresenter";
 import type { SessionType } from "./SessionModel";
+import { MatchAnimationView } from "./views/matchAnimationView.tsx";
 
 export type AppRenderProps = {
 	model: ModelType
 	sessionModel: SessionType
 }
 
-/* 
-// From https://youtu.be/xhURh2RDzzg
-
-const playerColors = ["blue", "red", "orange", "yellow", "green", "purple"];
-
-function randomFromArray(array) {
-	return array[Math.floor(Math.random() * array.length)];
-}
-
-function createName() {
-	const prefix = randomFromArray([
-		"COOL",
-		"SUPER",
-		"HIP",
-		"SMUG",
-		"COOL",
-		"SILKY",
-		"GOOD",
-		"SAFE",
-		"DEAR",
-		"DAMP",
-		"WARM",
-		"RICH",
-		"LONG",
-		"DARK",
-		"SOFT",
-		"BUFF",
-		"DOPE",
-	]);
-	const animal = randomFromArray([
-		"BEAR",
-		"DOG",
-		"CAT",
-		"FOX",
-		"LAMB",
-		"LION",
-		"BOAR",
-		"GOAT",
-		"VOLE",
-		"SEAL",
-		"PUMA",
-		"MULE",
-		"BULL",
-		"BIRD",
-		"BUG",
-	]);
-	return `${prefix} ${animal}`;
-}
-
-function() {
-
-	let playerId;
-	let playerRef;
-
-	function initSession() {
-		const allPlayersRef = firebase.database().ref(`${sessionId}/players`);
-
-		allPlayersRef.on("value", (snapshot) => {
-			//Fires whenever a change occurs
-
-		})
-
-		allPlayersRef.on("child_added", (snapshot) => {
-			const addedPlayer = snapshot.val(); // gets playerRef
-			//Fires whenever a new node is added the tree
-		})
-
-		firebase.auth().inAuthStateChanged((user) => {
-			console.log(user)
-			if (user) {
-				//You're logged in!
-				playerId = user.uid;
-				playerRef = firebase.database().ref(`players/${playerId}`);
-
-				const name = createName();
-				playerRef.set({
-					id: playerId,
-					name,
-					color: randomFromArray(playerColors),
-					likes: [],
-					dislikes: [],
-				})
-
-				playerRef.onDisconnect().remove();
-
-			} else {
-				// logged out
-			})
-
-
-		firebase.auth().signInAnonymously()
-	} 
-*/
 const App = observer(
 	function AppRender(props: AppRenderProps) {
 		function makeRouter() {
@@ -116,6 +24,10 @@ const App = observer(
 				{
 					path: "/",
 					element: <Home model={props.model} />,
+				},
+				{
+					path: "/test-animation",
+					element: <MatchAnimationView />,
 				},
 				{
 					path: "/options",
@@ -140,7 +52,7 @@ const App = observer(
 				},
 				{
 					path: "/lobby",
-					element: <Lobby model={props.model} sessionModel={props.sessionModel}/>
+					element: <Lobby model={props.model} sessionModel={props.sessionModel} />
 				},
 			]);
 		}
