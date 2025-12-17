@@ -199,21 +199,38 @@ html, body {
 
 .sidebar-toggle {
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 0;
-    transform: translate(-75%, -50%);
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 0;
-    cursor: pointer;
+    transform: translateX(-100%) rotate(180deg);
+    width: 50px;
+    height: 50px;
+    transition:
+        transform 80ms ease,
+        box-shadow 80ms ease;
 }
+.sidebar-toggle svg:hover {
+    background-color: rgb(201, 201, 201);
+}
+.sidebar-toggle svg:active {
+    transform: scale(0.96);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+.sidebar-toggle svg {
+    width: 50px;
+    height: 50px;
+    color: white;
+    border: 2px gray solid;
+    border-left: 0px;
+    border-radius: 0px 8px 8px 0px;
+    transition: background-color ease 150ms;
+}
+
 .swipe-sidebar:not(.is-open) {
   transform: translateX(100%);
 }
 
 .swipe-sidebar:not(.is-open) .sidebar-toggle {
-  transform: translate(-100%, -50%) rotate(180deg); 
+  transform: translateX(-100%, -50%);
 }
 
 
@@ -347,10 +364,9 @@ html, body {
     }
     .swipe-sidebar {
         width: 100vw;
-        transition: none;
     }
     .swipe-sidebar.is-open .sidebar-toggle {
-        transform: translate(0%, -50%);
+        transform: translateX(0%);
     }
 }
 

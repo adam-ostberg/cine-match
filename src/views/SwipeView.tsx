@@ -10,6 +10,8 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useState } from "react";
 import { type PanInfo } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
+import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
+import TuneIcon from '@mui/icons-material/Tune';
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -72,10 +74,19 @@ function SwipeView(props: SwipeViewProps) {
 
   const [isSidebarOpen, setSidebarIsOpen] = useState(true);
 
+  const swipeSidebarClassNames = isSidebarOpen ? "swipe-sidebar is-open" : "swipe-sidebar";
+
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 1023px)');
 
     const sync = (matches: boolean) => {
+      if (matches) {
+        const sidebar = document.getElementById("swipeSidebar")
+        if (!!sidebar) { sidebar.style.transition = "none"};
+        setTimeout(() => {
+          if (!!sidebar) { sidebar.style.transition = "transform ease 0.2s" };
+        }, 300);
+      }
       setSidebarIsOpen(!matches); // mobile => false, desktop => true
     };
     const onChange = (e: MediaQueryListEvent) => {
@@ -88,14 +99,6 @@ function SwipeView(props: SwipeViewProps) {
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);
   }, []);
-
-
-  const swipeSidebarClassNames = isSidebarOpen ? "swipe-sidebar is-open" : "swipe-sidebar";
-  function sideBarToggleClickedCB() {
-    if (isSidebarOpen.valueOf()) { setSidebarIsOpen(false) }
-    else { setSidebarIsOpen(true) };
-  }
-
 
   return (
     <div className="swipe-container">
@@ -115,19 +118,17 @@ function SwipeView(props: SwipeViewProps) {
           </IconButton>
         </div>
       </div>
-      <div className={swipeSidebarClassNames}>
-        <aside className="sidebar is-open">
-          <button className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
-            ▶
-          </button>
-          <div>
-            <h2>Lobby</h2>
-            <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Gustav</p>
-            <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Rasmus</p>
-            <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Adam</p>   
-          </div>
-        </aside>
-      </div>
+      <aside className={swipeSidebarClassNames} id="swipeSidebar">
+        <IconButton className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
+          <TuneIcon />
+        </IconButton>
+        <div>
+          <h2>Lobby</h2>
+          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Gustav</p>
+          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Rasmus</p>
+          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Adam</p>   
+        </div>
+      </aside>
     </div>
   );
 }
