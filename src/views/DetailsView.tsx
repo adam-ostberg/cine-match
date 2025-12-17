@@ -1,7 +1,7 @@
 import "../style.css"
 import { type MovieDetails, type TMDBCast, type TMDBCrew, type WatchProvider, type CountryWatchOptions, type TMDBGenre, type TMDBVideoType, type TMDBMovieCredits, type WatchProvidersResponse, } from "../apiConfig";
 import { observer } from "mobx-react-lite";
-import { minutesToHourAndMinutesText, getCountryCode } from "../helperFunctions";
+import { minutesToHourAndMinutesText, getCountryCode, hideRootAndMainContentOverflow } from "../helperFunctions";
 import { useState, useEffect, useRef } from "react";
 /* npm install react-icons */
 import { FaArrowLeft, FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaFire, FaUserCircle, FaExternalLinkAlt, /* FaPlus */ } from "react-icons/fa";
@@ -30,7 +30,7 @@ const DetailsView = observer(
 
     function openDetailsViewAnimation() {
       const detailContainer = document.getElementById(`details-container ${details.id}`);
-
+      hideRootAndMainContentOverflow();
       if (!!detailContainer) {
         //detailsScrollableArea?.classList.add("hide-scrollbar");
         detailContainer.style.top = "100%";
@@ -39,9 +39,10 @@ const DetailsView = observer(
       }
       setTimeout(() => {
         if (!!detailContainer) {
-          detailContainer.style.top = "0";
+          detailContainer.style.top = "4%";
         }
       }, 50);
+      setTimeout(() => hideRootAndMainContentOverflow(true), 500);
     }
 
     // https://stackoverflow.com/q/74245335

@@ -12,6 +12,7 @@ import { type PanInfo } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import TuneIcon from '@mui/icons-material/Tune';
+import { hideRootAndMainContentOverflow } from "../helperFunctions";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;

@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 export function getVideoUrl(video: { site: string; key: string }) {
   switch (video.site.toLowerCase()) {
     case "youtube":
@@ -26,6 +29,21 @@ export function getCountryCode(): string {
   const locale = navigator.language || navigator.language[0];
   const countryCode = locale.split("-")[1];
   return countryCode
+}
+
+export function hideRootAndMainContentOverflow(remove: boolean = false) {
+  if (remove) {
+    const mainContent = document.querySelector(".mainContent"); // makes the background scrollable again when the DetailsView is removed
+    const root = document.querySelector(":root");
+    root?.classList.remove("hide-overflow");
+    mainContent?.classList.remove("hide-overflow"); // makes the background scrollable again when the DetailsView is removed
+  }
+  else {
+    const mainContent = document.querySelector(".mainContent"); // stops the background from being scrollable when the DetailsView is on top
+    const root = document.querySelector(":root");
+    root?.classList.add("hide-overflow");
+    mainContent?.classList.add("hide-overflow"); // stops the background from being scrollable when the DetailsView is on top
+  }
 }
 
 

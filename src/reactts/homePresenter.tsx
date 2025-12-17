@@ -7,6 +7,7 @@ import { createSession, joinSession, listenToSession } from "../firestoreModel.t
 import { type ModelType } from "../MovieModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
+import { hideRootAndMainContentOverflow } from "../helperFunctions.ts";
 /*
 export type HomeModel = {
     initiateStart: () => void;
@@ -51,15 +52,17 @@ const Home = observer(
 
         function onMovieClickedACB(id: number) {
             setShowDetails(true);
+            //hideRootAndMainContentOverflow();
             props.model.setCurrentMovieId(id);
             //window.location.hash = "#/details"; // Navigate to details
         }
         
         function closeDetailsACB() {
             if (!showDetails) return;
-			const background = document.querySelector(".details-view-background");
+			const background = document.querySelector(".details-view-background"); 
 			background?.classList.remove("is-dark");
             setShowDetails(false); // Hide details overlay
+            //hideRootAndMainContentOverflow(true);
         }
 
 		const HAS_ALL_DETAILS_DATA = (

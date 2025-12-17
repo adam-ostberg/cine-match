@@ -1,8 +1,7 @@
 import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie, type MovieDetails } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
-import { getBatchImdbRating, getImdbRating } from "./imdbApiConfig";
+import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
-import { chunk } from "./helperFunctions";
 import { fetchImdbRatings } from "./testImdbApi";
 
 export type ModelType = {

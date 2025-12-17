@@ -6,6 +6,7 @@ import { NavBarView } from "../views/NavbarView";
 import type { MovieDetails } from "../apiConfig";
 import { DetailsView } from "../views/DetailsView";
 import { useState } from "react";
+import { hideRootAndMainContentOverflow } from "../helperFunctions";
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
 export type SwipePresenterProps = {	
@@ -41,6 +42,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		}
 
 		function moreInfoClickedACB() {
+			//hideRootAndMainContentOverflow();
 			setShowDetails(true);
 			//document.location.hash = "/details";
 		}
@@ -49,9 +51,9 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			const background = document.querySelector(".details-view-background");
 			background?.classList.remove("is-dark");
             setShowDetails(false); // Hide details overlay
+			//hideRootAndMainContentOverflow(true);
         }
 
-		const data = props.model.prefetchWindowPrmsState.data as MovieDetails[];
 		const HAS_ALL_DETAILS_DATA = (
 			!!props.model.movieDetailsPrmsState.data
 			&& !!props.model.movieVideosPrmsState.data
