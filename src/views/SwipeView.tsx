@@ -12,6 +12,8 @@ import { type PanInfo } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import TuneIcon from '@mui/icons-material/Tune';
+import { hideRootAndMainContentOverflow } from "../helperFunctions";
+import { MatchAnimationView } from "./matchAnimationView";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -35,6 +37,7 @@ function SwipeView(props: SwipeViewProps) {
     return detailsQueue
   }
 
+  const [showMatchAnimation, setShowMatchAnimation] = useState(false);
   const [cachedDetails, setCachedDetails] = useState<MovieDetails[] | null>(null);
 
   // Whenever new data arrives, store it
@@ -44,6 +47,13 @@ function SwipeView(props: SwipeViewProps) {
       setCachedDetails(data);
     }
   }, [props.prefetchWindowPrmsState.data]);
+
+  useEffect(() => {
+    if (showMatchAnimation) {
+      const timer = setTimeout(() => setShowMatchAnimation(false), 1800);
+      return () => clearTimeout(timer);
+    }
+  }, [showMatchAnimation]);
 
   // Prefer the latest non-null data, but fall back to cached
   const effectiveDetails = (props.prefetchWindowPrmsState.data as MovieDetails[] | null) || cachedDetails;
@@ -55,6 +65,7 @@ function SwipeView(props: SwipeViewProps) {
 
     if (dir === "right") {
       props.onLike(id);     
+      setShowMatchAnimation(true);
     } else {
       props.onDislike(id);
     }
@@ -129,6 +140,7 @@ function SwipeView(props: SwipeViewProps) {
           <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Adam</p>   
         </div>
       </aside>
+      {showMatchAnimation && <MatchAnimationView />}
     </div>
   );
 }

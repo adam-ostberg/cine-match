@@ -1,5 +1,7 @@
 // https://www.npmjs.com/package/countries-and-timezones
 import { getCountryForTimezone } from "countries-and-timezones";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export function getVideoUrl(video: { site: string; key: string }) {
   switch (video.site.toLowerCase()) {
@@ -32,6 +34,21 @@ export function getCountryCode(): string | null {
   console.log(timezoneData);
   return timezoneData ? timezoneData.id : null;
 }
+export function hideRootAndMainContentOverflow(remove: boolean = false) {
+  if (remove) {
+    const mainContent = document.querySelector(".mainContent"); // makes the background scrollable again when the DetailsView is removed
+    const root = document.querySelector(":root");
+    root?.classList.remove("hide-overflow");
+    mainContent?.classList.remove("hide-overflow"); // makes the background scrollable again when the DetailsView is removed
+  }
+  else {
+    const mainContent = document.querySelector(".mainContent"); // stops the background from being scrollable when the DetailsView is on top
+    const root = document.querySelector(":root");
+    root?.classList.add("hide-overflow");
+    mainContent?.classList.add("hide-overflow"); // stops the background from being scrollable when the DetailsView is on top
+  }
+}
+
 
 export function chunk(array: Array<any>, size: number = 5) {
   const result = [];

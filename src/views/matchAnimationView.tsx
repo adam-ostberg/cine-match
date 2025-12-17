@@ -1,54 +1,47 @@
 import { AnimatePresence, motion } from "motion/react"
 import { useState } from "react"
 import "../style.css"
+import { useEffect } from "react"
 
 /* From https://motion.dev/docs/react-animation */
 
 function MatchAnimationView() {
   const [isVisible, setIsVisible] = useState(true)
 
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => setIsVisible(false), 1200)
+      return () => clearTimeout(timer)
+    }
+  }, [isVisible])
+
   return (
     <div className="matchContainer">
-      <AnimatePresence initial={false}>
+      <AnimatePresence>
         {isVisible ? (
-          <div>
-            {/* VIGNETTE BACKROUND */}
-            <motion.div className="match-vignette"
-              key="vignette"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { type: "spring", damping: 3, stiffness: 3, restDelta: 0.001 } }}
-              exit={{ opacity: 0 }}
-            />
-
-            {/* TEXT */}
-            <motion.div className="match-text-wrapper"
-              key="content"
-              initial={{ opacity: 0, scale: 0.8 }}
-              /* https://motion.dev/docs/react-transitions */
-              /* Two transition types */
-              animate={{
-                opacity: 1,
-                scale: 1,
-                transition: { type: "spring", damping: 6 }
-              }}
-              exit={{
-                opacity: 0,
-                scale: 0.8,
-                transition: { type: "tween" }
-              }}
-            >
-              <div className="heart-text">{"<3"}</div>
-              <div className="match-text">IT'S A MATCH!</div>
-            </motion.div>
-          </div>
+        <motion.div>
+          <motion.div
+            className="match-vignette"
+            key="vignette"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, type: "spring" }}
+          >
+          </motion.div>
+          <motion.div
+            className="match-text-wrapper"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 2 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 1.2, type: "spring" }}
+          >
+            <div className="heart-text">{"<3"}</div>
+            <div className="match-text">IT'S A MATCH!</div>
+          </motion.div>
+        </motion.div>
         ) : null}
       </AnimatePresence>
-      {/* Uncomment for testing the animation */}
-      {/* <button
-        onClick={() => setIsVisible(!isVisible)}
-      >
-        {isVisible ? "Hide" : "Show"}
-      </button> */}
     </div>
   )
 }

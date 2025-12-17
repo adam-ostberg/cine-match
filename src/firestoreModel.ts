@@ -139,7 +139,7 @@ export function listenToSession(sessionId: string, model: ModelType) {
                 
                 // TODO!!! Update the model with match data and call some function to show the match screen
                 
-                alert(`It's a match! Everyone wants to watch: ${data.match.title}`);
+                //alert(`It's a match! Everyone wants to watch: ${data.match.title}`);
             }
         }
     });
