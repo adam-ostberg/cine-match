@@ -863,6 +863,17 @@ html, body {
     align-content: center;
 }
 
+.account-section a {
+    color: rgb(166, 166, 223);
+}
+
+.account-section input {
+    padding-left: 9px;
+    height: 2rem;
+    border-radius: 8px;
+    border: none;
+}
+
 .account-form {
     display: flex;
     flex-direction: column;
@@ -871,6 +882,7 @@ html, body {
     padding: 30px;
     border-radius: 10px;
     width: 350px;
+    gap: 10px;
 }
 
 .account-form input {

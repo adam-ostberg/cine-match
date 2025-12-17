@@ -32,12 +32,12 @@ export function LoginView({onLogin, onToCreateAccount}: LoginViewProps) {
           <h1>Login</h1>
           <label>
             E-Mail:
-            <input id="email" type="email" placeholder="example@address.com" required />
           </label>
+          <input id="email" type="email" placeholder="example@address.com" required />
           <label>
             Password:
-            <input id="password" type="password" placeholder="password" required />
           </label>
+          <input id="password" type="password" placeholder="password" required />
           <div className="button-row">
             <button className="primary-button" onClick={loginACB}>Login</button>
           </div>
