@@ -1,13 +1,13 @@
 html, body {
     margin: 0;
     padding: 0;
-
 }
 
 .mainContent {
+    min-height: 100vh;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 
@@ -17,10 +17,6 @@ html, body {
     background-color: #201f2c;
     color: white;
     height: 100%;
-    overflow-x: hidden;
-}
-
-.hide-overflow {
     overflow: hidden;
 }
 
@@ -29,31 +25,12 @@ html, body {
     margin: 40px 0;
 }
 
-.home-presenter-parent {
-}
-
 .home {
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow-x: hidden; /* For the carousel to work */
 }
-
-.home-nav {
-    width: 100%;
-    height: 5vh;
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: row;
-    margin: 0;
-    background-color: var(--bg-color);
-    align-items: center;
-    padding-left: 60px;
-    padding-right: 60px;
-    justify-content: space-between;
-}
-
 
 .home h1 {
     font-weight: bold;
@@ -69,7 +46,7 @@ html, body {
 /* Carousel css from https://blog.logto.io/css-only-infinite-scroll */
 .carousel-view {
     width: 100%;
-    height: 40vh;
+    height: 400px;
     overflow: hidden;
     padding: 30px;
     margin: 0 0 30px;
@@ -79,7 +56,7 @@ html, body {
 
 .carousel-track {
     display: flex;
-    gap: 1.1vh;;
+    gap: 16px;;
     width: max-content;
     /* Infinite scroll animation */
     animation: scrolling 240s linear infinite;
@@ -90,7 +67,7 @@ html, body {
 }
 
 .carousel-track .movie-card {
-    width: 25vh;
+    width: 250px;
     flex-shrink: 0;
     transition: transform 0.3s ease;
     border-radius: 10px;
@@ -136,7 +113,7 @@ html, body {
     flex-direction: row;
     margin: 0;
     padding: 0;
-    background-color: #201f29;
+    background-color: #201f29;;
 }
 
 .logo-text {
@@ -163,6 +140,9 @@ html, body {
 }
 
 .swipe-flex-parent {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     position: relative;
 }
 
@@ -188,9 +168,9 @@ html, body {
 }
 
 .swipe-container {
-    min-height: 90vh;
     position: relative;
     flex: 1;
+    height: 100%
 }
 
 .swipe-content {
@@ -199,7 +179,7 @@ html, body {
     display: grid;
     place-items: center;
     padding-top: 2vh;
-    grid-template-rows: 65vh 12vh 7vh; /* we have 90vh of total space as the header above is 10vh*/
+    grid-template-rows: 65vh 12vh 6vh;
 }
 
 .swipe-content .swipe-card {
@@ -212,8 +192,8 @@ html, body {
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
     width: 300px;
+    height: 100vh;
     background-color: #201f29;
     transition: transform ease 0.2s;
 }
@@ -352,10 +332,11 @@ html, body {
 
 .details-container {
     position: absolute;
-    top: 4%;
+    top: 100%;
     width: 100%;
     max-width: 65vw;
-    height: calc(100% - 4%);
+    height: 100%;
+    margin-top: 3vh;
     left: 50%;
     transform: translateX(-50%);
     color: white;
@@ -1098,6 +1079,20 @@ html, body {
     font-style: italic;
 }
 
+.home-nav {
+    width: 100%;
+    height: 5vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    background-color: var(--bg-color);
+    align-items: center;
+    padding-left: 60px;
+    padding-right: 60px;
+    justify-content: space-between;
+}
 
 /* Match animation styles */
 
@@ -1149,13 +1144,15 @@ html, body {
 /* Match animation styles */
 
 .matchContainer {
+    position: fixed;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100vh;
-    position: relative;
     font-family: "Inter", sans-serif;
+    pointer-events: none;
 }
 
 .match-vignette {
@@ -1169,6 +1166,7 @@ html, body {
         rgba(0,0,0,0) 50%, 
         rgba(0,0,0,0.1) 70%,
         rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
 }
 
 .match-text-wrapper {
@@ -1180,15 +1178,18 @@ html, body {
     /* Glow effect */
     text-shadow: 0 0 30px var(--btn-green);
     position: relative;
+    pointer-events: none;
 }
 
 .heart-text {
     font-weight: bold;
     margin-bottom: 10px;
     font-size: 60px;
+    pointer-events: none;
 }
 
 .match-text {
     font-weight: bold;
     font-size: 24px;
+    pointer-events: none;
 }
