@@ -1,3 +1,6 @@
+// https://www.npmjs.com/package/countries-and-timezones
+import { getCountryForTimezone } from "countries-and-timezones";
+
 export function getVideoUrl(video: { site: string; key: string }) {
   switch (video.site.toLowerCase()) {
     case "youtube":
@@ -16,18 +19,19 @@ export function getVideoUrl(video: { site: string; key: string }) {
 }
 
 export function minutesToHourAndMinutesText(totalMinutes: number) {
-  const hours =  Math.floor(totalMinutes / 60);
+  const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   const text = hours === 0 ? `${minutes}m` : `${hours}h ${minutes}m`;
   return text;
 }
 
-export function getCountryCode(): string {
-  const locale = navigator.language || navigator.language[0];
-  const countryCode = locale.split("-")[1];
-  return countryCode
-}
+export function getCountryCode(): string | null {
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+  const timezoneData = getCountryForTimezone(userTimezone);
+  console.log(timezoneData);
+  return timezoneData ? timezoneData.id : null;
+}
 
 export function chunk(array: Array<any>, size: number = 5) {
   const result = [];
