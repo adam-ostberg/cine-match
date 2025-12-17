@@ -95,8 +95,8 @@ const DetailsView = observer(
     }
     function getTopActors(cast: TMDBCast[]): Array<TMDBCast> {
       const actors = cast.filter(person => person.known_for_department === "Acting"); // Only actors have a .order key
-      const topSixActors = actors.filter(person => person.order < 8).sort((a, b) => a.order - b.order);
-      return topSixActors;
+      const topSevenActors = actors.filter(person => person.order < 7).sort((a, b) => a.order - b.order);
+      return topSevenActors;
     }
 
     function toggleMuteACB() {
@@ -154,7 +154,7 @@ const DetailsView = observer(
       if (!options) {
         return [];
       }
-      const providers = [...options.rent ?? [], ...options.buy ?? [], options.flatrate ?? []] as WatchProvider[];
+      const providers = [...options.flatrate ?? [], ...options.rent ?? [], ...options.buy ?? []] as WatchProvider[];
       const uniqueProviders = [
         ...new Map(providers.map(p => [p.provider_id, p])).values()
       ];
@@ -162,12 +162,15 @@ const DetailsView = observer(
       return uniqueProviders.sort((a, b) => a.display_priority - b.display_priority);
     }
     function outputWatchProviders(provider: WatchProvider) {
-      return (
-        <div key={provider.provider_id} className="detail-card provider">
-          <a /* href={watchProviders.link} */> {/* Goes to TMDB site, not correct link */}
-            <img src={TMDB_BASE_URL + LOGO_SIZE_URL + provider.logo_path} alt="" />
-            <span className="name">{provider.provider_name}</span>
-          </a>
+      function handleProviderClick() {
+        if (watchProviders && watchProviders.link) {
+          window.open(watchProviders.link, "_blank");
+        }
+      }
+      return provider.logo_path && (
+        <div key={provider.provider_id} className="detail-card provider" onClick={handleProviderClick}>
+          <img src={TMDB_BASE_URL + LOGO_SIZE_URL + provider.logo_path} alt="" />
+          <span className="name" style={{ marginTop: "10px" }}>{provider.provider_name}</span>
         </div>
       );
     }
@@ -299,13 +302,14 @@ const DetailsView = observer(
             {director && (
               <div className="details-section">
                 <h3>Director</h3>
-                {/* From renderActor */}
-                {director.profile_path ? (
-                  <img className="headshot" src={TMDB_BASE_URL + PROFILE_SIZE_URL + director.profile_path} alt={director.name} />
-                ) : (
-                  <FaUserCircle className="no-image" />
-                )}
-                <p className="director-name">{director ? director?.name : ""}</p>
+                <div className="detail-card">
+                  {director.profile_path ? (
+                    <img className="headshot" src={TMDB_BASE_URL + PROFILE_SIZE_URL + director.profile_path} alt={director.name} />
+                  ) : (
+                    <FaUserCircle className="no-image" />
+                  )}
+                  <span className="name">{director.name}</span>
+                </div>
               </div>
             )}
             {topActors.length > 0 && (
