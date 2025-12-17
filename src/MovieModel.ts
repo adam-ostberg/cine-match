@@ -43,7 +43,10 @@ export type ModelType = {
     getCurWatchProviders: () => Promise<WatchProvidersResponse | any>;
     getMovieImdbRating: (id: number) => void;
     /* getPopularMovies: () => Promise<TMDBMoviePageResult[]>; */
+    fetchPopularMovies: () => Promise<TMDBMoviePageResult[]>;
     setMovieIdQueue: () => Promise<any>;
+    insertRecommendedMovieIntoQueue: (movieId: number) => void;
+    filterMoviesByOptionParams: (data: TMDBMoviePageResult[]) => Promise<number[] | undefined>;
     filterAndGetIdsFromMoviesACB: (data: any) => number[];
     nextMovie: () => void;
     toggleGenre: (id: number) => void;
@@ -54,6 +57,7 @@ export type ModelType = {
     toggleSeededIconToMovie: (id: number) => void;
     toggleAlltimeLike: (movie: TMDBMoviePageResult, removePossible?: boolean) => void
     setUsername: (username: string) => void;
+    
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState };

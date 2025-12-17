@@ -9,7 +9,9 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useState } from "react";
 import { type PanInfo } from "framer-motion";
-import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import { FaUserCircle } from "react-icons/fa";
+import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
+import TuneIcon from '@mui/icons-material/Tune';
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -70,22 +72,63 @@ function SwipeView(props: SwipeViewProps) {
     return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
   }
 
+  const [isSidebarOpen, setSidebarIsOpen] = useState(true);
+
+  const swipeSidebarClassNames = isSidebarOpen ? "swipe-sidebar is-open" : "swipe-sidebar";
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1023px)');
+
+    const sync = (matches: boolean) => {
+      if (matches) {
+        const sidebar = document.getElementById("swipeSidebar")
+        if (!!sidebar) { sidebar.style.transition = "none"};
+        setTimeout(() => {
+          if (!!sidebar) { sidebar.style.transition = "transform ease 0.2s" };
+        }, 300);
+      }
+      setSidebarIsOpen(!matches); // mobile => false, desktop => true
+    };
+    const onChange = (e: MediaQueryListEvent) => {
+      sync(e.matches);
+    };
+
+    // initial sync
+    sync(mq.matches);
+
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
   return (
     <div className="swipe-container">
-      <p id="current-session">Current Session id: {props.currentSessionId}</p>
-      {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <p>__loading__</p>}
-      <div className="swipe-title">{outputTitle(firstDetail)}</div>
-      <div className="controls">
-        <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
-          <CloseRoundedIcon id="dislike-icon"/>
-        </IconButton>
-        <IconButton className="like-btn" onClick={() => setSwipeDirection("right")}>
-          <FavoriteIcon id="like-icon"/>
-        </IconButton>
-        <IconButton className="more-info-btn" onClick={props.onMoreInfo}>
-          <MoreHorizIcon />
-        </IconButton>
+      <div className="swipe-content">
+        <p id="current-session">Current Session id: {props.currentSessionId}</p>
+        {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <p>__loading__</p>}
+        <div className="swipe-title">{outputTitle(firstDetail)}</div>
+        <div className="controls">
+          <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
+            <CloseRoundedIcon id="dislike-icon"/>
+          </IconButton>
+          <IconButton className="like-btn" onClick={() => setSwipeDirection("right")}>
+            <FavoriteIcon id="like-icon"/>
+          </IconButton>
+          <IconButton className="more-info-btn" onClick={props.onMoreInfo}>
+            <MoreHorizIcon />
+          </IconButton>
+        </div>
       </div>
+      <aside className={swipeSidebarClassNames} id="swipeSidebar">
+        <IconButton className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
+          <TuneIcon />
+        </IconButton>
+        <div>
+          <h2>Lobby</h2>
+          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Gustav</p>
+          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Rasmus</p>
+          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Adam</p>   
+        </div>
+      </aside>
     </div>
   );
 }

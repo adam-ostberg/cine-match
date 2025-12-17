@@ -113,7 +113,7 @@ html, body {
     flex-direction: row;
     margin: 0;
     padding: 0;
-    background-color: var(--bg-color);
+    background-color: #201f29;;
 }
 
 .logo-text {
@@ -166,22 +166,73 @@ html, body {
     opacity: 1;
 }
 
-
-
 .swipe-container {
+    position: relative;
     flex: 1;
+    height: 100%
+}
+
+.swipe-content {
+    flex: 1;
+    height: 100%;
     display: grid;
     place-items: center;
     padding-top: 2vh;
     grid-template-rows: 65vh 12vh 6vh;
 }
 
-.swipe-container .swipe-card {
+.swipe-content .swipe-card {
     height: 65vh;
     width: 43vh;
-    object-fit: cover;
     border-radius: 8px;
 }
+
+.swipe-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background-color: #201f29;
+    transition: transform ease 0.2s;
+}
+
+.sidebar-toggle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%) rotate(180deg);
+    width: 50px;
+    height: 50px;
+    transition:
+        transform 80ms ease,
+        box-shadow 80ms ease;
+}
+.sidebar-toggle svg:hover {
+    background-color: rgb(201, 201, 201);
+}
+.sidebar-toggle svg:active {
+    transform: scale(0.96);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+.sidebar-toggle svg {
+    width: 50px;
+    height: 50px;
+    color: white;
+    border: 2px gray solid;
+    border-left: 0px;
+    border-radius: 0px 8px 8px 0px;
+    transition: background-color ease 150ms;
+}
+
+.swipe-sidebar:not(.is-open) {
+  transform: translateX(100%);
+}
+
+.swipe-sidebar:not(.is-open) .sidebar-toggle {
+  transform: translateX(-100%, -50%);
+}
+
 
 .swipe-like-img, .swipe-dislike-img, .swipe-settings-img {
     height: 65vh;
@@ -257,11 +308,6 @@ html, body {
     border-radius: 5px;
 }
 
-.swipe-sidebar {
-    width: 300px;
-    background-color: var(--bg-color);
-}
-
 /* Styled like genre-option buttons */
 .primary-button {
     border: 2px solid var(--btn-green);
@@ -291,6 +337,7 @@ html, body {
     left: 50%;
     transform: translateX(-50%);
     color: white;
+    background-color: black;
     font-family: 'Inter', system-ui, sans-serif;
     transition: top 0.3s ease-in-out;
     border-bottom: 0px;
@@ -314,6 +361,12 @@ html, body {
 @media (max-width: 1023px) {
     .details-container {
         max-width: 100vw;
+    }
+    .swipe-sidebar {
+        width: 100vw;
+    }
+    .swipe-sidebar.is-open .sidebar-toggle {
+        transform: translateX(0%);
     }
 }
 
