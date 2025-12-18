@@ -1205,3 +1205,146 @@ body {
   font-size: 24px;
   pointer-events: none;
 }
+
+/* Profile View */
+
+.profile-pic {
+  border-radius: 50%;
+  /* Smoothens the edges, for some reason: */
+  border: var(--btn-green);
+  /* overflow: "hidden"; */
+}
+
+.scroll-auto {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.profile-container h2 {
+  font-size: 3rem;
+  margin-top: 5px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 20px;
+}
+
+/* Header Section (Avatar + info) */
+.profile-header {
+  display: flex;
+  flex-direction: row; /* Side by side */
+  align-items: center;
+  gap: 40px;
+  border-radius: 15px;
+  padding: 30px;
+}
+
+.profile-container .no-image {
+  color: #555;
+  width: auto;
+  height: auto;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+.profile-info .username {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.profile-info .secondary-button {
+  margin-left: 1px;
+}
+
+/* Adjust the search/input row specifically for profile */
+.profile-info .search-row {
+  width: 100%;
+  justify-content: flex-start; /* align left */
+  margin: 10px 0 0 0;
+  gap: 10px;
+}
+
+.profile-info .search-row input {
+  width: 250px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+/* Liked Movies Section */
+.profile-container .section h3 {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #ccc;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 2px solid rgb(179, 81, 81);
+  border-radius: 50%;
+  background-color: rgba(179, 81, 81, 0.8); /* Transparent green */
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(179, 81, 81, 0.7); /* Glow */
+  cursor: pointer;
+  transition: transform ease 0.2s, background-color ease 0.2s;
+}
+
+.remove-btn:hover {
+  background-color: #ff4d4d;
+  border: 2px solid #ff4d4d;
+  transform: scale(1.05);
+}
+
+.movie-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: white;
+}
+
+/* Logged Out */
+.center-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-info {
+    align-items: center;
+  }
+
+  .profile-info .search-row {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .profile-container .seed-results-container {
+    justify-content: center;
+  }
+}
