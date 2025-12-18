@@ -1,78 +1,84 @@
-html, body {
-    margin: 0;
-    padding: 0;
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
 .mainContent {
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
-
 :root {
-    --bg-color: #201f2c;
-    --btn-green: #51b351;
-    background-color: #201f2c;
-    color: white;
-    height: 100%;
-    overflow: hidden;
+  --bg-color: #201f2c;
+  --btn-green: #51b351;
+  background-color: #201f2c;
+  color: white;
+  height: 100%;
+  overflow: hidden;
 }
 
 .vertical-line {
-    color: white;
-    margin: 40px 0;
+  color: white;
+  margin: 40px 0;
 }
 
 .home {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-x: hidden; /* For the carousel to work */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden; /* For the carousel to work */
 }
 
 .home h1 {
-    font-weight: bold;
-    font-size: 80;
+  font-weight: bold;
+  font-size: 80;
 }
 
 .home p {
-    color: rgb(198, 198, 198);
-    margin: 0;
-    padding: 0;
+  color: rgb(198, 198, 198);
+  margin: 0;
+  padding: 0;
 }
 
 /* Carousel css from https://blog.logto.io/css-only-infinite-scroll */
 .carousel-view {
-    width: 100%;
-    height: 400px;
-    overflow: hidden;
-    padding: 30px;
-    margin: 0 0 30px;
-    /* Adds mask from left to right */
-    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  padding: 30px;
+  margin: 0 0 30px;
+  /* Adds mask from left to right */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 15%,
+    black 85%,
+    transparent
+  );
 }
 
 .carousel-track {
-    display: flex;
-    gap: 16px;;
-    width: max-content;
-    /* Infinite scroll animation */
-    animation: scrolling 240s linear infinite;
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  /* Infinite scroll animation */
+  animation: scrolling 240s linear infinite;
 }
 
 .carousel-track:hover {
-    animation-play-state: paused;
+  animation-play-state: paused;
 }
 
 .carousel-track .movie-card {
-    width: 250px;
-    flex-shrink: 0;
-    transition: transform 0.3s ease;
-    border-radius: 10px;
-    overflow: hidden; /* Ensures image corners curve with the card */
-    cursor: pointer;
+  width: 250px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden; /* Ensures image corners curve with the card */
+  cursor: pointer;
 }
 
 .carousel-track .movie-card img {
@@ -82,150 +88,149 @@ html, body {
 }
 
 .carousel-track .movie-card:hover {
-    transform: scale(1.05);
-    /* Using two shadows creates realistic depth */
-    /* From https://www.w3schools.com/css/css3_shadows.asp */
-    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
+  transform: scale(1.05);
+  /* Using two shadows creates realistic depth */
+  /* From https://www.w3schools.com/css/css3_shadows.asp */
+  box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 @keyframes scrolling {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-        /* 
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* 
    Logic:
    The track contains 2 identical sets of items. 
    When the animation reaches 100%, it has moved -50% (the width of one set).
    => The first item of the 2nd set aligns with where the 1st item 
    of the 1st set started. The animation then snaps back to 0%.
         */
-      transform: translateX(-50%);
-    }
+    transform: translateX(-50%);
+  }
 }
 
 .header {
-    width: 100%;
-    height: 10vh;
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: row;
-    margin: 0;
-    padding: 0;
-    background-color: #201f29;;
+  width: 100%;
+  height: 10vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+  background-color: #201f29;
 }
 
 .logo-text {
-    font-size: 5vh;
-    margin: 0;
-    margin-left: 20px;
-    margin-right: auto;
-    cursor: pointer;
+  font-size: 5vh;
+  margin: 0;
+  margin-left: 20px;
+  margin-right: auto;
+  cursor: pointer;
 }
 
 .settings-button {
-    align-self: right;
+  align-self: right;
 }
 .settings-button svg {
-    color: gray;
-    font-size: 8vh;
+  color: gray;
+  font-size: 8vh;
 }
 .profile-button {
-    flex: 1;
+  flex: 1;
+  gap: 15px;
 }
 .profile-button svg {
-    color: gray;
-    font-size: 8vh;
+  color: gray;
+  font-size: 8vh;
 }
 
 .swipe-flex-parent {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .details-view-background {
-    position: relative;
-    width: 100%;
-    height: 100vh;
+  position: relative;
+  width: 100%;
+  height: 100vh;
 }
 
 .details-view-background::after {
-    content: '';
-    /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  content: "";
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .details-view-background.is-dark::after {
-    opacity: 1;
+  opacity: 1;
 }
 
 .swipe-container {
-    position: relative;
-    flex: 1;
-    height: 100%
+  position: relative;
+  flex: 1;
+  height: 100%;
 }
 
 .swipe-content {
-    flex: 1;
-    height: 100%;
-    display: grid;
-    place-items: center;
-    padding-top: 2vh;
-    grid-template-rows: 65vh 12vh 6vh;
+  flex: 1;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding-top: 2vh;
+  grid-template-rows: 65vh 12vh 6vh;
 }
 
 .swipe-content .swipe-card {
-    height: 65vh;
-    width: 43vh;
-    border-radius: 8px;
+  height: 65vh;
+  width: 43vh;
+  border-radius: 8px;
 }
 
 .swipe-sidebar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 300px;
-    height: 100vh;
-    background-color: #201f29;
-    transition: transform ease 0.2s;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100vh;
+  background-color: #201f29;
+  transition: transform ease 0.2s;
 }
 
 .sidebar-toggle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translateX(-100%) rotate(180deg);
-    width: 50px;
-    height: 50px;
-    transition:
-        transform 80ms ease,
-        box-shadow 80ms ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(-100%) rotate(180deg);
+  width: 50px;
+  height: 50px;
+  transition: transform 80ms ease, box-shadow 80ms ease;
 }
 @media (hover: hover) and (pointer: fine) {
-    .sidebar-toggle svg:hover {
-        background-color: rgb(201, 201, 201);
-    }
+  .sidebar-toggle svg:hover {
+    background-color: rgb(201, 201, 201);
+  }
 }
 .sidebar-toggle svg:active {
-    transform: scale(0.96);
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  transform: scale(0.96);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 }
 .sidebar-toggle svg {
-    width: 50px;
-    height: 50px;
-    color: white;
-    border: 2px gray solid;
-    border-left: 0px;
-    border-radius: 0px 8px 8px 0px;
-    transition: background-color ease 150ms;
+  width: 50px;
+  height: 50px;
+  color: white;
+  border: 2px gray solid;
+  border-left: 0px;
+  border-radius: 0px 8px 8px 0px;
+  transition: background-color ease 150ms;
 }
 
 .swipe-sidebar:not(.is-open) {
@@ -236,139 +241,141 @@ html, body {
   transform: translateX(-100%, -50%);
 }
 
-
-.swipe-like-img, .swipe-dislike-img, .swipe-settings-img {
-    height: 65vh;
-    width: auto;
-    object-fit: cover;
-    border-radius: 8px;
+.swipe-like-img,
+.swipe-dislike-img,
+.swipe-settings-img {
+  height: 65vh;
+  width: auto;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .swipe-container .swipe-card-wrapper:hover {
-    cursor: grab;
+  cursor: grab;
 }
 
 .swipe-container .swipe-card-wrapper:active {
-    cursor: grabbing;
+  cursor: grabbing;
 }
 
 .swipe-card-wrapper {
-    height: 65vh;
-    width: auto;
-    border-radius: 8px;
+  height: 65vh;
+  width: auto;
+  border-radius: 8px;
 }
 
 .swipe-more-info-img {
-    filter: brightness(0.9);
-    height: 9vh;
-    width: auto;
+  filter: brightness(0.9);
+  height: 9vh;
+  width: auto;
 }
 
 .swipe-title {
-    font-size: 5vh;
+  font-size: 5vh;
 }
 
 #current-session {
-
 }
 
 .dislike-btn svg {
-    color: rgb(189, 58, 58);
-    font-size: 12vh;
-    transition: transform 0.3s ease;
+  color: rgb(189, 58, 58);
+  font-size: 12vh;
+  transition: transform 0.3s ease;
 }
 .dislike-btn svg:hover {
-    transform: scale(1.3);
+  transform: scale(1.3);
 }
 .like-btn svg {
-    color: rgb(146, 226, 71);
-    font-size: 10vh;
-    transition: transform 0.3s ease;
+  color: rgb(146, 226, 71);
+  font-size: 10vh;
+  transition: transform 0.3s ease;
 }
 .more-info-btn svg {
-    color: gray;
-    font-size: 11vh;
-    transition: transform 0.3s ease;
+  color: gray;
+  font-size: 11vh;
+  transition: transform 0.3s ease;
 }
 
-.dislike-btn svg:hover, .like-btn svg:hover, .more-info-btn svg:hover {
-    transform: scale(1.3);
+.dislike-btn svg:hover,
+.like-btn svg:hover,
+.more-info-btn svg:hover {
+  transform: scale(1.3);
 }
 
 .swipe-container h3 {
-    font-size: 40px;
-    width: 500px;
-    text-align: center;
-    margin-top: 0px;
-    margin-bottom: 0px;
+  font-size: 40px;
+  width: 500px;
+  text-align: center;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .movie-poster {
-    height: 60vh;
-    width: auto;
-    border-radius: 5px;
+  height: 60vh;
+  width: auto;
+  border-radius: 5px;
 }
 
 /* Styled like genre-option buttons */
 .primary-button {
-    border: 2px solid var(--btn-green);
-    background-color: rgba(81, 179, 81, 0.2); /* Transparent green */
-    color: white;
-    font-weight: bold;
-    font-size: 15px;
-    padding: 10px 16px;
-    border-radius: 5px;
-    /* background-color: var(--btn-green); */ /* <--Uncomment here: better? */
-    transition: transform 0.3s ease;
+  border: 2px solid var(--btn-green);
+  background-color: rgba(81, 179, 81, 0.2); /* Transparent green */
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 16px;
+  border-radius: 5px;
+  /* background-color: var(--btn-green); */ /* <--Uncomment here: better? */
+  transition: transform 0.3s ease;
 }
 
 .primary-button:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
+  cursor: pointer;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
 .details-container {
-    position: absolute;
-    top: 100%;
-    width: 100%;
-    max-width: 65vw;
-    height: 100%;
-    margin-top: 3vh;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    background-color: black;
-    font-family: 'Inter', system-ui, sans-serif;
-    transition: top 0.3s ease-in-out;
-    border-bottom: 0px;
-    border-radius: 20px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  max-width: 65vw;
+  height: 100%;
+  margin-top: 3vh;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  background-color: black;
+  font-family: "Inter", system-ui, sans-serif;
+  transition: top 0.3s ease-in-out;
+  border-bottom: 0px;
+  border-radius: 20px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
 
 @media (min-width: 1024px) and (orientation: landscape) {
-    .details-container {
-        max-width: 65vw;
-    }
+  .details-container {
+    max-width: 65vw;
+  }
 }
 
 @media (min-width: 1024px) and (orientation: portrait) {
-    .details-container {
-        max-width: 100vw;
-    }
+  .details-container {
+    max-width: 100vw;
+  }
 }
 
 @media (max-width: 1023px) {
-    .details-container {
-        max-width: 100vw;
-    }
-    .swipe-sidebar {
-        width: 100vw;
-    }
-    .swipe-sidebar.is-open .sidebar-toggle {
-        transform: translateX(0%);
-    }
+  .details-container {
+    max-width: 100vw;
+  }
+  .swipe-sidebar {
+    width: 100vw;
+  }
+  .swipe-sidebar.is-open .sidebar-toggle {
+    transform: translateX(0%);
+  }
 }
 
 /* BACKGROUND LAYER */
@@ -376,18 +383,18 @@ html, body {
 /* Since object-fit: cover; doesnt work */
 /* From https://stackoverflow.com/a/60192837 */
 .details-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    overflow: hidden;
-    pointer-events: none; /* Let clicks pass through */
-    border-bottom: 0px;
-    border-radius: 20px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none; /* Let clicks pass through */
+  border-bottom: 0px;
+  border-radius: 20px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
 
 .details-video-frame {
@@ -400,455 +407,453 @@ html, body {
 }
 
 .details-container .secondary-button {
-    font-weight: bold;
-    font-size: 15px;
-    padding: 10px 16px;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 16px;
 }
 
-
 @media (min-aspect-ratio: 16/9) {
-    /* height = 100 * (9 / 16) = 56.25 */
+  /* height = 100 * (9 / 16) = 56.25 */
   .details-video-frame {
     width: 100vw;
     height: 56.25vw;
   }
 }
 @media (max-aspect-ratio: 16/9) {
-    /* width = 100 / (9 / 16) = 177.777777 */
-    .details-video-frame {
-        height: 100vh;
-        width: 177.78vh; 
+  /* width = 100 / (9 / 16) = 177.777777 */
+  .details-video-frame {
+    height: 100vh;
+    width: 177.78vh;
   }
 }
 
 .details-fallback-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    }
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 /* Gradient overlay for text */
 .details-overlay-gradient {
-    position: absolute;
-    inset: 0;
-    /* Gives a really nice realistic gradient */
-    /* from https://ishadeed.com/article/handling-text-over-image-css/ */
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.3) 0%,
-        rgba(0, 0, 0, 0.1) 40%,
-        rgba(0, 0, 0, 0.8) 75%,
-        #000000 100%
-    );
-    z-index: 2;
+  position: absolute;
+  inset: 0;
+  /* Gives a really nice realistic gradient */
+  /* from https://ishadeed.com/article/handling-text-over-image-css/ */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 40%,
+    rgba(0, 0, 0, 0.8) 75%,
+    #000000 100%
+  );
+  z-index: 2;
 }
 
 .details-scrollable-area {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    z-index: 10;
-    scroll-behavior: smooth;
-    border-bottom: 0px;
-    border-radius: 20px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10;
+  scroll-behavior: smooth;
+  border-bottom: 0px;
+  border-radius: 20px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
 
 .hide-scrollbar {
-    scrollbar-width: none;          /* Firefox */
-    -ms-overflow-style: none;       /* IE 10–11 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10–11 */
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-    display: none;                  /* Chrome, Safari, Edge */
+  display: none; /* Chrome, Safari, Edge */
 }
-
 
 /* Main section, content layer */
 .details-content-layer {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 40px;
-    padding-bottom: 60px;
-    box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+  padding-bottom: 60px;
+  box-sizing: border-box;
 }
 
 /* Top "nav bar" */
 .details-top-bar {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    right: 20px; /* Stretch to allow right-aligned buttons */
-    display: flex;
-    justify-content: space-between;
-    pointer-events: none; /* Let clicks pass through empty space */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px; /* Stretch to allow right-aligned buttons */
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none; /* Let clicks pass through empty space */
 }
 
 .details-nav-btn {
-    pointer-events: auto; /* Re-enable clicks on buttons */
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-    padding: 12px;
-    border-radius: 50%;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    transition: background 0.2s, transform 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
+  pointer-events: auto; /* Re-enable clicks on buttons */
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
 }
 
 .details-nav-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
 }
 
 .details-video-controls {
-    display: flex;
-    pointer-events: auto;
-    gap: 10px;
+  display: flex;
+  pointer-events: auto;
+  gap: 10px;
 }
 
 /* Main Info Styling */
 .details-info-wrapper {
-    max-width: 600px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 40px; 
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
 }
 
 .details-info-wrapper:not(:hover) {
-    .hide {
+  .hide {
     opacity: 0;
     transform: translateY(-20px);
     transition: ease 0.5s;
-    }
+  }
 }
 
-.details-info-wrapper:hover { 
-    .hide {
-    transition: ease 0.5s;;
+.details-info-wrapper:hover {
+  .hide {
+    transition: ease 0.5s;
     opacity: 1;
-    }
+  }
 }
 
 .details-title {
-    font-family: 'Times New Roman', serif;
-    font-size: 4rem;
-    font-weight: 700;
-    line-height: 1.1;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
-    margin: 0;
-    letter-spacing: -1px;
+  font-family: "Times New Roman", serif;
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+  margin: 0;
+  letter-spacing: -1px;
 }
 
 /* Metadata Row */
 .details-meta-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 1.1rem;
-    color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.1rem;
+  color: #e0e0e0;
 }
 
 .meta-dot {
-    color: #888;
+  color: #888;
 }
 
 .meta-rating {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none; 
-    color: white; 
-    transition: transform 0.2s ease; 
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.2s ease;
 }
 .meta-rating span {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 /* IMDb specific styling */
 .meta-imdb-logo {
-    height: 24px;
-    width: auto;
+  height: 24px;
+  width: auto;
 }
 
 /* Genres */
 .details-genres-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .details-genre-chip {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(5px);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Description */
 .details-overview {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #ccc;
-    overflow: hidden;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #ccc;
+  overflow: hidden;
 }
 
 /* Action Buttons */
 .details-actions-row {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 10px;
 }
 
 .details-more-info {
-    position: relative;
-    /* I think #000 works better here vs --bg-color */
-    background-color: #000000; /* Solid background to cover video */
-    padding: 40px;
-    min-height: 50vh;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    /* Create a gradient fade from the video into this black section */
-    box-shadow: 0 -50px 50px 20px #000000;
+  position: relative;
+  /* I think #000 works better here vs --bg-color */
+  background-color: #000000; /* Solid background to cover video */
+  padding: 40px;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  /* Create a gradient fade from the video into this black section */
+  box-shadow: 0 -50px 50px 20px #000000;
 }
 
 .details-section h3 {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    color: #eee;
-    border-left: 4px solid var(--btn-green);
-    padding-left: 10px;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #eee;
+  border-left: 4px solid var(--btn-green);
+  padding-left: 10px;
 }
 
 .details-grid-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 /* Actor/Provider Cards */
 .detail-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100px;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  text-align: center;
 }
 
 .headshot {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 50%; /* Circle for pfp */
-    margin-bottom: 8px;
-    border: 2px solid #333;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%; /* Circle for pfp */
+  margin-bottom: 8px;
+  border: 2px solid #333;
 }
 
 .detail-card.provider img {
-    border-radius: 12px;
-    border: none;
-    width: 60px;
-    height: 60px;
-    :hover {
-        cursor: pointer;
-    }
+  border-radius: 12px;
+  border: none;
+  width: 60px;
+  height: 60px;
+  :hover {
+    cursor: pointer;
+  }
 }
 
 .detail-card .name {
-    margin: 3px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: white;
+  margin: 3px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: white;
 }
 
 .detail-card .role {
-    font-size: 0.8rem;
-    color: #aaa;
+  font-size: 0.8rem;
+  color: #aaa;
 }
 
 .detail-card {
-    transition: ease 0.3s;
+  transition: ease 0.3s;
 }
 
 .detail-card:hover {
-    transform: scale(1.05)
+  transform: scale(1.05);
 }
 
 .no-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: #333;
-    color: #b9b9b9;
-    margin-bottom: 8px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #333;
+  color: #b9b9b9;
+  margin-bottom: 8px;
 }
 
 @media (max-width: 768px) {
-    .details-title {
-        font-size: 2.5rem;
-    }
-    .details-info-wrapper {
-        width: 100%;
-        padding-right: 20px;
-    }
+  .details-title {
+    font-size: 2.5rem;
+  }
+  .details-info-wrapper {
+    width: 100%;
+    padding-right: 20px;
+  }
 }
 
 .primary-button:active {
-    transform: scale(1);
+  transform: scale(1);
 }
 
 .session-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 50px;
 }
 
 .join-session-input {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .join-session-input input {
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 /* Options View Styles */
 .options-container {
-    padding: 20px;
-    max-width: 800px; /* Keeps it from getting too wide on desktop */
-    margin: 0 auto; /* Centers container */
-    text-align: center;
+  padding: 20px;
+  max-width: 800px; /* Keeps it from getting too wide on desktop */
+  margin: 0 auto; /* Centers container */
+  text-align: center;
 }
 
 .options-container h2 {
-    font-size: 32px;
-    margin-bottom: 20px;
+  font-size: 32px;
+  margin-bottom: 20px;
 }
 
 .section {
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.05); /* Subtle background */
-    border-radius: 10px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.05); /* Subtle background */
+  border-radius: 10px;
 }
 
 /* Uses MuiSlider-root, bad practice? */
 .MuiSlider-root.slider {
-    /* Sets main color, affects track and thumb */
-    color: var(--btn-green); 
-    max-width: 500px;
+  /* Sets main color, affects track and thumb */
+  color: var(--btn-green);
+  max-width: 500px;
 }
 
 .MuiSlider-root.slider .MuiSlider-valueLabel {
-    /* Sets color of valueLabel */
-    background-color: var(--btn-green);
+  /* Sets color of valueLabel */
+  background-color: var(--btn-green);
 }
 
 /* From https://stackoverflow.com/a/67770685 */
 .MuiSlider-root.slider .MuiSlider-thumb:hover {
-      box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.1);
-    }
-
-.MuiSlider-root.slider .MuiSlider-active {
-      box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.2);
-    }
-
-/* Recolor imdB slider – should it? */
-.MuiSlider-root.imdb-slider{
-    /* Sets main color, affects track and thumb */
-    color: #F2DB83; 
-    max-width: 500px;
+  box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.1);
 }
 
-.MuiSlider-root.imdb-slider .MuiSlider-valueLabel{
-    /* Sets color of valueLabel */
-    background-color: #DBA506; 
+.MuiSlider-root.slider .MuiSlider-active {
+  box-shadow: 0 0 0 10px rgba(81, 179, 81, 0.2);
+}
+
+/* Recolor imdB slider – should it? */
+.MuiSlider-root.imdb-slider {
+  /* Sets main color, affects track and thumb */
+  color: #f2db83;
+  max-width: 500px;
+}
+
+.MuiSlider-root.imdb-slider .MuiSlider-valueLabel {
+  /* Sets color of valueLabel */
+  background-color: #dba506;
 }
 
 .MuiSlider-root.imdb-slider .MuiSlider-thumb:hover {
-      box-shadow: 0 0 0 10px #dba60624;
-    }
+  box-shadow: 0 0 0 10px #dba60624;
+}
 
 .MuiSlider-root.imdb-slider .MuiSlider-thumb:active {
-      box-shadow: 0 0 0 10px #dba60664;
-    }
+  box-shadow: 0 0 0 10px #dba60664;
+}
 
 .genre-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
 .genre-option {
-    display: inline-block;
-    padding: 10px 16px;
-    border: 1px solid gray;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease-in-out;
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid gray;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
 }
 
 .genre-option:hover {
-    border-color: white;
-    background-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.02);
+  border-color: white;
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
 }
 
 /* Selected State */
 .genre-option.selected {
-    border: 2px solid var(--btn-green);
-    background-color: rgba(81, 179, 81, 0.2); /* Transparent green */
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
+  border: 2px solid var(--btn-green);
+  background-color: rgba(81, 179, 81, 0.2); /* Transparent green */
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
 .genre-option.selected:hover {
-    border: 2px solid rgb(179, 81, 81);
-    background-color: rgba(179, 81, 81, 0.2); /* Transparent green */
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(179, 81, 81, 0.7); /* Glow */
+  border: 2px solid rgb(179, 81, 81);
+  background-color: rgba(179, 81, 81, 0.2); /* Transparent green */
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(179, 81, 81, 0.7); /* Glow */
 }
 
 .genre-option {
-    display: inline-block;
-    padding: 10px 16px;
-    border: 1px solid gray;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease-in-out;
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid gray;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
 }
 
 .genre-option.all {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 /* Najs med green highlight or not? */
@@ -861,333 +866,485 @@ html, body {
 } */
 
 .account-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
 }
 
 .account-section a {
-    color: rgb(166, 166, 223);
+  color: rgb(166, 166, 223);
 }
 
 .account-section input {
-    padding-left: 9px;
-    height: 2rem;
-    border-radius: 8px;
-    border: none;
+  padding-left: 9px;
+  height: 2rem;
+  border-radius: 8px;
+  border: none;
 }
 
 .account-form {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10vh;
-    background-color: #3a3851;
-    padding: 30px;
-    border-radius: 10px;
-    width: 350px;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10vh;
+  background-color: #3a3851;
+  padding: 30px;
+  border-radius: 10px;
+  width: 350px;
+  gap: 10px;
 }
 
 .account-form input {
-    width: 70%;
+  width: 70%;
 }
 
 .account-form button {
-    margin-top: 20px;
-    width: 50%
+  margin-top: 20px;
+  width: 50%;
 }
 
 /* Options view */
 .secondary-button {
-    border: 2px solid var(--btn-green);
-    /* background-color: rgba(81, 179, 81, 0.2); */ /* Transparent green */
-    color: white;
-    font-weight: bold;
-    font-size: 12px;
-    padding: 8px 13px;
-    margin: 0 5px;
-    border-radius: 5px;
-    background-color: var(--btn-green); /* <--Uncomment here: better? */
-    transition: transform 0.3s ease;
+  border: 2px solid var(--btn-green);
+  /* background-color: rgba(81, 179, 81, 0.2); */ /* Transparent green */
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 8px 13px;
+  margin: 0 5px;
+  border-radius: 5px;
+  background-color: var(--btn-green); /* <--Uncomment here: better? */
+  transition: transform 0.3s ease;
 }
 
 .secondary-button:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
+  cursor: pointer;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
 .search-row {
-    display: flex;
-    margin-bottom: 10px;
-    justify-content: center;
+  display: flex;
+  margin-bottom: 10px;
+  justify-content: center;
 }
 
 .search-row input {
-    width: 60%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #444444;
-    background-color: #2a2a2a;
-    color: white;
-    font-size: 16px;
+  width: 60%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #444444;
+  background-color: #2a2a2a;
+  color: white;
+  font-size: 16px;
 }
 
 /* Copied over from homeview carousel */
 .seed-results-container {
-    display: flex;
-    overflow: auto; /* Allow manual scrolling */
-    gap: 16px;
-    padding: 20px 30px;
-    width: 100%;
-    box-sizing: border-box;
-    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-    
-    /* Scrollbar Styling */
-    scrollbar-color: #00000088;
+  display: flex;
+  overflow: auto; /* Allow manual scrolling */
+  gap: 16px;
+  padding: 20px 30px;
+  width: 100%;
+  box-sizing: border-box;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 5%,
+    black 95%,
+    transparent
+  );
+
+  /* Scrollbar Styling */
+  scrollbar-color: #00000088;
 }
 
 /* The cards - matching .carousel-track .movie-card style */
 .seed-result-card {
-    display: flex;
-    flex: 0 0 150px; /* Fixed width for each card, slightly smaller than home carousel */
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: transform 0.3s ease;
+  display: flex;
+  flex: 0 0 150px; /* Fixed width for each card, slightly smaller than home carousel */
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
 
-    /* Ensures the absolute child (checkmark) stays inside this card */
-    position: relative; 
+  /* Ensures the absolute child (checkmark) stays inside this card */
+  position: relative;
 }
 
 .seed-result-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    object-fit: cover;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* Base shadow */
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Base shadow */
 }
 
 .seed-result-card:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .seed-result-card:hover img {
-    /* Using two shadows creates realistic depth */
-    /* From https://www.w3schools.com/css/css3_shadows.asp */
-    box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
+  /* Using two shadows creates realistic depth */
+  /* From https://www.w3schools.com/css/css3_shadows.asp */
+  box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .seed-result-card .checkmark {
-    /* Position it over the image */
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    
-    font-size: 24px; /* Size of the icon */
-    color: var(--btn-green);
-    /* The only way I thought to make the checkmark white on the inside only: */
-    background: radial-gradient(white 45%, transparent 50%);
+  /* Position it over the image */
+  position: absolute;
+  top: 8px;
+  left: 8px;
+
+  font-size: 24px; /* Size of the icon */
+  color: var(--btn-green);
+  /* The only way I thought to make the checkmark white on the inside only: */
+  background: radial-gradient(white 45%, transparent 50%);
 }
 
 .lobby-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--bg-color);
 }
 
 .lobby-content {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 40px;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 40px;
 }
 
 .lobby-content h1 {
-    margin: 0;
-    font-size: 3rem;
-    font-weight: bold;
-    text-decoration: none;
+  margin: 0;
+  font-size: 3rem;
+  font-weight: bold;
+  text-decoration: none;
 }
 
-.lobby-code-section p, .lobby-users-section p {
-    margin: 0 0 10px 0;
-    color: #aaa;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.lobby-code-section p,
+.lobby-users-section p {
+  margin: 0 0 10px 0;
+  color: #aaa;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .lobby-code {
-    font-size: 3rem;
-    font-family: monospace;
-    letter-spacing: 5px;
-    font-weight: bold;
-    color: var(--btn-green);
-    background: rgba(255,255,255,0.05);
-    padding: 10px 30px;
-    border-radius: 8px;
-    border: 1px solid #444;
+  font-size: 3rem;
+  font-family: monospace;
+  letter-spacing: 5px;
+  font-weight: bold;
+  color: var(--btn-green);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 30px;
+  border-radius: 8px;
+  border: 1px solid #444;
 }
 
 .lobby-users-section {
-    width: 100%;
+  width: 100%;
 }
 
 .user-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
 }
 
 .user-list li {
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  color: white;
 }
 
 .lobby-actions {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .lobby-actions .primary-button {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.1rem;
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
 }
 
 .waiting-text {
-    color: #888;
-    font-style: italic;
+  color: #888;
+  font-style: italic;
 }
 
 .home-nav {
-    width: 100%;
-    height: 5vh;
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: row;
-    margin: 0;
-    background-color: var(--bg-color);
-    align-items: center;
-    padding-left: 60px;
-    padding-right: 60px;
-    justify-content: space-between;
+  width: 100%;
+  height: 5vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  background-color: var(--bg-color);
+  align-items: center;
+  padding-left: 60px;
+  padding-right: 60px;
+  justify-content: space-between;
 }
 
 /* Match animation styles */
 
 .matchContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    font-family: "Inter", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  font-family: "Inter", sans-serif;
 }
 
 .match-vignette {
-    /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
-    position: absolute;
-    inset: 0;
-    background-color: var(--btn-green);
-    pointer-events: none;
-    mask-image: radial-gradient(
-        circle at center, 
-        rgba(0,0,0,0) 50%, 
-        rgba(0,0,0,0.1) 70%,
-        rgba(0,0,0,0.4) 100%);
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
+  position: absolute;
+  inset: 0;
+  background-color: var(--btn-green);
+  pointer-events: none;
+  mask-image: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.1) 70%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
 }
 
 .match-text-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--btn-green);
-    /* Glow effect */
-    text-shadow: 0 0 30px var(--btn-green);
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--btn-green);
+  /* Glow effect */
+  text-shadow: 0 0 30px var(--btn-green);
+  position: relative;
 }
 
 .heart-text {
-    font-weight: bold;
-    margin-bottom: 10px;
-    font-size: 60px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 60px;
 }
 
 .match-text {
-    font-weight: bold;
-    font-size: 24px;
+  font-weight: bold;
+  font-size: 24px;
 }
 
 /* Match animation styles */
 
 .matchContainer {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100vh;
-    font-family: "Inter", sans-serif;
-    pointer-events: none;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  font-family: "Inter", sans-serif;
+  pointer-events: none;
 }
 
 .match-vignette {
-    /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
-    position: absolute;
-    inset: 0;
-    background-color: var(--btn-green);
-    pointer-events: none;
-    mask-image: radial-gradient(
-        circle at center, 
-        rgba(0,0,0,0) 50%, 
-        rgba(0,0,0,0.1) 70%,
-        rgba(0,0,0,0.4) 100%);
-    pointer-events: none;
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
+  position: absolute;
+  inset: 0;
+  background-color: var(--btn-green);
+  pointer-events: none;
+  mask-image: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.1) 70%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
 }
 
 .match-text-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--btn-green);
-    /* Glow effect */
-    text-shadow: 0 0 30px var(--btn-green);
-    position: relative;
-    pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--btn-green);
+  /* Glow effect */
+  text-shadow: 0 0 30px var(--btn-green);
+  position: relative;
+  pointer-events: none;
 }
 
 .heart-text {
-    font-weight: bold;
-    margin-bottom: 10px;
-    font-size: 60px;
-    pointer-events: none;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 60px;
+  pointer-events: none;
 }
 
 .match-text {
-    font-weight: bold;
-    font-size: 24px;
-    pointer-events: none;
+  font-weight: bold;
+  font-size: 24px;
+  pointer-events: none;
+}
+
+/* Profile View */
+
+.profile-pic {
+  border-radius: 50%;
+  /* Smoothens the edges, for some reason: */
+  border: var(--btn-green);
+  /* overflow: "hidden"; */
+}
+
+.scroll-auto {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.profile-container h2 {
+  font-size: 3rem;
+  margin-top: 5px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 20px;
+}
+
+/* Header Section (Avatar + info) */
+.profile-header {
+  display: flex;
+  flex-direction: row; /* Side by side */
+  align-items: center;
+  gap: 40px;
+  border-radius: 15px;
+  padding: 30px;
+}
+
+.profile-container .no-image {
+  color: #555;
+  width: auto;
+  height: auto;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+}
+
+.profile-info .username {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.profile-info .secondary-button {
+  margin-left: 1px;
+}
+
+/* Adjust the search/input row specifically for profile */
+.profile-info .search-row {
+  width: 100%;
+  justify-content: flex-start; /* align left */
+  margin: 10px 0 0 0;
+  gap: 10px;
+}
+
+.profile-info .search-row input {
+  width: 250px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+/* Liked Movies Section */
+.profile-container .section h3 {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #ccc;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 2px solid rgb(179, 81, 81);
+  border-radius: 50%;
+  background-color: rgba(179, 81, 81, 0.8); /* Transparent green */
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(179, 81, 81, 0.7); /* Glow */
+  cursor: pointer;
+  transition: transform ease 0.2s, background-color ease 0.2s;
+}
+
+.remove-btn:hover {
+  background-color: #ff4d4d;
+  border: 2px solid #ff4d4d;
+  transform: scale(1.05);
+}
+
+.movie-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: white;
+}
+
+/* Logged Out */
+.center-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-info {
+    align-items: center;
+  }
+
+  .profile-info .search-row {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .profile-container .seed-results-container {
+    justify-content: center;
+  }
 }
