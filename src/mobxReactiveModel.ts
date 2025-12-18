@@ -16,15 +16,23 @@ declare global {
 }
 
 export const reactiveModel = observable(model);
+
 reactiveModel.fetchPopularMovies();
 reactiveModel.fetchGenres().then(() => reactiveModel.toggleAllGenres());
-reactiveModel.toggleSeededIconToMovie(550);
+
+function startDefaultDebugConfig() {
+  reactiveModel.toggleSeededIconToMovie(550);
+  const idQueuePrms = reactiveModel.setMovieIdQueue();
+  idQueuePrms.then(() => reactiveModel.currentMovieEffect());
+}
+//startDefaultDebugConfig();
+
+
 
 export const reactiveSessionModel = observable(SessionModel);
 export const reactiveUserModel = observable(UserModel);
 
-const idQueuePrms = reactiveModel.setMovieIdQueue();
-idQueuePrms.then(() => reactiveModel.currentMovieEffect());
+
 
 function currentMovieIdACB() {
   return reactiveModel.curMovieId;

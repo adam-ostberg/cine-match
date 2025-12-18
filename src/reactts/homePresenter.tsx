@@ -85,6 +85,7 @@ const Home = observer(
                 <div className="details-view-background" onClick={closeDetailsACB}>
                     <HomeView
                         userModel={props.userModel}
+                        sessionModel={props.sessionModel}
                         onStartSession={sessionStartACB}
                         username={username}
                         onJoinSession={sessionJoinACB}

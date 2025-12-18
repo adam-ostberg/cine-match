@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { OptionsView } from "../views/OptionsView.tsx";
 import type { ModelType } from "../MovieModel.ts";
 import type { TMDBMoviePage, TMDBMoviePageResult } from "../apiConfig.ts";
+import { useNavigate } from "react-router-dom";
 // import type { TMDBGenre } from "../apiConfig.ts";
 
 export type OptionsPresenterProps = {
@@ -11,6 +12,7 @@ export type OptionsPresenterProps = {
 
 const Options = observer(
     function OptionsRender(props: OptionsPresenterProps) {
+        const navigator = useNavigate();
 
         // Ensure genres are loaded
         if (!props.model.genres || props.model.genres.length === 0) {
@@ -39,8 +41,11 @@ const Options = observer(
             props.model.searchMovie(q);
         }
 
-        function onSelectSeedMovieACB(id: number) {
-            props.model.toggleSeededIconToMovie(id);
+        function onSelectSeedMovieACB(movie: TMDBMoviePageResult) {
+            props.model.toggleSeededIconToMovie(movie.id);
+        }
+        function handleOnCloseACB() {
+            navigator(-1);
         }
 
         return (
@@ -59,6 +64,7 @@ const Options = observer(
                 onSearch={onSearchTextACB}
                 onSelectMovie={onSelectSeedMovieACB}
                 seededMovieIds={props.model.selectedSeededIds}
+                onClose={handleOnCloseACB}
             />
         );
     }

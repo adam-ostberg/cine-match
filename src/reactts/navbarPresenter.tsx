@@ -2,9 +2,11 @@ import { observer } from "mobx-react-lite";
 import { type UserModelType } from "../UserModel"
 import { NavbarView } from "../views/NavbarView";
 import { signOutUser } from "../authService";
+import type { SessionType } from "../SessionModel";
 
 type NavbarPresenterProps = {
   userModel: UserModelType;
+  sessionModel: SessionType;
 }
 
 const Navbar = observer(
@@ -25,7 +27,7 @@ const Navbar = observer(
     const username = (user.currentUser && user.username) || null;
 
     return (
-      <NavbarView onLogoClick={logoClickACB} onSignOutClick={handleSignOutACB} username={username} userId={user.userId || ""} />
+      <NavbarView onLogoClick={logoClickACB} onSignOutClick={handleSignOutACB} username={username} userId={user.userId || ""} sessionStatus={props.sessionModel.status}/>
     );
   }
 );

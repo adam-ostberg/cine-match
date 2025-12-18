@@ -7,6 +7,7 @@ import { UserAvatar } from "../components/UserAvatar.tsx";
 export type navbarViewProps = {
 	username: string | null;
 	userId: string;
+	sessionStatus: string;
 	onLogoClick: () => void;
 	onSignOutClick: () => void;
 }
@@ -20,12 +21,19 @@ export function NavbarView(props: navbarViewProps) {
 	function signOutClickACB() {
 		props.onSignOutClick();
 	}
+	const sessionActive = props.sessionStatus === "active" || props.sessionStatus === "matched";
 
 	return (
 		<div className="header">
 			<h1 onClick={logoClickACB} className="logo-text">
 				CineMatch
 			</h1>
+			{sessionActive ?
+				<button> {/* Have not added functionality yet this button is so you can escape a swipe session lobby*/}
+					Exit Session
+				</button>
+				: ""
+			}
 			{
 				props.username ? (
 					<>

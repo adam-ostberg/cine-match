@@ -4,12 +4,16 @@ export type LobbyViewProps = {
   usernames: string[];
   isHost: boolean;
   onStartSwiping: () => void;
+  toOptionsView: () => void;
 }
 
 export function LobbyView(props: LobbyViewProps) {
   
   function startSwipingACB() {
     props.onStartSwiping();
+  }
+  function toOptionsViewACB() {
+    props.toOptionsView();
   }
 
   return (
@@ -27,7 +31,9 @@ export function LobbyView(props: LobbyViewProps) {
             <Userlist usernames={props.usernames} />
         </div>
 
+        
         <div className="lobby-actions">
+            <button className="primary-button" onClick={toOptionsViewACB}>Filter</button>
             {props.isHost ? (
                 <button className="primary-button" onClick={startSwipingACB}>Begin Swiping</button>
             ) : (

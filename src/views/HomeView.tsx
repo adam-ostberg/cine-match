@@ -1,12 +1,14 @@
 import "../style.css";
 
-import type { TMDBPopularMovieResult } from "../apiConfig";
+import type { TMDBMoviePageResult } from "../apiConfig";
 import { Navbar } from "../reactts/navbarPresenter";
 import type { UserModelType } from "../UserModel";
+import type { SessionType } from "../SessionModel";
 
 export type HomeViewProps = {
   userModel: UserModelType;
-  movies: TMDBPopularMovieResult[] | null;
+  sessionModel: SessionType;
+  movies: TMDBMoviePageResult[] | null;
   username: string | null;
   onStartSession: () => void;
   onJoinSession: (sessionId: string) => void;
@@ -37,7 +39,7 @@ export function HomeView(props: HomeViewProps) {
     props.onStartSession();
   } */
 
-  function renderMovieCardCB(movie: TMDBPopularMovieResult, index: number) {
+  function renderMovieCardCB(movie: TMDBMoviePageResult, index: number) {
     function onMovieClickCB() {
       props.onMovieClick(movie.id);
     }
@@ -62,7 +64,7 @@ export function HomeView(props: HomeViewProps) {
 
   return (
     <div className="home">
-      <Navbar userModel={props.userModel}/>
+      <Navbar userModel={props.userModel} sessionModel={props.sessionModel}/>
       <p>Swipe to find your perfect movie</p>
       {/*TODO: PUT THIS BUTTON SOMEWHERE ELSE*/}
       <button onClick={() => window.location.hash="#/account"}>Go To Account Page</button>

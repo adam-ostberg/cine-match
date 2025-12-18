@@ -2,6 +2,7 @@
 import { getCountryForTimezone } from "countries-and-timezones";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import type { ModelType } from "./MovieModel";
 
 export function getVideoUrl(video: { site: string; key: string }) {
   switch (video.site.toLowerCase()) {
@@ -72,4 +73,16 @@ export function getPopularityColor(score: number): string {
         const hue = 45 - (45 * percent);
         return `hsl(${hue}, 100%, 50%)`;
     }
+}
+
+export function configDataForSwipeStart(model: ModelType) {
+  const idQueuePrms = model.setMovieIdQueue();
+  idQueuePrms
+    .then(() => model.currentMovieEffect())
+    .then(() => {
+      model.prefetchWindowPrmsState.promise.then(() => {
+        const id = model.getLatestPrefetchMovieId();
+        model.setCurrentMovieId(id);
+      })
+    });
 }

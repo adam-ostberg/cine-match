@@ -4,6 +4,7 @@ import type { ModelType } from "../MovieModel";
 import type { SessionType, UserInfoType } from "../SessionModel";
 import { isUserSessionHost } from "../sessionHelpers";
 import type { UserModelType } from "../UserModel";
+import { configDataForSwipeStart } from "../helperFunctions";
 
 export type LobbyPresenterProps = {
   model: ModelType;
@@ -15,12 +16,16 @@ const Lobby = observer(
   function LobbyRender(props: LobbyPresenterProps) {
 
     function handleStartSwipingACB() {
+      configDataForSwipeStart(props.model);
       props.sessionModel.setStatus("active", props.model.userId || "");
-      window.location.href = "/#swipe";
+      window.location.href = "#/swipe";
+    }
+    function handleToOptionsViewACB() {
+      document.location.href = "#/options"
     }
 
     if (props.sessionModel.status === "active") {
-      window.location.href = "/#swipe";
+      window.location.href = "#/swipe";
     }
 
     // Callback for extracting usernames
@@ -38,6 +43,7 @@ const Lobby = observer(
           usernames={usernames} 
           isHost={isUserSessionHost(props.model, props.sessionModel)}
           onStartSwiping={handleStartSwipingACB}
+          toOptionsView={handleToOptionsViewACB}
         />
       </div>
     );

@@ -44,12 +44,17 @@ function SwipeView(props: SwipeViewProps) {
 
   const [showMatchAnimation, setShowMatchAnimation] = useState(false);
   const [cachedDetails, setCachedDetails] = useState<MovieDetails[] | null>(null);
+  const [swipeCardIsCached, setSwipeCardIsCached] = useState<boolean>(false);
 
   // Whenever new data arrives, store it
   useEffect(() => {
     const data = props.prefetchWindowPrmsState.data as MovieDetails[] | null;
     if (data && Array.isArray(data) && data.length > 0) {
+      setSwipeCardIsCached(false);
       setCachedDetails(data);
+    }
+    else {
+      setSwipeCardIsCached(true);
     }
   }, [props.prefetchWindowPrmsState.data]);
 
@@ -76,7 +81,7 @@ function SwipeView(props: SwipeViewProps) {
   function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
     if (!detail) { return };
     const is_top_card = index === array.length-1;
-    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right", detail.id)} leftSwipeCB={() => handleSwipe("left", detail.id)} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card}/>
+    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right", detail.id)} leftSwipeCB={() => handleSwipe("left", detail.id)} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card} isCached={swipeCardIsCached}/>
   }
   function outputTitle(firstDetail: MovieDetails | undefined) {
     if (!firstDetail?.title) { return "" };
@@ -150,13 +155,13 @@ function SwipeView(props: SwipeViewProps) {
 }
 
 // @ts-ignore [TODO] remove
-const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean}) => {
+const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card, isCached} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean, isCached: boolean}) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0)
   const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
   const dislikeOpacity = useTransform(x, [-145 ,-70, 0, 70] , [0, 1, 0, 0]);
   const likeOpacity = useTransform(x, [-70, 0, 70, 145] , [0, 0, 0.9, 0]);
-
+  isCached
   const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 
   const mapRange = (
@@ -233,13 +238,12 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
       animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     }
   };
-    
+  const motionDivClassNames = isCached ? "swipe-card-wrapper pointer-events-none" : "swipe-card-wrapper";
 return (
-  <motion.div className="swipe-card-wrapper"
+  <motion.div className={motionDivClassNames}
     style={{
       gridRow: 1,
       gridColumn: 1,
-
       position: "relative",
     }}  
   >

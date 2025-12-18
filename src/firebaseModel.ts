@@ -124,14 +124,6 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
       session.status = data.status || "waiting";
       session.ready = true;
 
-      getDocs(likeCollectionRef).then((snapshot) => {
-        const movieLikeIds = snapshot.docs.map(doc => Number(doc.id));
-        if (!movieLikeIds || !Array.isArray(movieLikeIds) || movieLikeIds.length === 0) return;
-        model.insertMovieLikesIntoQueue(movieLikeIds);
-        session.likes = [...session.likes, ...movieLikeIds];
-      })
-      
-
       // Reset flag after updates are applied (use setTimeout to let MobX reactions complete)
       setTimeout(() => {
         isUpdatingFromFirestore = false;
@@ -139,6 +131,21 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
     }, (error) => {
       console.error("Error listening to session:", error);
     });
+
+    // Replace getDocs with a real-time listener for the likes collection
+    const unsubscribeLikes = firestoreOnSnapshot(likeCollectionRef, (querySnapshot) => {
+      // Callback runs every time the collection updates
+      const movieLikeIds = querySnapshot.docs.map(doc => Number(doc.id));
+      if (!movieLikeIds || !Array.isArray(movieLikeIds) || movieLikeIds.length === 0) {
+        return;
+      }
+      model.insertMovieLikesIntoQueue(movieLikeIds);
+      const idQueue = [...session.likes, ...movieLikeIds];
+      session.likes = [...new Set(idQueue)]; // removes duplicates
+    }, (error) => {
+      console.error("Error listening to likes collection:", error);
+    });
+
   }
 
   // Watch for status changes only - this is the main thing clients might update

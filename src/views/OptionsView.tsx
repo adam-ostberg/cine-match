@@ -6,7 +6,7 @@ import type { PromiseState } from "../resolvePromise";
 /* Inspired by https://www.themoviedb.org/movie */
 import Slider from '@mui/material/Slider';
 /* npm install react-icons */
-import { FaCheckCircle } from "react-icons/fa";
+import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 
 export type OptionsViewProps = {
   availableGenres: TMDBGenre[];
@@ -25,6 +25,7 @@ export type OptionsViewProps = {
   onToggleAll: () => void;
   onRatingChange: (rating: number) => void;
   onRuntimeChange: (min: number, max: number) => void;
+  onClose: () => void;
 }
 
 export function OptionsView(props: OptionsViewProps) {
@@ -91,11 +92,17 @@ export function OptionsView(props: OptionsViewProps) {
       props.onRuntimeChange(newValue[0], newValue[1]);
     }
   }
+  function closeACB() {
+    props.onClose();
+  }
 
   const isAllSelected = props.availableGenres.length > 0 && props.selectedGenreIds.length === props.availableGenres.length;
 
   return (
     <div className="options-container">
+      <button onClick={closeACB} className="details-nav-btn back">
+        <FaArrowLeft />
+      </button>
       <h2>Filters</h2>
       <div className="section">
 

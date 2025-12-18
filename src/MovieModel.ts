@@ -361,7 +361,7 @@ export const model: ModelType = {
                 return true
             })
             .map(movie => {
-                return {...movie, imdbRating: movieIdToRating.get(movie.id), runtime: movieIdToRating.get(movie.id)}
+                return {...movie, imdbRating: movieIdToRating.get(movie.id), runtime: movieIdToRuntime.get(movie.id)}
             });
 
         return result.map(movie => movie.id);
