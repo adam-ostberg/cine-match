@@ -26,6 +26,7 @@ html, body {
 
 .hide-overflow {
   overflow: hidden;
+  /* font-family: monospace, system-ui, sans-serif; */
 }
 
 .pointer-events-none {
@@ -146,7 +147,15 @@ height: auto;
   background-color: #201f29;;
 }
 
+.username {
+  color: white;
+}
+
+/* Logo text */
 .logo-text {
+  font-family: monospace, system-ui, sans-serif;
+  font-weight: bold;
+  color: var(--btn-green);
   font-size: 5vh;
   margin: 0;
   margin-left: 20px;
