@@ -1,15 +1,19 @@
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
+}
+
+.mainContent::-webkit-scrollbar{
+  display: none;
 }
 
 .mainContent {
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
 }
+
 
 :root {
   --bg-color: #201f2c;
@@ -17,7 +21,15 @@ body {
   background-color: #201f2c;
   color: white;
   height: 100%;
+  overflow-x: hidden;
+}
+
+.hide-overflow {
   overflow: hidden;
+}
+
+.home-presenter-parent {
+
 }
 
 .vertical-line {
@@ -30,6 +42,21 @@ body {
   flex-direction: column;
   align-items: center;
   overflow-x: hidden; /* For the carousel to work */
+}
+
+.home-nav {
+  width: 100%;
+  height: 5vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  background-color: var(--bg-color);
+  align-items: center;
+  padding-left: 60px;
+  padding-right: 60px;
+  justify-content: space-between;
 }
 
 .home h1 {
@@ -46,23 +73,16 @@ body {
 /* Carousel css from https://blog.logto.io/css-only-infinite-scroll */
 .carousel-view {
   width: 100%;
-  height: 400px;
+  height: 40vh;
   overflow: hidden;
-  padding: 30px;
-  margin: 0 0 30px;
+  padding: 6.5vh;
   /* Adds mask from left to right */
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 15%,
-    black 85%,
-    transparent
-  );
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
 
 .carousel-track {
   display: flex;
-  gap: 16px;
+  gap: 1.1vh;
   width: max-content;
   /* Infinite scroll animation */
   animation: scrolling 240s linear infinite;
@@ -73,7 +93,7 @@ body {
 }
 
 .carousel-track .movie-card {
-  width: 250px;
+  width: 28vh;
   flex-shrink: 0;
   transition: transform 0.3s ease;
   border-radius: 10px;
@@ -82,16 +102,16 @@ body {
 }
 
 .carousel-track .movie-card img {
-  display: block;
-  width: 100%;
-  height: auto;
+display: block;
+width: 100%;
+height: auto;
 }
 
 .carousel-track .movie-card:hover {
   transform: scale(1.05);
   /* Using two shadows creates realistic depth */
   /* From https://www.w3schools.com/css/css3_shadows.asp */
-  box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow:0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
 }
 
 @keyframes scrolling {
@@ -99,13 +119,13 @@ body {
     transform: translateX(0);
   }
   100% {
-    /* 
-   Logic:
-   The track contains 2 identical sets of items. 
-   When the animation reaches 100%, it has moved -50% (the width of one set).
-   => The first item of the 2nd set aligns with where the 1st item 
-   of the 1st set started. The animation then snaps back to 0%.
-        */
+      /* 
+  Logic:
+  The track contains 2 identical sets of items. 
+  When the animation reaches 100%, it has moved -50% (the width of one set).
+  => The first item of the 2nd set aligns with where the 1st item 
+  of the 1st set started. The animation then snaps back to 0%.
+      */
     transform: translateX(-50%);
   }
 }
@@ -119,7 +139,7 @@ body {
   flex-direction: row;
   margin: 0;
   padding: 0;
-  background-color: #201f29;
+  background-color: #201f29;;
 }
 
 .username {
@@ -143,7 +163,6 @@ body {
 }
 .profile-button {
   flex: 1;
-  gap: 15px;
 }
 .profile-button svg {
   color: gray;
@@ -151,9 +170,6 @@ body {
 }
 
 .swipe-flex-parent {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   position: relative;
 }
 
@@ -164,7 +180,7 @@ body {
 }
 
 .details-view-background::after {
-  content: "";
+  content: '';
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/inset */
   position: absolute;
   inset: 0;
@@ -179,9 +195,9 @@ body {
 }
 
 .swipe-container {
+  min-height: 90vh;
   position: relative;
   flex: 1;
-  height: 100%;
 }
 
 .swipe-content {
@@ -190,7 +206,7 @@ body {
   display: grid;
   place-items: center;
   padding-top: 2vh;
-  grid-template-rows: 65vh 12vh 6vh;
+  grid-template-rows: 65vh 12vh 7vh; 
 }
 
 .swipe-content .swipe-card {
@@ -204,7 +220,7 @@ body {
   top: 0;
   right: 0;
   width: 300px;
-  height: 100vh;
+  height: 100%;
   background-color: #201f29;
   transition: transform ease 0.2s;
 }
@@ -216,11 +232,13 @@ body {
   transform: translateX(-100%) rotate(180deg);
   width: 50px;
   height: 50px;
-  transition: transform 80ms ease, box-shadow 80ms ease;
+  transition:
+      transform 80ms ease,
+      box-shadow 80ms ease;
 }
 @media (hover: hover) and (pointer: fine) {
   .sidebar-toggle svg:hover {
-    background-color: rgb(201, 201, 201);
+      background-color: rgb(201, 201, 201);
   }
 }
 .sidebar-toggle svg:active {
@@ -245,9 +263,8 @@ body {
   transform: translateX(-100%, -50%);
 }
 
-.swipe-like-img,
-.swipe-dislike-img,
-.swipe-settings-img {
+
+.swipe-like-img, .swipe-dislike-img, .swipe-settings-img {
   height: 65vh;
   width: auto;
   object-fit: cover;
@@ -279,6 +296,7 @@ body {
 }
 
 #current-session {
+
 }
 
 .dislike-btn svg {
@@ -300,9 +318,7 @@ body {
   transition: transform 0.3s ease;
 }
 
-.dislike-btn svg:hover,
-.like-btn svg:hover,
-.more-info-btn svg:hover {
+.dislike-btn svg:hover, .like-btn svg:hover, .more-info-btn svg:hover {
   transform: scale(1.3);
 }
 
@@ -341,16 +357,15 @@ body {
 
 .details-container {
   position: absolute;
-  top: 100%;
+  top: 96%;
+  height: calc(100% - 4%);
   width: 100%;
   max-width: 65vw;
-  height: 100%;
-  margin-top: 3vh;
   left: 50%;
   transform: translateX(-50%);
   color: white;
   background-color: black;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   transition: top 0.3s ease-in-out;
   border-bottom: 0px;
   border-radius: 20px;

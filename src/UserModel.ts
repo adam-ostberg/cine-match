@@ -1,4 +1,5 @@
 import { type User } from "firebase/auth";
+import { handleSwipeInSession } from "./firestoreModel";
 
 export type UserModelType = {
     userId: string;
@@ -10,6 +11,7 @@ export type UserModelType = {
     setCurrentUser: (user: User | null) => void;
     setUsername: (username: string) => void;
     setCurrentSessionId: (id: string | null) => void;
+    reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
 }
 
 export const UserModel: UserModelType = {
@@ -34,5 +36,11 @@ export const UserModel: UserModelType = {
 
     setCurrentSessionId(id: string | null) {
         this.currentSessionId = id;
+    },
+    
+    async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
+        if (this.currentSessionId && this.userId) {
+            await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
+        }
     },
 }

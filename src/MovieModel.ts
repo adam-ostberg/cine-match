@@ -3,6 +3,7 @@ import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
 import { fetchImdbRatings } from "./testImdbApi";
+import { type LikesType } from "./SessionModel";
 
 export type ModelType = {
     username: string;
@@ -46,6 +47,7 @@ export type ModelType = {
     fetchPopularMovies: () => Promise<TMDBMoviePageResult[]>;
     setMovieIdQueue: () => Promise<any>;
     insertRecommendedMovieIntoQueue: (movieId: number) => void;
+    insertMovieLikesIntoQueue: (likes: number[]) => void;
     filterMoviesByOptionParams: (data: TMDBMoviePageResult[]) => Promise<number[] | undefined>;
     filterAndGetIdsFromMoviesACB: (data: any) => number[];
     nextMovie: () => void;
@@ -262,6 +264,20 @@ export const model: ModelType = {
         else {
             const idQueue = selMoviesIds;
             this.movieIdQueuePrmsState.data = idQueue;                
+        }
+    },
+
+    insertMovieLikesIntoQueue(likes: number[]) {
+        const establishedIdQueue = this.movieIdQueuePrmsState.data ?? [];
+
+        const filteredMovieIds = likes
+            .filter(id => !this.likes.includes(id) && !this.dislikes.includes(id) && !establishedIdQueue.includes(id));
+
+        if (!filteredMovieIds) return;
+        if (!!this.movieIdQueuePrmsState.data) {
+            const idQueue = [...this.movieIdQueuePrmsState.data]
+            idQueue.splice(4, 0, ...filteredMovieIds);
+            this.movieIdQueuePrmsState.data = idQueue;
         }
     },
 

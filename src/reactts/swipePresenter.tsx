@@ -28,11 +28,12 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		}
 
 		function swipeLikeACB(id: number) {
-			const currentMovie = props.model.movieDetailsPrmsState.data;
+			const currentMovie = props.model.prefetchWindowPrmsState.data[0];
 
 			// Report the swipe to the model
 			if (currentMovie) {
-				props.model.reportSwipe(currentMovie.id, currentMovie.title, currentMovie.poster_path || "", true);
+				props.userModel.reportSwipe(currentMovie.id, currentMovie.title, currentMovie.poster_path || "", true);
+				//props.model.reportSwipe(currentMovie.id, currentMovie.title, currentMovie.poster_path || "", true);
 			}
 			props.model.addToLiked(id);
 			props.model.insertRecommendedMovieIntoQueue(id);
@@ -70,7 +71,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			<SwipeView prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} 
 			onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB} 
 			currentSessionId={props.model.currentSessionId} sessionModel={props.sessionModel}
-			userModel={props.userModel}
+			userModel={props.userModel} sessionShowMatchAnimation={props.sessionModel.showMatchAnimation}
 			/>);
 
 		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
