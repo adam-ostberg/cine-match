@@ -4,10 +4,12 @@ import type { ModelType } from "../MovieModel.ts";
 import type { UserModelType } from "../UserModel";
 import type { TMDBMoviePageResult } from "../apiConfig.ts";
 import { signOutUser } from "../authService";
+import type { SessionType } from "../SessionModel.ts";
 
 export type ProfilePresenterProps = {
   model: ModelType;
   userModel: UserModelType;
+  sessionModel: SessionType;
 }
 
 const Profile = observer(
@@ -35,6 +37,7 @@ const Profile = observer(
     return (
       <ProfileView
         userModel={props.userModel}
+        sessionModel={props.sessionModel}
         likedMovies={props.model.alltimeLikedMoviesArray}
         onUsernameChange={handleUsernameChangeACB}
         onRemoveLike={handleRemoveLikeACB}

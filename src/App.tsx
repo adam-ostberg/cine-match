@@ -50,7 +50,7 @@ const App = observer(
 				},
 				{
 					path: "/profile",
-					element: <Profile model={props.model} userModel={props.userModel}/>
+					element: <Profile model={props.model} userModel={props.userModel} sessionModel={props.sessionModel}/>
 				},
 				{
 					path: "/lobby",

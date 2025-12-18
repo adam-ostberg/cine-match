@@ -147,25 +147,25 @@ export const model: ModelType = {
     },
 
     currentMovieEffect() {
-        const movieIdsQueue = this.movieIdQueuePrmsState.data as number[] | null;
-        if (!movieIdsQueue) {
-            console.log("MovieIdsQueue is empty! call from currentMovieEffect()");
-            return;
-        }
-
         this.prefetchMovieDetails(this.curMovieId);
         // 2) Point the "active" PromiseState to the one for curMovieId
         const currentState = this.movieDetailsById[this.curMovieId];
         if (currentState) {
             this.movieDetailsPrmsState = currentState;
         }
-
-        this.ensurePrefetchWindow();
-
         this.getCurMovieTrailer();
         this.getCurMovieCredits();
         this.getMovieImdbRating(this.curMovieId);
         this.getCurWatchProviders();
+
+        const movieIdsQueue = this.movieIdQueuePrmsState.data as number[] | null;
+        if (!movieIdsQueue) {
+            console.log("MovieIdsQueue is empty! call from currentMovieEffect()");
+            return;
+        }
+        else {
+            this.ensurePrefetchWindow();
+        }
     },
 
     getCurMovieCredits() {

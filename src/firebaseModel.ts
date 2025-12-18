@@ -132,7 +132,7 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
       console.error("Error listening to session:", error);
     });
 
-    // Replace getDocs with a real-time listener for the likes collection
+    // This updates evertime the likes collection changes in the firestore database.
     const unsubscribeLikes = firestoreOnSnapshot(likeCollectionRef, (querySnapshot) => {
       // Callback runs every time the collection updates
       const movieLikeIds = querySnapshot.docs.map(doc => Number(doc.id));

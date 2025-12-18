@@ -6,9 +6,11 @@ import { IconButton } from "@mui/material";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { Navbar } from "../reactts/navbarPresenter.tsx";
 import type { UserModelType } from "../UserModel.ts";
+import type { SessionType } from "../SessionModel.ts";
 
 export type ProfileViewProps = {
   userModel: UserModelType;
+  sessionModel: SessionType;
   likedMovies: TMDBMoviePageResult[];
   matchedMovies: TMDBMoviePageResult[];
 
@@ -75,7 +77,7 @@ export function ProfileView(props: ProfileViewProps) {
 
   return (props.userModel.username ? (
     <>
-      <Navbar userModel={props.userModel} />
+      <Navbar userModel={props.userModel} sessionModel={props.sessionModel}/>
       <div className="scroll-auto">
         <div className="profile-container">
           <h2>My Profile</h2>
