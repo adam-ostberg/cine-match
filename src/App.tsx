@@ -25,7 +25,7 @@ const App = observer(
 			return createHashRouter([
 				{
 					path: "/",
-					element: <Home userModel={props.userModel} model={props.model} />,
+					element: <Home userModel={props.userModel} model={props.model} sessionModel={props.sessionModel}/>,
 				},
 				{
 					path: "/test-animation",

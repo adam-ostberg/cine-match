@@ -1,7 +1,7 @@
 import { db } from "./firebaseConfig.ts";
 import { type ModelType } from "./MovieModel.ts";
-import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot } from "firebase/firestore";
-import type { UserInfoType } from "./SessionModel.ts";
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot, collection } from "firebase/firestore";
+import type { SessionType, UserInfoType } from "./SessionModel.ts";
 import type { UserModelType } from "./UserModel.ts";
 
 export type UserType = {
@@ -125,7 +125,7 @@ export async function handleSwipeInSession(sessionId: string, userId: string, mo
     }
 }
 
-export function listenToSession(sessionId: string, model: ModelType) {
+export function listenToSession(sessionId: string, model: ModelType, sessionModel: SessionType) {
     const docRef = doc(db, "sessions", sessionId);
     // @ts-ignore  /* For npm run build */
     const m = model
@@ -137,7 +137,7 @@ export function listenToSession(sessionId: string, model: ModelType) {
             // Check if a match has been found
             if (data.match) {
                 console.log("We have a match!", data.match);
-                
+                sessionModel.activateMatchAnimation();
                 // TODO!!! Update the model with match data and call some function to show the match screen
                 
                 //alert(`It's a match! Everyone wants to watch: ${data.match.title}`);

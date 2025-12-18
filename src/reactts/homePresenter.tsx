@@ -9,6 +9,7 @@ import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
 import { hideRootAndMainContentOverflow } from "../helperFunctions.ts";
 import type { UserModelType } from "../UserModel.ts";
+import type { SessionType } from "../SessionModel.ts";
 /*
 export type HomeModel = {
     initiateStart: () => void;
@@ -20,6 +21,7 @@ export type HomeModel = {
 export type HomePresenterProps = {
     model: ModelType;
     userModel: UserModelType;
+    sessionModel: SessionType;
 }
 
 const Home = observer(
@@ -33,7 +35,7 @@ const Home = observer(
             }
             const sessionId = await createSession(props.userModel);
             // @ts-ignore  /* [TODO] for npm build, remove */
-            const unsubscribe = listenToSession(sessionId, props.model);
+            const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel);
         }
 
         async function sessionJoinACB(sessionId: string) {
@@ -45,7 +47,7 @@ const Home = observer(
 
             // TODO add this to the model so we can stop listening when leaving the home view
             // @ts-ignore
-            const unsubscribe = listenToSession(sessionId, props.model);
+            const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel);
         }
 
         if (!props.model.popularMoviesPrmsState.data) {

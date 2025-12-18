@@ -21,6 +21,7 @@ export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
   currentSessionId: string | null;
   sessionModel: SessionType;
+  sessionShowMatchAnimation: boolean;
   userModel: UserModelType;
   onDislike: (id: number) => void;
   onLike: (id: number) => void;
@@ -53,11 +54,8 @@ function SwipeView(props: SwipeViewProps) {
   }, [props.prefetchWindowPrmsState.data]);
 
   useEffect(() => {
-    if (showMatchAnimation) {
-      const timer = setTimeout(() => setShowMatchAnimation(false), 1800);
-      return () => clearTimeout(timer);
-    }
-  }, [showMatchAnimation]);
+    setShowMatchAnimation(props.sessionShowMatchAnimation)
+  }, [props.sessionShowMatchAnimation]);
 
   // Prefer the latest non-null data, but fall back to cached
   const effectiveDetails = (props.prefetchWindowPrmsState.data as MovieDetails[] | null) || cachedDetails;
@@ -69,7 +67,6 @@ function SwipeView(props: SwipeViewProps) {
 
     if (dir === "right") {
       props.onLike(id);     
-      setShowMatchAnimation(true);
     } else {
       props.onDislike(id);
     }

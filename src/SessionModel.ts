@@ -14,11 +14,13 @@ export type SessionType = {
     hostId: string;
     status: "waiting" | "active" | "matched";
     participants: UserInfoType[];
-    likes: LikesType[];
+    likes: number[]
+    showMatchAnimation: boolean;
     setSessionId: (sessionId: string | null) => void;
     getSessionId: () => string | null;
     setStatus: (status: "waiting" | "active" | "matched", userId: string) => void;
     addUser: (user: UserInfoType) => void;
+    activateMatchAnimation: () => void,
 }
 
 export const SessionModel: SessionType = {
@@ -29,6 +31,7 @@ export const SessionModel: SessionType = {
     status: "waiting",
     participants: [],
     likes: [],
+    showMatchAnimation: false,
 
     setSessionId(sessionId: string | null) {
         this.sessionId = sessionId;
@@ -47,5 +50,14 @@ export const SessionModel: SessionType = {
         if (!this.participants.find(u => u.userId === user.userId)) {
             this.participants.push(user);
         }
-    }
+    },
+
+    activateMatchAnimation() {
+        this.showMatchAnimation = true;
+        console.log("ShowMatchAnimation: " + this.showMatchAnimation);
+        setTimeout(() => { 
+            this.showMatchAnimation = false 
+            console.log("ShowMatchAnimation: " + this.showMatchAnimation);
+        }, 1800);
+    },
 }
