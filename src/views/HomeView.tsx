@@ -64,8 +64,6 @@ export function HomeView(props: HomeViewProps) {
     <div className="home">
       <Navbar userModel={props.userModel}/>
       <p>Swipe to find your perfect movie</p>
-      {/*TODO: PUT THIS BUTTON SOMEWHERE ELSE*/}
-      <button onClick={() => window.location.hash="#/account"}>Go To Account Page</button>
       <div className="carousel-view">
         <div className="carousel-track">
           {infiniteMovies.map(renderMovieCardCB)}

@@ -66,10 +66,19 @@ observeAuth((user) => {
 
 reaction(currentMovieIdACB, movieIdEffectACB);
 
+function sessionModelLikedACB() {
+  return reactiveSessionModel.likes;
+}
+function sessionLikesChangedEffectACB() {
+  return reactiveModel.insertMovieLikesIntoQueue(reactiveSessionModel.likes);
+}
+
+//reaction(sessionModelLikedACB, sessionLikesChangedEffectACB);
+
 window.model = reactiveModel;
 window.sessionModel = reactiveSessionModel;
 window.userModel = reactiveUserModel;
 
 // Connect models to persistence
 connectToPersistence(reactiveModel, reaction);
-connectSessionToPersistence(reactiveSessionModel, reactiveUserModel, reaction);
+connectSessionToPersistence(reactiveSessionModel, reactiveUserModel, reactiveModel, reaction);

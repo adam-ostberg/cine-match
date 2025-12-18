@@ -21,6 +21,10 @@ export function NavbarView(props: navbarViewProps) {
 		props.onSignOutClick();
 	}
 
+	function profileClickACB() {
+		window.location.hash = "#/profile";
+	}
+
 	return (
 		<div className="header">
 			<h1 onClick={logoClickACB} className="logo-text">
@@ -29,7 +33,7 @@ export function NavbarView(props: navbarViewProps) {
 			{
 				props.username ? (
 					<>
-						<IconButton className="profile-button">
+						<IconButton className="profile-button" onClick={profileClickACB}>
 							<p className="username">{props.username}</p>
 							{props.userId ? <UserAvatar
 								userId={props.userId}

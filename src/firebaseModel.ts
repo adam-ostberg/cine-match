@@ -4,8 +4,8 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, onValue } from "firebase/database";
 import { firebaseConfig } from "./firebaseConfig";
 import type { ModelType } from "./MovieModel";
-import type { SessionType } from "./SessionModel";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot as firestoreOnSnapshot } from "firebase/firestore";
+import type { LikesType, SessionType } from "./SessionModel";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot as firestoreOnSnapshot, collection, getDocs } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/auth";
 import type { UserModelType } from "./UserModel";
 
@@ -73,7 +73,7 @@ export function connectToPersistence(model: ModelType, reaction: any) {
   reaction(modelInterestsACB, writeToCloudACB);
 }
 
-export function connectSessionToPersistence(session: SessionType, userModel: UserModelType, watchFunction: any) {
+export function connectSessionToPersistence(session: SessionType, userModel: UserModelType, model: ModelType, watchFunction: any) {
   let unsubscribeFirestore: Unsubscribe | null = null;
   
   // Flag to prevent write-back loops when receiving Firestore updates
@@ -103,6 +103,7 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
     }
 
     const docRef = doc(firestore, "sessions", sessionId);
+    const likeCollectionRef = collection(docRef, "likes");
 
     // Set up real-time listener for this session
     unsubscribeFirestore = firestoreOnSnapshot(docRef, (docSnap) => {
@@ -120,9 +121,16 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
       session.sessionId = data.sessionId || sessionId;
       session.participants = data.participants || [];
       session.hostId = data.hostId || "";
-      session.likes = data.likes || [];
       session.status = data.status || "waiting";
       session.ready = true;
+
+      getDocs(likeCollectionRef).then((snapshot) => {
+        const movieLikeIds = snapshot.docs.map(doc => Number(doc.id));
+        if (!movieLikeIds || !Array.isArray(movieLikeIds) || movieLikeIds.length === 0) return;
+        model.insertMovieLikesIntoQueue(movieLikeIds);
+        session.likes = [...session.likes, ...movieLikeIds];
+      })
+      
 
       // Reset flag after updates are applied (use setTimeout to let MobX reactions complete)
       setTimeout(() => {
