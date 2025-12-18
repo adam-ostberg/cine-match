@@ -37,7 +37,7 @@ const App = observer(
 				},
 				{
 					path: "/swipe",
-					element: <Swipe model={props.model} />,
+					element: <Swipe model={props.model} userModel={props.userModel}/>,
 				},
 
 				{

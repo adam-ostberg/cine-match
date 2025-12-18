@@ -82,6 +82,7 @@ const Home = observer(
             <div className="home-presenter-parent">
                 <div className="details-view-background" onClick={closeDetailsACB}>
                     <HomeView
+                        userModel={props.userModel}
                         onStartSession={sessionStartACB}
                         username={username}
                         onJoinSession={sessionJoinACB}

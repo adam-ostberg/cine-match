@@ -2,14 +2,16 @@
 import { observer } from "mobx-react-lite";
 import { SwipeView } from "../views/SwipeView";
 import type { ModelType } from "../MovieModel";
-import { NavBarView } from "../views/NavbarView";
+import { Navbar } from "../reactts/navbarPresenter";
 import type { MovieDetails } from "../apiConfig";
 import { DetailsView } from "../views/DetailsView";
 import { useState } from "react";
 import { hideRootAndMainContentOverflow } from "../helperFunctions";
+import type { UserModelType } from "../UserModel";
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
 export type SwipePresenterProps = {	
+	userModel: UserModelType;
 	model: ModelType
 }
 
@@ -69,7 +71,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		return (
 			<div className="swipe-flex-parent">
 				<div className="details-view-background" onClick={closeDetailsACB}>
-					<NavBarView onLogoClick={navBarlogoClickedACB}/>
+					<Navbar userModel={props.userModel}/>
 					{view}
 				</div>
 				{details}

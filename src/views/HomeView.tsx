@@ -1,8 +1,11 @@
 import "../style.css";
 
 import type { TMDBPopularMovieResult } from "../apiConfig";
+import { Navbar } from "../reactts/navbarPresenter";
+import type { UserModelType } from "../UserModel";
 
 export type HomeViewProps = {
+  userModel: UserModelType;
   movies: TMDBPopularMovieResult[] | null;
   username: string | null;
   onStartSession: () => void;
@@ -16,10 +19,6 @@ export function HomeView(props: HomeViewProps) {
 
   // Duplicate array for infinite scroll
   const infiniteMovies = [...movies, ...movies];
-
-  function onLogoClickACB() {
-    window.location.hash = "#/";
-  }
 
   function onStartSessionClickACB() {
     props.onStartSession();
@@ -63,13 +62,7 @@ export function HomeView(props: HomeViewProps) {
 
   return (
     <div className="home">
-      <nav className="home-nav">
-        <h1 onClick={onLogoClickACB}>CineMatch</h1>
-        {props.username ? 
-          <p>Logged in as {props.username}</p> : 
-          <p>Not signed in</p>
-        }
-      </nav>
+      <Navbar userModel={props.userModel}/>
       <p>Swipe to find your perfect movie</p>
       {/*TODO: PUT THIS BUTTON SOMEWHERE ELSE*/}
       <button onClick={() => window.location.hash="#/account"}>Go To Account Page</button>
