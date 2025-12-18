@@ -190,11 +190,11 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
 
   useEffect(() => {
     if (!swipeDirection || !is_top_card) return;
-    const targetX = swipeDirection === "right" ? 110 : -110;
+    const targetX = swipeDirection === "right" ? 200 : -200;
 
     const controls = animate(x, targetX, {
       type: "tween",
-      duration: 0.1,
+      duration: 0.19,
       ease: "easeOut",
       onComplete: () => {
         if (swipeDirection === "right") rightSwipeCB();
@@ -239,9 +239,7 @@ return (
     style={{
       gridRow: 1,
       gridColumn: 1,
-      x,
-      y,
-      rotate,
+
       position: "relative",
     }}  
   >
@@ -250,7 +248,7 @@ return (
       alt={"Placeholder"}
       className="swipe-card"
       drag
-      dragConstraints={{left: -50, right: 50, top: 0, bottom: 0}}
+      dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{
@@ -268,7 +266,7 @@ return (
       alt={"Placeholder"}
       className="swipe-like-img"
       drag
-      dragConstraints={{left: -50, right: 50, top: 0, bottom: 0}}
+      dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{
@@ -288,7 +286,7 @@ return (
       alt={"Placeholder"}
       className="swipe-dislike-img"
       drag
-      dragConstraints={{left: -50, right: 50, top: 0, bottom: 0}}
+      dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{
@@ -308,7 +306,7 @@ return (
       alt={"Placeholder"}
       className="swipe-settings-img"
       drag
-      dragConstraints={{left: -50, right: 50, top: 0, bottom: 0}}
+      dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{

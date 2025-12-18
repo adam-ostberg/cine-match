@@ -354,7 +354,7 @@ height: auto;
 
 .details-container {
   position: absolute;
-  top: 4%;
+  top: 96%;
   height: calc(100% - 4%);
   width: 100%;
   max-width: 65vw;
