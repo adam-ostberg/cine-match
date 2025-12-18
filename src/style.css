@@ -94,7 +94,7 @@ html, body {
 }
 
 .carousel-track .movie-card {
-  width: 29vh;
+  width: 28vh;
   flex-shrink: 0;
   transition: transform 0.3s ease;
   border-radius: 10px;
