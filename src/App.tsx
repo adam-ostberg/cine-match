@@ -10,11 +10,13 @@ import { Account } from "./reactts/accountPresenter";
 import { Profile } from "./reactts/profilePresenter";
 import { Lobby } from "./reactts/lobbyPresenter";
 import type { SessionType } from "./SessionModel";
+import type { UserModelType } from "./UserModel";
 import { MatchAnimationView } from "./views/matchAnimationView.tsx";
 
 export type AppRenderProps = {
 	model: ModelType
 	sessionModel: SessionType
+	userModel: UserModelType;
 }
 
 const App = observer(
@@ -23,7 +25,7 @@ const App = observer(
 			return createHashRouter([
 				{
 					path: "/",
-					element: <Home model={props.model} />,
+					element: <Home userModel={props.userModel} model={props.model} />,
 				},
 				{
 					path: "/test-animation",
@@ -44,7 +46,7 @@ const App = observer(
 				},
 				{
 					path: "/account",
-					element: <Account model={props.model} />
+					element: <Account model={props.model} userModel={props.userModel}/>
 				},
 				{
 					path: "/profile",
@@ -52,7 +54,7 @@ const App = observer(
 				},
 				{
 					path: "/lobby",
-					element: <Lobby model={props.model} sessionModel={props.sessionModel} />
+					element: <Lobby model={props.model} sessionModel={props.sessionModel} userModel={props.userModel}/>
 				},
 			]);
 		}

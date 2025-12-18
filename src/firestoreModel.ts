@@ -2,6 +2,7 @@ import { db } from "./firebaseConfig.ts";
 import { type ModelType } from "./MovieModel.ts";
 import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot } from "firebase/firestore";
 import type { UserInfoType } from "./SessionModel.ts";
+import type { UserModelType } from "./UserModel.ts";
 
 export type UserType = {
     username: string,
@@ -13,9 +14,9 @@ export type UserType = {
 };
 
 // Create a new session in Firebase and return the session ID
-export async function createSession(model: ModelType) {
+export async function createSession(user: UserModelType) {
     // First check if the user is logged in
-    if (!model.userId) {
+    if (!user.currentUser) {
         alert("You must be logged in to create a session.");
         return;
     }
@@ -28,10 +29,10 @@ export async function createSession(model: ModelType) {
     try {
         await setDoc(docRef, {
             status: "waiting",
-            hostId: model.userId,
+            hostId: user.currentUser.uid,
             match: null,
             created: new Date(),
-            participants: [{userId: model.userId, username: model.username}],
+            participants: [{userId: user.currentUser.uid, username: user.username}],
         });
         console.log("Session created successfully with ID:", sessionId);
     } catch (error) {
@@ -40,14 +41,14 @@ export async function createSession(model: ModelType) {
     }
 
     // Set and return the session ID
-    model.setSessionId(sessionId);
+    user.setCurrentSessionId(sessionId);
     console.log("Session created with ID: ", sessionId);
     return sessionId;
 }
 
-export async function joinSession(model: ModelType, sessionId: string) {
+export async function joinSession(userModel: UserModelType, sessionId: string) {
     // First check if the user is logged in
-    if (!model.userId) {
+    if (!userModel.currentUser) {
         alert("You must be logged in to join a session.");
         return;
     }
@@ -58,15 +59,15 @@ export async function joinSession(model: ModelType, sessionId: string) {
     if (docSnap.exists()) {
         // Add current user to the session
         const newUserInfo: UserInfoType = {
-            userId: model.userId,
-            username: model.username,
+            userId: userModel.currentUser.uid,
+            username: userModel.username,
         };
 
         await updateDoc(docRef, {
             participants: arrayUnion(newUserInfo),
         });
 
-        model.setSessionId(sessionId);
+        userModel.setCurrentSessionId(sessionId);
         console.log("Joined session with ID:", sessionId);
         return true;
     } else {

@@ -4,9 +4,11 @@ import { SignupView } from "../views/signupView";
 import { signInWithEmail, signUpWithEmail } from "../authService";
 import { useState } from "react";
 import type { ModelType } from "../MovieModel";
+import type { UserModelType } from "../UserModel";
 
 type AccountPresenterProps = {
   model: ModelType;
+  userModel: UserModelType;
 }
 
 const Account = observer(
@@ -15,7 +17,7 @@ const Account = observer(
 
     async function handleLoginACB(email: string, password: string) {
       try {
-        await signInWithEmail(props.model, email.trim(), password);
+        await signInWithEmail(props.userModel, email.trim(), password);
         window.location.hash = "#/";
       } catch (err: any) {
         alert(err?.message ?? "Login failed");
@@ -25,7 +27,7 @@ const Account = observer(
     async function handleSignupACB(username: string, email: string, password: string) {
       try {
         // Create the user account and then add the username to the profile
-        await signUpWithEmail(props.model, username.trim(), email.trim(), password);
+        await signUpWithEmail(props.userModel, username.trim(), email.trim(), password);
         window.location.hash = "#/";
       } catch (err: any) {
         alert(err?.message ?? "Signup failed");

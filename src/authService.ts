@@ -8,31 +8,30 @@ import {
 } from "firebase/auth";
 
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
-import type { ModelType } from "./MovieModel";
+
+import type { UserModelType } from "./UserModel";
 
 // Function for signing up a new user with email and password
-export async function signUpWithEmail(model: ModelType, username: string, email: string, password: string) {
+export async function signUpWithEmail(userModel: UserModelType, username: string, email: string, password: string) {
     // First create the use in Firebase Auth with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Set up the new user document in Firestore
     await setDoc(doc(db, "users", user.uid), {
         username: username,
-        email,
+        email: email,
         createdAt: serverTimestamp(),
-        likes: [],
-        dislikes: [],
-        sessions: []
     });
 
-    model.setUsername(username);
+    userModel.setCurrentUser(user);
+    userModel.setUserId(user.uid);
+    userModel.setUsername(username);
 
     return user;
 }
 
 // Sign in an existing user with email and password
-export async function signInWithEmail(model: ModelType, email: string, password: string) {
+export async function signInWithEmail(userModel: UserModelType, email: string, password: string) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -40,7 +39,9 @@ export async function signInWithEmail(model: ModelType, email: string, password:
     const userDoc = await getDoc(doc(db, "users", user.uid));
     const username = userDoc.data()?.username || "";
 
-    model.setUsername(username);
+    userModel.setUsername(username);
+    userModel.setCurrentUser(user);
+    userModel.setUserId(user.uid);
     return user;
 }
 

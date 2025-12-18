@@ -5,8 +5,9 @@ import { getDatabase, ref, set, onValue } from "firebase/database";
 import { firebaseConfig } from "./firebaseConfig";
 import type { ModelType } from "./MovieModel";
 import type { SessionType } from "./SessionModel";
-import { getFirestore, doc, setDoc, onSnapshot as firestoreOnSnapshot } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot as firestoreOnSnapshot } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/auth";
+import type { UserModelType } from "./UserModel";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -72,7 +73,7 @@ export function connectToPersistence(model: ModelType, reaction: any) {
   reaction(modelInterestsACB, writeToCloudACB);
 }
 
-export function connectSessionToPersistence(session: SessionType, model: ModelType, watchFunction: any) {
+export function connectSessionToPersistence(session: SessionType, userModel: UserModelType, watchFunction: any) {
   let unsubscribeFirestore: Unsubscribe | null = null;
   
   // Flag to prevent write-back loops when receiving Firestore updates
@@ -80,7 +81,7 @@ export function connectSessionToPersistence(session: SessionType, model: ModelTy
 
   // We watch for changes in the sessionId of the moviemodel
   function sessionIdACB() {
-    return model.getCurrentSessionId();
+    return userModel.currentSessionId;
   }
 
   function onSessionIdChangeACB(sessionId: string | null) {
@@ -141,8 +142,8 @@ export function connectSessionToPersistence(session: SessionType, model: ModelTy
 
   // Only the HOST should be able to update the session status
   function persistStatusACB(newStatus: string) {
-    const sessionId = model.getCurrentSessionId();
-    const userId = model.userId;
+    const sessionId = userModel.currentSessionId;
+    const userId = userModel.userId;
     
     // Don't persist if:
     // - Session not ready
@@ -167,3 +168,59 @@ export function connectSessionToPersistence(session: SessionType, model: ModelTy
   watchFunction(statusACB, persistStatusACB);
 }
 
+export function connectUserToPersistence(user: UserModelType, watchFunction: any) {
+  if (!user.currentUser) return;
+
+  const docRef = doc(firestore, "users", user.userId);
+  
+  // Flag to prevent write-back loops
+  let isUpdatingFromFirestore = false;
+
+  // For checking changes
+  function getUserInfoACB() {
+    return [user.username];
+  }
+
+  // Update the model in the cloud
+  function persistUserModelACB() {
+    if (!user.ready || isUpdatingFromFirestore) return;
+
+    const modelData = {
+      username: user.username,
+    };
+
+    setDoc(docRef, modelData, { merge: true })?.catch(console.error);
+  }
+
+  user.ready = false;
+
+  // Set up real-time listener for this user document
+  const unsubscribe = firestoreOnSnapshot(docRef, (docSnap) => {
+    if (!docSnap.exists()) {
+      console.warn("User document does not exist:", user.userId);
+      return;
+    }
+
+    const data = docSnap.data();
+
+    // Set flag to prevent triggering a write-back
+    isUpdatingFromFirestore = true;
+
+    // Update local user model with Firestore data
+    user.setUsername(data.username ?? "");
+    user.ready = true;
+
+    // Reset flag after updates are applied
+    setTimeout(() => {
+      isUpdatingFromFirestore = false;
+    }, 0);
+  }, (error) => {
+    console.error("Error listening to user document:", error);
+  });
+
+  // Install the side effect for local changes
+  watchFunction(getUserInfoACB, persistUserModelACB);
+
+  // Return unsubscribe function in case you need cleanup later
+  return unsubscribe;
+}

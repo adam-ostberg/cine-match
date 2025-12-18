@@ -8,6 +8,7 @@ import { type ModelType } from "../MovieModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
 import { hideRootAndMainContentOverflow } from "../helperFunctions.ts";
+import type { UserModelType } from "../UserModel.ts";
 /*
 export type HomeModel = {
     initiateStart: () => void;
@@ -18,6 +19,7 @@ export type HomeModel = {
 
 export type HomePresenterProps = {
     model: ModelType;
+    userModel: UserModelType;
 }
 
 const Home = observer(
@@ -25,21 +27,21 @@ const Home = observer(
         const [showDetails, setShowDetails] = useState(false); // State to control details overlay
         async function sessionStartACB() {
             props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
-            if (!props.model.userId) {
+            if (!props.userModel.currentUser) {
                 alert("Please log in first.");
                 return;
             }
-            const sessionId = await createSession(props.model);
+            const sessionId = await createSession(props.userModel);
             // @ts-ignore  /* [TODO] for npm build, remove */
             const unsubscribe = listenToSession(sessionId, props.model);
         }
 
         async function sessionJoinACB(sessionId: string) {
-            if (!props.model.userId) {
+            if (!props.userModel.userId) {
                 alert("Please log in first.");
                 return;
             }
-            await joinSession(props.model, sessionId); // TODO get session ID from user input
+            await joinSession(props.userModel, sessionId); // TODO get session ID from user input
 
             // TODO add this to the model so we can stop listening when leaving the home view
             // @ts-ignore
@@ -74,7 +76,7 @@ const Home = observer(
 		)
 		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
 
-        const username = props.model.userId && props.model.username || null;
+        const username = props.userModel.currentUser && props.userModel.username || null;
 
         return (
             <div className="home-presenter-parent">

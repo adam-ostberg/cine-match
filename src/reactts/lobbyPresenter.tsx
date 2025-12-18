@@ -3,10 +3,12 @@ import { LobbyView } from "../views/lobbyView";
 import type { ModelType } from "../MovieModel";
 import type { SessionType, UserInfoType } from "../SessionModel";
 import { isUserSessionHost } from "../sessionHelpers";
+import type { UserModelType } from "../UserModel";
 
 export type LobbyPresenterProps = {
   model: ModelType;
-  sessionModel: SessionType
+  sessionModel: SessionType;
+  userModel: UserModelType;
 }
 
 const Lobby = observer(
@@ -32,7 +34,7 @@ const Lobby = observer(
     return (
       <div>
         <LobbyView 
-          lobbyId={props.model.getCurrentSessionId() || "No Session"} 
+          lobbyId={props.userModel.currentSessionId || "No Session"} 
           usernames={usernames} 
           isHost={isUserSessionHost(props.model, props.sessionModel)}
           onStartSwiping={handleStartSwipingACB}
