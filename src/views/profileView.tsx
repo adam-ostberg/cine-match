@@ -4,10 +4,11 @@ import { type TMDBMoviePageResult } from "../apiConfig.ts";
 import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { UserAvatar } from "../components/UserAvatar.tsx";
+import { Navbar } from "../reactts/navbarPresenter.tsx";
+import type { UserModelType } from "../UserModel.ts";
 
 export type ProfileViewProps = {
-  username: string;
-  userId: string;
+  userModel: UserModelType;
   likedMovies: TMDBMoviePageResult[];
   matchedMovies: TMDBMoviePageResult[];
 
@@ -54,65 +55,71 @@ export function ProfileView(props: ProfileViewProps) {
     }
 
     return (
-      <div key={movie.id} className="seed-result-card profile" onClick={movieClickACB}>
-        <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          alt={movie.title}
-        />
-        <div className="movie-overlay">
-          <span className="movie-title">{movie.title}</span>
-          <button className="remove-btn" onClick={removeLikeACB}>
-            X
-          </button>
+      <>
+        
+        <div key={movie.id} className="seed-result-card profile" onClick={movieClickACB}>
+          <img
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            alt={movie.title}
+          />
+          <div className="movie-overlay">
+            <span className="movie-title">{movie.title}</span>
+            <button className="remove-btn" onClick={removeLikeACB}>
+              X
+            </button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
-  return (props.username ? (
-    <div className="scroll-auto">
-      <div className="profile-container">
-        <h2>My Profile</h2>
+  return (props.userModel.username ? (
+    <>
+      <Navbar userModel={props.userModel} />
+      <div className="scroll-auto">
+        <div className="profile-container">
+          <h2>My Profile</h2>
 
-        <div className="section profile-header">
-          <IconButton>
-            {props.userId ? <UserAvatar
-              userId={props.userId}
-              className="profile-pic"
-              size={100}
-            />
-              :
-              <FaUserCircle size={100} className="no-name" />}
-          </IconButton>
-          <div className="profile-info">
-            <span className="username">{props.username}</span>
-            <button className="secondary-button" onClick={signOutClickACB}>Sign Out</button>
-            <div className="search-row">
-              <input
-                id="username-input"
-                type="text"
-                placeholder="Change username"
-                onKeyDown={handleSearchKeyDownACB}
+          <div className="section profile-header">
+            <IconButton>
+              {props.userModel.userId ? <UserAvatar
+                userId={props.userModel.userId}
+                className="profile-pic"
+                size={100}
               />
-              <button className="secondary-button" onClick={handleSaveClickCB}>
-                Save
-              </button>
+                :
+                <FaUserCircle size={100} className="no-name" />}
+            </IconButton>
+            <div className="profile-info">
+              <span className="username">{props.userModel.username}</span>
+              <button className="secondary-button" onClick={signOutClickACB}>Sign Out</button>
+              <div className="search-row">
+                <input
+                  id="username-input"
+                  type="text"
+                  placeholder="Change username"
+                  onKeyDown={handleSearchKeyDownACB}
+                />
+                <button className="secondary-button" onClick={handleSaveClickCB}>
+                  Save
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="section">
-          <h3>Liked Movies (All Time)</h3>
-          {props.likedMovies.length === 0 ? (
-            <p>You haven't liked any movies yet. Go explore!</p>
-          ) : (
-            <div className="seed-results-container">
-              {props.likedMovies.map(renderLikedMovieCB)}
-            </div>
-          )}
+          <div className="section">
+            <h3>Liked Movies (All Time)</h3>
+            {props.likedMovies.length === 0 ? (
+              <p>You haven't liked any movies yet. Go explore!</p>
+            ) : (
+              <div className="seed-results-container">
+                {props.likedMovies.map(renderLikedMovieCB)}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>) : (<div className="center-div">
+    </>
+    ) : (<div className="center-div">
       <button className="secondary-button" onClick={() => { window.location.hash = "#/account" }}>
         Log In
       </button>

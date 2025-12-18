@@ -34,8 +34,7 @@ const Profile = observer(
 
     return (
       <ProfileView
-        username={props.userModel.username}
-        userId={props.userModel.userId || ""}
+        userModel={props.userModel}
         likedMovies={props.model.alltimeLikedMoviesArray}
         onUsernameChange={handleUsernameChangeACB}
         onRemoveLike={handleRemoveLikeACB}
