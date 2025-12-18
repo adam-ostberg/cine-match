@@ -8,10 +8,12 @@ import { DetailsView } from "../views/DetailsView";
 import { useState } from "react";
 import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import type { UserModelType } from "../UserModel";
+import type { SessionType } from "../SessionModel";
 /* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
 export type SwipePresenterProps = {	
 	userModel: UserModelType;
+  	sessionModel: SessionType;
 	model: ModelType
 }
 
@@ -64,7 +66,12 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			&& !!props.model.watchProvidersPrmsState.data
 		)
 		
-		const view = <SwipeView prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB} currentSessionId={props.model.currentSessionId}/>;
+		const view = (
+			<SwipeView prefetchWindowPrmsState={props.model.prefetchWindowPrmsState} 
+			onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB} 
+			currentSessionId={props.model.currentSessionId} sessionModel={props.sessionModel}
+			userModel={props.userModel}
+			/>);
 
 		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
 

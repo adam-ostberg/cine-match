@@ -1,7 +1,7 @@
 import "../style.css"
 import { type MovieDetails, type TMDBCast, type TMDBCrew, type WatchProvider, type CountryWatchOptions, type TMDBGenre, type TMDBVideoType, type TMDBMovieCredits, type WatchProvidersResponse, } from "../apiConfig";
 import { observer } from "mobx-react-lite";
-import { minutesToHourAndMinutesText, getCountryCode, hideRootAndMainContentOverflow } from "../helperFunctions";
+import { minutesToHourAndMinutesText, getCountryCode, hideRootAndMainContentOverflow, getPopularityColor } from "../helperFunctions";
 import { useState, useEffect, useRef } from "react";
 /* npm install react-icons */
 import { FaArrowLeft, FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaFire, FaUserCircle, FaExternalLinkAlt, /* FaPlus */ } from "react-icons/fa";
@@ -9,7 +9,6 @@ import imdbLogo from "../assets/imdb_logo_2016.svg";
 
 export type DetailsViewProps = {
   details: MovieDetails;
-  popColor: string;
   video: TMDBVideoType;
   credits: TMDBMovieCredits;
   imdb: number;
@@ -259,7 +258,7 @@ const DetailsView = observer(
                   <span>{imdbRating ? imdbRating.toFixed(1) : details.vote_average.toFixed(1)}</span>
                 </a>
                 <span className="meta-dot">•</span>
-                <div className="meta-rating popularity" style={{ color: props.popColor }}>
+                <div className="meta-rating popularity" style={{ color: getPopularityColor(details.popularity) }}>
                   <FaFire />
                   <span>{Math.round(details.popularity)}</span>
                 </div>

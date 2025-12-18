@@ -14,10 +14,14 @@ import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import TuneIcon from '@mui/icons-material/Tune';
 import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import { MatchAnimationView } from "./matchAnimationView";
+import type { SessionType, UserInfoType } from "../SessionModel";
+import type { UserModelType } from "../UserModel";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
   currentSessionId: string | null;
+  sessionModel: SessionType;
+  userModel: UserModelType;
   onDislike: (id: number) => void;
   onLike: (id: number) => void;
   onMoreInfo: () => void;
@@ -82,7 +86,11 @@ function SwipeView(props: SwipeViewProps) {
     const title = firstDetail?.title ?? "";
     return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
   }
-
+  function outputParticipants(participant: UserInfoType) {
+    return (
+      <p><FaUserCircle size={50} className="profile-pic-placeholder" />{participant.username}</p>
+    );
+  }
   const [isSidebarOpen, setSidebarIsOpen] = useState(true);
 
   const swipeSidebarClassNames = isSidebarOpen ? "swipe-sidebar is-open" : "swipe-sidebar";
@@ -114,7 +122,6 @@ function SwipeView(props: SwipeViewProps) {
   return (
     <div className="swipe-container">
       <div className="swipe-content">
-        <p id="current-session">Current Session id: {props.currentSessionId}</p>
         {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <p>__loading__</p>}
         <div className="swipe-title">{outputTitle(firstDetail)}</div>
         <div className="controls">
@@ -134,10 +141,10 @@ function SwipeView(props: SwipeViewProps) {
           <TuneIcon />
         </IconButton>
         <div>
+          <h2>Status</h2>
+          <p id="current-session">Current Session id: {props.sessionModel.sessionId}</p>
           <h2>Lobby</h2>
-          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Gustav</p>
-          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Rasmus</p>
-          <p><FaUserCircle size={50} className="profile-pic-placeholder" /> Adam</p>   
+          {props.sessionModel.participants.map(outputParticipants)}
         </div>
       </aside>
       {showMatchAnimation && <MatchAnimationView />}
