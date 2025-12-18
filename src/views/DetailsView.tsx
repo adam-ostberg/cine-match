@@ -9,6 +9,7 @@ import imdbLogo from "../assets/imdb_logo_2016.svg";
 
 export type DetailsViewProps = {
   details: MovieDetails;
+  popColor: string;
   video: TMDBVideoType;
   credits: TMDBMovieCredits;
   imdb: number;
@@ -75,13 +76,6 @@ const DetailsView = observer(
 
     const runtimeText = minutesToHourAndMinutesText(Number(details.runtime));
     const year = details.release_date ? details.release_date.split("-")[0] : "";
-
-    // Popularity Color Logic
-    // [TODO] Make a range
-    const popularityScore = details.popularity;
-    let popColor = "white";
-    if (popularityScore > 400) popColor = "#e50914"; // Red hot
-    else if (popularityScore > 200) popColor = "#ffbf00"; // Orange
 
     function closeACB() {
       props.onClose();
@@ -265,7 +259,7 @@ const DetailsView = observer(
                   <span>{imdbRating ? imdbRating.toFixed(1) : details.vote_average.toFixed(1)}</span>
                 </a>
                 <span className="meta-dot">•</span>
-                <div className="meta-rating popularity" style={{ color: popColor }}>
+                <div className="meta-rating popularity" style={{ color: props.popColor }}>
                   <FaFire />
                   <span>{Math.round(details.popularity)}</span>
                 </div>

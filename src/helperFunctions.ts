@@ -59,3 +59,17 @@ export function chunk(array: Array<any>, size: number = 5) {
 
   return result;
 }
+
+export function getPopularityColor(score: number): string {
+    if (score <= 200) {
+        const percent = score / 200; 
+        const lightness = 100 - (50 * percent); 
+        return `hsl(45, 100%, ${lightness}%)`;
+    } 
+    else {
+        const adjScore = Math.min(score, 400); /* To not exceed 400 */
+        const percent = (adjScore - 200) / 200; 
+        const hue = 45 - (45 * percent);
+        return `hsl(${hue}, 100%, 50%)`;
+    }
+}

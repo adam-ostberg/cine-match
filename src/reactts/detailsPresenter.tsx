@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { DetailsView } from "../views/DetailsView.tsx";
 import type { ModelType } from "../MovieModel.ts";
 import { useNavigate } from "react-router-dom";
+import { getPopularityColor } from "../helperFunctions";
 
 export type DetailsPresenterProps = {
   model: ModelType;
@@ -24,11 +25,13 @@ const Details = observer(  // needed for the presenter to update (its view) when
       //props.model.closeDetails();
     }
 
+    const popColor = moviedetailsPrmsState.data ? getPopularityColor(moviedetailsPrmsState.data.popularity) : "white";
+
     const HAS_ENOUGH_DATA = !!moviedetailsPrmsState.data && !!movieCreditsPrmsState.data && !!imdbRatingPrmsState.data && watchProvidersPrmsState.data;
 
     const view = 
       HAS_ENOUGH_DATA 
-        ? <DetailsView details={moviedetailsPrmsState.data} video={movieVideosPrmsState.data} credits={movieCreditsPrmsState.data} imdb={imdbRatingPrmsState.data} watchProviders={watchProvidersPrmsState.data} onClose={closeACB} /> 
+        ? <DetailsView details={moviedetailsPrmsState.data} popColor={popColor} video={movieVideosPrmsState.data} credits={movieCreditsPrmsState.data} imdb={imdbRatingPrmsState.data} watchProviders={watchProvidersPrmsState.data} onClose={closeACB} /> 
         : ("__no_data__");
 
     return (
