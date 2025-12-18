@@ -26,7 +26,7 @@ const Profile = observer(
     return (
       <ProfileView
         username={props.model.username}
-        profilePic={props.model.profilePic}
+        userId={props.model.userId || ""}
         likedMovies={props.model.alltimeLikedMoviesArray}
         onUsernameChange={handleUsernameChangeACB}
         onRemoveLike={handleRemoveLikeACB}

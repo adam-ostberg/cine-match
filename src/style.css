@@ -1193,3 +1193,12 @@ html, body {
     font-size: 24px;
     pointer-events: none;
 }
+
+/* Profile View */
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: "50%";
+    overflow: "hidden";
+}

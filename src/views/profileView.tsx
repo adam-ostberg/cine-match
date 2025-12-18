@@ -2,10 +2,11 @@ import "../style.css"
 import { type TMDBMoviePageResult } from "../apiConfig.ts";
 /* npm install react-icons */
 import { FaUserCircle } from "react-icons/fa";
+import { UserAvatar } from "../components/UserAvatar.tsx";
 
 export type ProfileViewProps = {
   username: string;
-  profilePic?: string; // Optional URL
+  userId: string;
   likedMovies: TMDBMoviePageResult[];
   matchedMovies: TMDBMoviePageResult[];
 
@@ -67,10 +68,13 @@ export function ProfileView(props: ProfileViewProps) {
       <h2>My Profile</h2>
 
       <div className="section profile-header">
-        {(props.profilePic) ? /* Renders profilePic */
-          <img src={props.profilePic} className="profile-pic" />
+        {props.userId ? <UserAvatar
+          userId={props.userId}
+          className="profile-pic"
+          size={100}
+        />
           :
-          <FaUserCircle size={100} className="profile-pic-placeholder" />}
+          <FaUserCircle size={100} className="profile-pic placeholder" />}
 
         <div className="profile-info">
           <label htmlFor="username-input">Display Name</label>
