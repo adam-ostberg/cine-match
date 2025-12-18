@@ -25,7 +25,7 @@ const Navbar = observer(
     const username = (user.currentUser && user.username) || null;
 
     return (
-      <NavbarView onLogoClick={logoClickACB} onSignOutClick={handleSignOutACB} username={username}/>
+      <NavbarView onLogoClick={logoClickACB} onSignOutClick={handleSignOutACB} username={username} userId={user.userId || ""} />
     );
   }
 );

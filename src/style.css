@@ -133,6 +133,7 @@ html, body {
 }
 .profile-button {
     flex: 1;
+    gap: 15px;
 }
 .profile-button svg {
     color: gray;
@@ -1195,8 +1196,6 @@ html, body {
 /* Profile View */
 
 .profile-pic {
-    width: 100px;
-    height: 100px;
     border-radius: "50%";
     overflow: "hidden";
 }

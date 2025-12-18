@@ -1,11 +1,13 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
+// import SettingsIcon from '@mui/icons-material/Settings';
 import { IconButton } from "@mui/material";
+import { FaUserCircle } from "react-icons/fa";
 import "../style.css"
+import { UserAvatar } from "../components/UserAvatar.tsx";
 
 export type navbarViewProps = {
 	username: string | null;
-  onLogoClick: () => void;
+	userId: string;
+	onLogoClick: () => void;
 	onSignOutClick: () => void;
 }
 
@@ -28,14 +30,21 @@ export function NavbarView(props: navbarViewProps) {
 				props.username ? (
 					<>
 						<IconButton className="profile-button">
-							<p>{props.username}</p>
-							<AccountCircleIcon/>	
+							<p className="username">{props.username}</p>
+							{props.userId ? <UserAvatar
+								userId={props.userId}
+								className="profile-pic navbar"
+								size={60}
+							/>
+								:
+								<FaUserCircle size={60} className="profile-pic placeholder" />}
+
 						</IconButton>
 						<button className="secondary-button" onClick={signOutClickACB}>Sign Out</button>
 					</>
-				):(
+				) : (
 					<div>
-						<button className="secondary-button" onClick={() => {window.location.hash = "#/account"}}>
+						<button className="secondary-button" onClick={() => { window.location.hash = "#/account" }}>
 							Log In
 						</button>
 					</div>
