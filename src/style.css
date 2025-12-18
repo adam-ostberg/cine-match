@@ -7,7 +7,7 @@ html, body {
     min-height: 100vh;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 
@@ -17,7 +17,15 @@ html, body {
     background-color: #201f2c;
     color: white;
     height: 100%;
+    overflow-x: hidden;
+}
+
+.hide-overflow {
     overflow: hidden;
+}
+
+.home-presenter-parent {
+
 }
 
 .vertical-line {
@@ -30,6 +38,21 @@ html, body {
     flex-direction: column;
     align-items: center;
     overflow-x: hidden; /* For the carousel to work */
+}
+
+.home-nav {
+    width: 100%;
+    height: 5vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    background-color: var(--bg-color);
+    align-items: center;
+    padding-left: 60px;
+    padding-right: 60px;
+    justify-content: space-between;
 }
 
 .home h1 {
@@ -46,7 +69,7 @@ html, body {
 /* Carousel css from https://blog.logto.io/css-only-infinite-scroll */
 .carousel-view {
     width: 100%;
-    height: 400px;
+    height: 40vh;
     overflow: hidden;
     padding: 30px;
     margin: 0 0 30px;
@@ -56,7 +79,7 @@ html, body {
 
 .carousel-track {
     display: flex;
-    gap: 16px;;
+    gap: 1.1vh;
     width: max-content;
     /* Infinite scroll animation */
     animation: scrolling 240s linear infinite;
@@ -67,7 +90,7 @@ html, body {
 }
 
 .carousel-track .movie-card {
-    width: 250px;
+    width: 25vh;
     flex-shrink: 0;
     transition: transform 0.3s ease;
     border-radius: 10px;
@@ -140,9 +163,6 @@ html, body {
 }
 
 .swipe-flex-parent {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
     position: relative;
 }
 
@@ -168,9 +188,9 @@ html, body {
 }
 
 .swipe-container {
+    min-height: 90vh;
     position: relative;
     flex: 1;
-    height: 100%
 }
 
 .swipe-content {
@@ -179,7 +199,7 @@ html, body {
     display: grid;
     place-items: center;
     padding-top: 2vh;
-    grid-template-rows: 65vh 12vh 6vh;
+    grid-template-rows: 65vh 12vh 7vh; 
 }
 
 .swipe-content .swipe-card {
@@ -193,7 +213,7 @@ html, body {
     top: 0;
     right: 0;
     width: 300px;
-    height: 100vh;
+    height: 100%;
     background-color: #201f29;
     transition: transform ease 0.2s;
 }
@@ -332,11 +352,10 @@ html, body {
 
 .details-container {
     position: absolute;
-    top: 100%;
+    top: 4%;
+    height: calc(100% - 4%);
     width: 100%;
     max-width: 65vw;
-    height: 100%;
-    margin-top: 3vh;
     left: 50%;
     transform: translateX(-50%);
     color: white;
@@ -1077,21 +1096,6 @@ html, body {
 .waiting-text {
     color: #888;
     font-style: italic;
-}
-
-.home-nav {
-    width: 100%;
-    height: 5vh;
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: row;
-    margin: 0;
-    background-color: var(--bg-color);
-    align-items: center;
-    padding-left: 60px;
-    padding-right: 60px;
-    justify-content: space-between;
 }
 
 /* Match animation styles */
