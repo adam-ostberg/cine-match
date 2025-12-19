@@ -114,7 +114,10 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		video={props.model.movieVideosPrmsState.data} 
 		credits={props.model.movieCreditsPrmsState.data} 
 		imdb={props.model.imdbRatingPrmsState.data} 
-		watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
+		watchProviders={props.model.watchProvidersPrmsState.data} 
+		onClose={closeDetailsACB}
+		isMatched={isMatchDetail}/> 
+		: "";
 
 		return (
 			<div className="swipe-flex-parent">

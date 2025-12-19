@@ -5,6 +5,7 @@ import { minutesToHourAndMinutesText, getCountryCode, hideRootAndMainContentOver
 import { useState, useEffect, useRef } from "react";
 /* npm install react-icons */
 import { FaArrowLeft, FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaFire, FaUserCircle, FaExternalLinkAlt, /* FaPlus */ } from "react-icons/fa";
+import { MdOutlineSwipe, MdExitToApp } from "react-icons/md";
 import imdbLogo from "../assets/imdb_logo_2016.svg";
 
 export type DetailsViewProps = {
@@ -13,6 +14,7 @@ export type DetailsViewProps = {
   credits: TMDBMovieCredits;
   imdb: number;
   watchProviders: WatchProvidersResponse;
+  isMatched?: boolean;
   onClose: () => void;
 };
 
@@ -64,6 +66,7 @@ const DetailsView = observer(
     const PROFILE_SIZE_URL = "w185";
     const BACKDROP_URL = `${TMDB_BASE_URL}/original${details.backdrop_path}`;
     /* const LOGO_URL = TMDB_BASE_URL + POSTER_WIDTH_URL + details.logo_path; */
+    const isMatched = props.isMatched || false;
 
     // enablejsapi=1 is crucial for custom controls to work
     // from https://avada.com/documentation/youtube-video-parameters/
@@ -284,6 +287,12 @@ const DetailsView = observer(
                     </button>
                   </a>
                 )}
+                {isMatched && (<button className="secondary-button" onClick={closeACB}>
+                  <MdOutlineSwipe /> Keep Swiping
+                </button>)}
+                {/* {isMatched && (<button className="secondary-button red" onClick={closeACB}>
+                  <MdExitToApp /> Exit Session
+                </button>)} */}
                 {/* <button className="secondary-button" title="Add to Liked"> [TODO]
                   <FaPlus /> Add to Liked
                 </button> */}
