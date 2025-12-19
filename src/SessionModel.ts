@@ -27,7 +27,6 @@ export type SessionType = {
     queueMatch: (movieId: number) => void; // Adds to queue
     processQueue: () => void;
     setHasBeenActivated: (value: boolean) => void,
-    activateMatchAnimation: () => void,
 }
 
 export const SessionModel: SessionType = {
@@ -63,16 +62,7 @@ export const SessionModel: SessionType = {
             this.participants.push(user);
         }
     },
-
-    activateMatchAnimation() {
-        this.showMatchAnimation = true;
-        console.log("ShowMatchAnimation: " + this.showMatchAnimation);
-        setTimeout(() => { 
-            this.showMatchAnimation = false 
-            console.log("ShowMatchAnimation: " + this.showMatchAnimation);
-        }, 1800);
-    },
-
+    
     processQueue() {
         // If there are matches waiting
         if (this.matchQueue.length > 0) {
