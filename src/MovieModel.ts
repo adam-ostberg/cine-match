@@ -478,7 +478,8 @@ export const model: ModelType = {
 
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
-            await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
+            console.log("testing");
+            //await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
         }
     },
 

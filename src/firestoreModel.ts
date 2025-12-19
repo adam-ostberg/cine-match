@@ -75,11 +75,12 @@ export async function joinSession(userModel: UserModelType, sessionId: string) {
     }
 }
 
-export async function handleSwipeInSession(sessionId: string, userId: string, movie: {id: number, title: string, posterPath: string}, liked: boolean) {
+export async function handleSwipeInSession(sessionId: string, userModel: UserModelType, movie: {id: number, title: string, posterPath: string}, liked: boolean) {
     if (!liked) return; // Only likes are relevant for matching
 
     const sessionRef = doc(db, "sessions", sessionId);
     const movieLikesRef = doc(db, "sessions", sessionId, "likes", movie.id.toString());
+    const userId = userModel.currentUser?.uid || "";    // TODO: Maybe we should handle null case better
 
     try {
         // runTransaction handles race conditions for us
@@ -122,7 +123,31 @@ export async function handleSwipeInSession(sessionId: string, userId: string, mo
         console.log("Swipe recorded successfully");
     } catch (e) {
         console.error("Transaction failed: ", e);
+        return;
     }
+
+    // Add like to users list of likes movies aswell
+    const userLikesRef = doc(db, "users", userId);
+    try {
+        await updateDoc(userLikesRef, {
+            likes: arrayUnion(movie.title),
+        });
+    } catch (e) {
+        console.error("Failed to update user likes: ", e);
+    }
+
+    // First we check if the user has already liked the movie before!
+
+    /*
+    const userLikes = userModel.likes;
+
+    if (!userLikes.includes(movie.title)) {
+        // User hasnt liked this movie before so we add it to their list
+        console.log("trying to add movie to user likes");
+        userModel.likes.push(movie.title);
+    }
+    */
+
 }
 
 export function listenToSession(sessionId: string, model: ModelType, sessionModel: SessionType) {

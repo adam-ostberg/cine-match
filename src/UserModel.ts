@@ -7,10 +7,12 @@ export type UserModelType = {
     currentUser: User | null;
     username: string;
     currentSessionId: string | null;
+    likes: any[];
     setUserId: (userId: string) => void;
     setCurrentUser: (user: User | null) => void;
     setUsername: (username: string) => void;
     setCurrentSessionId: (id: string | null) => void;
+    setLikes: (likes: any[]) => void;
     reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
 }
 
@@ -20,6 +22,7 @@ export const UserModel: UserModelType = {
     currentUser: null as User | null,
     username: "",
     currentSessionId: null,
+    likes: [],
 
     setUserId(userId: string) {
         this.userId = userId;
@@ -37,10 +40,14 @@ export const UserModel: UserModelType = {
     setCurrentSessionId(id: string | null) {
         this.currentSessionId = id;
     },
+
+    setLikes(likes: any[]) {
+        this.likes = likes;
+    },
     
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
-            await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
+            await handleSwipeInSession(this.currentSessionId, this, {id: movieId, title, posterPath}, liked);
         }
     },
 }

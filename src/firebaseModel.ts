@@ -193,7 +193,10 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
 
   // For checking changes
   function getUserInfoACB() {
-    return [user.username];
+    return {
+      username: user.username,
+      likes: user.likes,
+    };
   }
 
   // Update the model in the cloud
@@ -202,6 +205,7 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
 
     const modelData = {
       username: user.username,
+      likes: user.likes,
     };
 
     setDoc(docRef, modelData, { merge: true })?.catch(console.error);
@@ -223,6 +227,7 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
 
     // Update local user model with Firestore data
     user.setUsername(data.username ?? "");
+    user.setLikes(data.likes ?? []);
     user.ready = true;
 
     // Reset flag after updates are applied
