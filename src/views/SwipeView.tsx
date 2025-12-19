@@ -17,6 +17,7 @@ import { MatchAnimationView } from "./matchAnimationView";
 import type { SessionType, UserInfoType } from "../SessionModel";
 import type { UserModelType } from "../UserModel";
 import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
+import { UserAvatar } from "../components/UserAvatar.tsx";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -90,8 +91,18 @@ function SwipeView(props: SwipeViewProps) {
     return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
   }
   function outputParticipants(participant: UserInfoType) {
-    return (
-      <p><FaUserCircle size={50} className="profile-pic-placeholder" />{participant.username}</p>
+    return (<div>{
+      participant.userId ? <div>
+        <UserAvatar
+          userId={participant.userId}
+          className="profile-pic navbar"
+          size={50}
+        />
+        <p>{participant.username}</p>
+      </div>
+        :
+        <FaUserCircle size={50} className="profile-pic placeholder" />
+    }</div>
     );
   }
   const [isSidebarOpen, setSidebarIsOpen] = useState(true);
@@ -143,7 +154,7 @@ function SwipeView(props: SwipeViewProps) {
         <IconButton className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
           <TuneIcon />
         </IconButton>
-        <div>
+        <div className="sidebar-content">
           <h2>Status</h2>
           <p id="current-session">Current Session id: {props.sessionModel.sessionId}</p>
           <h2>Lobby</h2>

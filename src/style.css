@@ -146,6 +146,9 @@ height: auto;
   margin: 0;
   padding: 0 20px 0 0;
   background-color: #201f29;
+  /* Box shadow for header? breaks detailsview shadow */
+  /* z-index: 1; */
+ /* box-shadow: -5px 0 5px rgba(0, 0, 0, 0.3); */
 }
 
 .header .username {
@@ -238,13 +241,24 @@ height: auto;
   height: 100%;
   background-color: #201f29;
   transition: transform ease 0.2s;
+  font-family: monospace;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+  /* https://stackoverflow.com/questions/19428584/remove-box-shadow-from-only-top-of-div */
+  clip-path: inset(0px -60px/*  -50px -50px */);
+}
+
+.sidebar-content {
+  padding: 0px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .sidebar-toggle {
   position: absolute;
   top: 0;
   left: 0;
-  transform: translateX(-100%) rotate(180deg);
+  transform: translateX(-100%) translateY(50%) rotate(180deg);
   width: 50px;
   height: 50px;
   transition:
@@ -390,6 +404,7 @@ height: auto;
   border-radius: 20px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
+  z-index: 10;
 }
 
 @media (min-width: 1024px) and (orientation: landscape) {
