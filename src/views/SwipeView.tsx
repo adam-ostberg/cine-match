@@ -141,7 +141,9 @@ function SwipeView(props: SwipeViewProps) {
 
   return (
     <div className="swipe-container">
-      <div className="swipe-content">
+      <div className={`swipe-content ${props.sessionShowMatchAnimation 
+    ? "input-disabled" 
+    : ""}`}>
         {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <LoadingSpinner size={100} />}
         <div className="swipe-title">{outputTitle(firstDetail)}</div>
         <div className="controls">
@@ -169,7 +171,11 @@ function SwipeView(props: SwipeViewProps) {
           </div>
         </div>
       </aside>
-      {showMatchAnimation && <MatchAnimationView />}
+      {props.sessionModel.showMatchAnimation && (
+        <MatchAnimationView
+          key={props.sessionModel.currentMatchId}
+        />
+      )}
     </div>
   );
 }

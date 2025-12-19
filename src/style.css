@@ -219,6 +219,11 @@ height: auto;
   flex: 1;
 }
 
+.input-disabled {
+  pointer-events: none;
+  
+}
+
 .swipe-content {
   flex: 1;
   height: 100%;

@@ -5,21 +5,24 @@ import type { ModelType } from "../MovieModel";
 import { Navbar } from "../reactts/navbarPresenter";
 import type { MovieDetails } from "../apiConfig";
 import { DetailsView } from "../views/DetailsView";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import type { UserModelType } from "../UserModel";
 import type { SessionType } from "../SessionModel";
-/* [TODO] Alltså har ingen aning om detta är korrekt gjort */
 
-export type SwipePresenterProps = {	
+export type SwipePresenterProps = {
 	userModel: UserModelType;
-  	sessionModel: SessionType;
+	sessionModel: SessionType;
 	model: ModelType
 }
 
 const Swipe = observer(  // needed for the presenter to update (its view) when relevant parts of the model change
 	function SwipeRender(props: SwipePresenterProps) {
 		const [showDetails, setShowDetails] = useState(false); // State to control details overlay
+		const [isMatchDetail, setIsMatchDetail] = useState(false);
+
+		// Ref to keep the previous swipe card when there's a match
+		const previousCardMovieIdRef = useRef<number | null>(null);
 
 		function swipeDislikeACB(id: number) {
 			props.model.addToDisliked(id);
@@ -46,18 +49,50 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			window.location.hash = "#/";
 		}
 
+		/* [TODO] For some reason funkar inte knappen längre */
 		function moreInfoClickedACB() {
 			//hideRootAndMainContentOverflow();
 			setShowDetails(true);
 			//document.location.hash = "/details";
 		}
-        function closeDetailsACB() {
-			if (!showDetails) return;
+
+		useEffect(() => {
+			if (props.sessionModel.showMatchAnimation && props.sessionModel.currentMatchId) {
+				// point the state to the matched movie
+				if (previousCardMovieIdRef.current === null) {
+          previousCardMovieIdRef.current = props.model.curMovieId;
+        }
+				props.model.setCurrentMovieId(props.sessionModel.currentMatchId);
+				props.model.currentMovieEffect();
+
+				// Wait for the animation (1.8s) then show the details
+				const timer = setTimeout(() => {
+					setShowDetails(true);
+					setIsMatchDetail(true);
+				}, 1800);
+
+				return () => clearTimeout(timer);
+			}
+		}, [props.sessionModel.showMatchAnimation, props.sessionModel.currentMatchId]);
+
+		function closeDetailsACB() {
+			// if (!showDetails || !isMatchDetail) return;
 			const background = document.querySelector(".details-view-background");
 			background?.classList.remove("is-dark");
-            setShowDetails(false); // Hide details overlay
+
+			if (isMatchDetail) {
+				setIsMatchDetail(false);
+				props.sessionModel.processQueue();
+				if (previousCardMovieIdRef.current !== null) {
+                props.model.setCurrentMovieId(previousCardMovieIdRef.current);
+                props.model.currentMovieEffect(); // Trigger fetch to restore the view's data
+                previousCardMovieIdRef.current = null; // Clear the ref
+            }
+			}
+
+			setShowDetails(false); // Hide details overlay
 			//hideRootAndMainContentOverflow(true);
-        }
+		}
 
 		const HAS_ALL_DETAILS_DATA = (
 			!!props.model.movieDetailsPrmsState.data
@@ -74,7 +109,12 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			userModel={props.userModel} sessionShowMatchAnimation={props.sessionModel.showMatchAnimation}
 			/>);
 
-		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
+		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView 
+		details={props.model.movieDetailsPrmsState.data} 
+		video={props.model.movieVideosPrmsState.data} 
+		credits={props.model.movieCreditsPrmsState.data} 
+		imdb={props.model.imdbRatingPrmsState.data} 
+		watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
 
 		return (
 			<div className="swipe-flex-parent">
