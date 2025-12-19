@@ -26,7 +26,7 @@ const PALETTES = [
 export function UserAvatar(props: UserAvatarProps) {
 
   /* Choose a color based on userId */
-  const Index = props.userId.charCodeAt(0) % 11
+  const Index = props.userId.charCodeAt(0) % PALETTES.length;
   const colors = PALETTES[Index]
 
   return (
