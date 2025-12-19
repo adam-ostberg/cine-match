@@ -126,17 +126,20 @@ export async function handleSwipeInSession(sessionId: string, userModel: UserMod
         return;
     }
 
+    // Before we add the like to the users liked movies we check if its already there
+    const userLikesIds = userModel.likes.map(m => m.movieId);
+    // If the user has already liked this movie, we dont add it again
+    if (userLikesIds.includes(movie.id)) return;
+
     // Add like to users list of likes movies aswell
     const userLikesRef = doc(db, "users", userId);
     try {
         await updateDoc(userLikesRef, {
-            likes: arrayUnion(movie.title),
+            likes: arrayUnion({title: movie.title, movieId: movie.id, poster_path: movie.posterPath}),
         });
     } catch (e) {
         console.error("Failed to update user likes: ", e);
     }
-
-    // First we check if the user has already liked the movie before!
 
     /*
     const userLikes = userModel.likes;

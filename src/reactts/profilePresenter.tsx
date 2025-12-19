@@ -12,6 +12,12 @@ export type ProfilePresenterProps = {
   sessionModel: SessionType;
 }
 
+type LikedMovie = {
+  title: string;
+  movieId: string;
+  poster_path: string | null;
+}
+
 const Profile = observer(
   function ProfileRender(props: ProfilePresenterProps) {
 
@@ -28,17 +34,24 @@ const Profile = observer(
       //  props.model.setCurrentMovie(movieId);
     }
 
+    function extactLikedMovieTitlesCB(movie: LikedMovie) {
+      return movie.title;
+    }
+
     function handleSignOutACB() {
       signOutUser().then(() => {
         window.location.hash = "#/";
       });
     }
 
+    const likedMovieTitles = props.userModel.likes.map(extactLikedMovieTitlesCB);
+
     return (
       <ProfileView
         userModel={props.userModel}
         sessionModel={props.sessionModel}
         likedMovies={props.model.alltimeLikedMoviesArray}
+        likedMoviesTitles={likedMovieTitles}
         onUsernameChange={handleUsernameChangeACB}
         onRemoveLike={handleRemoveLikeACB}
         onMovieClick={handleMovieClickACB}

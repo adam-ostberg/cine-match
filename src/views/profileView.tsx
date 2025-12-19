@@ -12,6 +12,7 @@ export type ProfileViewProps = {
   userModel: UserModelType;
   sessionModel: SessionType;
   likedMovies: TMDBMoviePageResult[];
+  likedMoviesTitles: string[];
   matchedMovies: TMDBMoviePageResult[];
 
   onUsernameChange: (name: string) => void;
@@ -110,11 +111,11 @@ export function ProfileView(props: ProfileViewProps) {
           </div>
           <div className="section">
             <h3>Liked Movies (All Time)</h3>
-            {props.likedMovies.length === 0 ? (
+            {props.likedMoviesTitles.length === 0 ? (
               <p>You haven't liked any movies yet. Go explore!</p>
             ) : (
               <div className="seed-results-container">
-                {props.likedMovies.map(renderLikedMovieCB)}
+                {LikedMoviesList(props.likedMoviesTitles)}
               </div>
             )}
           </div>
@@ -126,5 +127,15 @@ export function ProfileView(props: ProfileViewProps) {
         Log In
       </button>
     </div>)
+  );
+}
+
+function LikedMoviesList(likedMoviesTitles: string[]) {
+  return (
+    <ul>
+      {likedMoviesTitles.map((title, index) => (
+        <li key={index}>{title}</li>
+      ))}
+    </ul>
   );
 }
