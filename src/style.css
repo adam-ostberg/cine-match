@@ -219,6 +219,12 @@ height: auto;
   flex: 1;
 }
 
+.input-disabled {
+  pointer-events: none;
+  opacity: 0.8;
+  filter: blur(2px);
+}
+
 .swipe-content {
   flex: 1;
   height: 100%;
@@ -1022,12 +1028,25 @@ height: auto;
   background-color: var(--btn-green); /* <--Uncomment here: better? */
   transition: transform 0.3s ease;
 }
+/* 
+.secondary-button.red {
+  padding: 0;
+  font-size: 30px;
+  border: transparent;
+  background-color: transparent;
+  color: rgb(179, 81, 81);;
+  font-weight: bold;
+} */
 
 .secondary-button:hover {
   cursor: pointer;
   transform: scale(1.05);
   box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
+/* 
+.secondary-button.red:hover {
+  box-shadow: none;
+} */
 
 .search-row {
   display: flex;

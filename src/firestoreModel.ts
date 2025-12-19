@@ -165,7 +165,10 @@ export function listenToSession(sessionId: string, model: ModelType, sessionMode
             // Check if a match has been found
             if (data.match) {
                 console.log("We have a match!", data.match);
-                sessionModel.activateMatchAnimation();
+                if (data.match) {
+                    // Use queueMatch to handle it safely
+                    sessionModel.queueMatch(data.match.movieId);
+                }
                 // TODO!!! Update the model with match data and call some function to show the match screen
                 
                 //alert(`It's a match! Everyone wants to watch: ${data.match.title}`);
