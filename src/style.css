@@ -777,9 +777,10 @@ height: auto;
   border: none;
   width: 60px;
   height: 60px;
-  :hover {
+}
+
+.detail-card.provider:hover {
     cursor: pointer;
-  }
 }
 
 .detail-card .name {
