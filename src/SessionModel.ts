@@ -13,6 +13,7 @@ export type SessionType = {
     created: string;
     hostId: string;
     status: "waiting" | "active" | "matched";
+    hasBeenActivated: boolean;
     participants: UserInfoType[];
     likes: number[]
     showMatchAnimation: boolean;
@@ -21,6 +22,7 @@ export type SessionType = {
     setStatus: (status: "waiting" | "active" | "matched", userId: string) => void;
     addUser: (user: UserInfoType) => void;
     activateMatchAnimation: () => void,
+    setHasBeenActivated: (value: boolean) => void,
 }
 
 export const SessionModel: SessionType = {
@@ -29,11 +31,13 @@ export const SessionModel: SessionType = {
     created: "",
     hostId: "",
     status: "waiting",
+    hasBeenActivated: false,
     participants: [],
     likes: [],
     showMatchAnimation: false,
 
     setSessionId(sessionId: string | null) {
+        this.setHasBeenActivated(false);
         this.sessionId = sessionId;
     },
 
@@ -60,4 +64,8 @@ export const SessionModel: SessionType = {
             console.log("ShowMatchAnimation: " + this.showMatchAnimation);
         }, 1800);
     },
+
+    setHasBeenActivated(value: boolean) {
+        this.hasBeenActivated = value;
+    }
 }

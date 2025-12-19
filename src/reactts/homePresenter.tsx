@@ -33,6 +33,7 @@ const Home = observer(
                 alert("Please log in first.");
                 return;
             }
+            window.location.hash = "#/lobby";
             const sessionId = await createSession(props.userModel);
             // @ts-ignore  /* [TODO] for npm build, remove */
             const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel);
@@ -43,6 +44,7 @@ const Home = observer(
                 alert("Please log in first.");
                 return;
             }
+            window.location.hash = "#/lobby";
             await joinSession(props.userModel, sessionId); // TODO get session ID from user input
 
             // TODO add this to the model so we can stop listening when leaving the home view

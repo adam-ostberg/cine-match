@@ -333,13 +333,18 @@ export async function fetchMoviesPages(
     pagePromises.push(fetcherFn(page));
   }
 
-  // Fetch all pages in parallel
-  const pageResults = await Promise.all(pagePromises);
+  try {
+    // Fetch all pages in parallel
+    const pageResults = await Promise.all(pagePromises);
 
-  // Merge all results into one array
-  const allMovies = pageResults.flatMap((res) => res.results);
+    // Merge all results into one array
+    const allMovies = pageResults.flatMap((res) => res.results);
 
-  return allMovies;
+    return allMovies;
+  } catch (error) {
+    console.error('Error fetching movie pages:', error);
+    return [];
+  }
 }
 
 
@@ -544,5 +549,5 @@ export function getMovieList() {
     .catch(handleErrorACB);
 }
 
-const data = await getRecommendedMovie(550, 1);
-console.log(data);
+//const data = await fetchMoviesPages(getPopularMovies, 2, 1);
+//console.log(data);

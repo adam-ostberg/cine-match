@@ -3,6 +3,8 @@ import { getCountryForTimezone } from "countries-and-timezones";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import type { ModelType } from "./MovieModel";
+import { fetchMoviesPages, getMovieDetails, getPopularMovies, type MovieDetails, type TMDBMoviePageResult } from "./apiConfig";
+import { fetchImdbRatings } from "./testImdbApi";
 
 export function getVideoUrl(video: { site: string; key: string }) {
   switch (video.site.toLowerCase()) {
@@ -75,14 +77,89 @@ export function getPopularityColor(score: number): string {
     }
 }
 
-export function configDataForSwipeStart(model: ModelType) {
-  const idQueuePrms = model.setMovieIdQueue();
-  idQueuePrms
-    .then(() => model.currentMovieEffect())
-    .then(() => {
-      model.prefetchWindowPrmsState.promise.then(() => {
-        const id = model.getLatestPrefetchMovieId();
-        model.setCurrentMovieId(id);
+export async function configDataForSwipeStart(model: ModelType) {
+  const idQueue = await model.setMovieIdQueue()
+  model.currentMovieEffect();
+  if (Array.isArray(idQueue) || idQueue.length > 0) {
+    console.log(idQueue);
+    console.log("Setting current movie id to " + idQueue[0]);
+    model.setCurrentMovieId(idQueue[0]);
+  }
+}
+
+export async function getFilteredPopularMovies(
+  pageOffset: number, 
+  pageRange: number, 
+  likes: number[], 
+  dislikes: number[], 
+  selectedGenreIds: number[],
+  minRating: number,
+  minRuntime: number,
+  maxRuntime: number,
+): Promise<TMDBMoviePageResult[]> {
+
+  let popularMovies: TMDBMoviePageResult[] = [];
+  let fetchCount = Math.floor(Math.random() * pageRange + pageOffset); // random value between 0-30 as a starting point for the popular movies so you always get a variation if you're not using any filter and recommendations.
+  const fetchStop = fetchCount + 10;
+  while (popularMovies.length < 30 && fetchCount < fetchStop) {
+      const popularData = await fetchMoviesPages(getPopularMovies, 1, fetchCount);
+
+      const filteredData = popularData.filter(movie =>
+          movie.genre_ids.some(genre => selectedGenreIds.includes(genre)) // filter by selected genres
+          && !likes.includes(movie.id) // not in liked
+          && !dislikes.includes(movie.id) // not in disliked
+      );
+      const fullyFilteredMovies = await filterByRatingAndRuntime(filteredData, minRating, minRuntime, maxRuntime);
+
+      popularMovies = [...popularMovies, ...fullyFilteredMovies];
+      fetchCount++;
+  }
+  if (fetchCount >= fetchStop) { // if it couldn't find enough filtered movies just append any popular movie to the queue.
+      const popularData = await fetchMoviesPages(getPopularMovies, 1, fetchCount+1);
+      popularMovies = [...popularMovies, ...popularData];
+  }
+
+  return popularMovies;
+}
+
+export async function filterByRatingAndRuntime(data: TMDBMoviePageResult[], minRating: number, minRuntime: number, maxRuntime: number): Promise<TMDBMoviePageResult[]> {
+  if (!data || data.length === 0) { return [] };
+  const details: MovieDetails[] = [];
+  for (const movie of data) {
+      const detail = await getMovieDetails(movie.id) as MovieDetails;
+      if (!detail) {
+          continue;
+      }
+      details.push(detail);
+      //await sleep(10); // Do this to avoid API Rate limiting
+  }
+
+  const imdbIds = details.map(detail => detail.imdb_id);
+
+  const ratings = (await fetchImdbRatings(imdbIds))?.data?.titles ?? [];
+  if (ratings.length === 0) return [];
+
+  const movieIdToRating = new Map<number, number>();
+  const movieIdToRuntime = new Map<number, number>();
+
+  for (const detail of details) {
+      movieIdToRuntime.set(detail.id, detail.runtime);
+      const rating = ratings.find(movie => movie.id === detail.imdb_id);
+      if (!rating || !rating?.ratingsSummary?.aggregateRating) continue;
+      movieIdToRating.set(detail.id, rating.ratingsSummary.aggregateRating)
+  }
+
+  const result = data
+      .filter(movie => {
+          const rating = movieIdToRating.get(movie.id);
+          const runtime = movieIdToRuntime.get(movie.id);
+          if (!rating  || rating <= minRating) { return false };
+          if (!runtime || runtime <= minRuntime || runtime >= maxRuntime) { return false };
+          return true
       })
-    });
+      .map(movie => {
+          return {...movie, imdbRating: movieIdToRating.get(movie.id), runtime: movieIdToRuntime.get(movie.id)}
+      });
+
+  return result;
 }

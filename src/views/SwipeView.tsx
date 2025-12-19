@@ -176,11 +176,25 @@ function SwipeView(props: SwipeViewProps) {
 
 // @ts-ignore [TODO] remove
 const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card, isCached} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean, isCached: boolean}) => {
+
+  const [screenHeight, setScreenHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const swipeCardHeight = screenHeight * 0.65; // from 65vh
+  const swipePixelLimit = swipeCardHeight * 0.15;
+
   const x = useMotionValue(0);
   const y = useMotionValue(0)
-  const opacity = useTransform(x, [-150, 0, 150], [0, 1, 0]);
-  const dislikeOpacity = useTransform(x, [-145 ,-70, 0, 70] , [0, 1, 0, 0]);
-  const likeOpacity = useTransform(x, [-70, 0, 70, 145] , [0, 0, 0.9, 0]);
+  const opacity = useTransform(x, [-swipePixelLimit*1.9, 0, swipePixelLimit*1.9], [0, 1, 0]);
+  const dislikeOpacity = useTransform(x, [-swipePixelLimit*1.5 ,-swipePixelLimit*0.8, 0, swipePixelLimit*0.8] , [0, 1, 0, 0]);
+  const likeOpacity = useTransform(x, [-swipePixelLimit*0.8, 0, swipePixelLimit*0.8, swipePixelLimit*1.5] , [0, 0, 0.9, 0]);
   isCached
   const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 
@@ -211,11 +225,11 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
       return Math.min(yOpacity, xOpacity);
     }
   );
-  const rotate = useTransform(x, [150, -150], [-18, 18]);
+  const rotate = useTransform(x, [swipePixelLimit*1.7, -swipePixelLimit*1.7], [-18, 18]);
 
   useEffect(() => {
     if (!swipeDirection || !is_top_card) return;
-    const targetX = swipeDirection === "right" ? 200 : -200;
+    const targetX = swipeDirection === "right" ? swipePixelLimit*2 : -swipePixelLimit*2;
 
     const controls = animate(x, targetX, {
       type: "tween",
@@ -235,21 +249,21 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
     if (swipeDirection) return;
     if (!is_top_card) return;
 
-    if (info.offset.x > 80) {
-      const controls = animate(x, 150, {
+    if (info.offset.x > swipePixelLimit) {
+      const controls = animate(x, swipePixelLimit*2, {
         type: "tween",
         duration: 0.1,
         ease: "easeOut",
         onComplete: () => rightSwipeCB(),
       });
-    } else if (info.offset.x < -80) {
-      const controls = animate(x, -150, {
+    } else if (info.offset.x < -swipePixelLimit) {
+      const controls = animate(x, -swipePixelLimit*2, {
         type: "tween",
         duration: 0.1,
         ease: "easeOut",
         onComplete: () => leftSwipeCB(),
       });
-    } else if (info.offset.y < -80 && Math.abs(info.offset.x) < 80) {
+    } else if (info.offset.y < -swipePixelLimit && Math.abs(info.offset.x) < swipePixelLimit) {
       // you might want a vertical animation here too
       upSwipeCB();
       animate(y, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
@@ -258,9 +272,9 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
       animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     }
   };
-  const motionDivClassNames = isCached ? "swipe-card-wrapper pointer-events-none" : "swipe-card-wrapper";
+  const motionDivClassNames = isCached ? "swipe-card-wrapper" : "swipe-card-wrapper";
 return (
-  <motion.div className={motionDivClassNames}
+  <motion.div className="swipe-card-wrapper"
     style={{
       gridRow: 1,
       gridColumn: 1,
@@ -272,7 +286,7 @@ return (
       alt={"Placeholder"}
       className="swipe-card"
       drag
-      dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
+      dragConstraints={{left: -swipePixelLimit, right: swipePixelLimit, top: 0, bottom: 0}}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{
@@ -290,7 +304,7 @@ return (
       alt={"Placeholder"}
       className="swipe-like-img"
       drag
-      dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
+      dragConstraints={{left: -swipePixelLimit, right: swipePixelLimit, top: 0, bottom: 0}}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{
@@ -310,7 +324,7 @@ return (
       alt={"Placeholder"}
       className="swipe-dislike-img"
       drag
-      dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
+      dragConstraints={{left: -swipePixelLimit, right: swipePixelLimit, top: 0, bottom: 0}}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{
@@ -330,7 +344,7 @@ return (
       alt={"Placeholder"}
       className="swipe-settings-img"
       drag
-      dragConstraints={{left: -80, right: 80, top: 0, bottom: 0}}
+      dragConstraints={{left: -swipePixelLimit, right: swipePixelLimit, top: 0, bottom: 0}}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{

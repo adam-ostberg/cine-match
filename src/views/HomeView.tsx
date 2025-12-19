@@ -24,7 +24,7 @@ export function HomeView(props: HomeViewProps) {
 
   function onStartSessionClickACB() {
     props.onStartSession();
-    window.location.hash = "#/lobby";
+
   }
 
   function onJoinSessionClickACB() {
@@ -32,7 +32,6 @@ export function HomeView(props: HomeViewProps) {
     const sessionId = sessionIdInput.value;
     props.onJoinSession(sessionId);
 
-    window.location.hash = "#/lobby";
   }
 
   /* function onStartSessionClickCB() { // For future implementation

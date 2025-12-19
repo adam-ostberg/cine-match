@@ -14,9 +14,8 @@ export type LobbyPresenterProps = {
 
 const Lobby = observer(
   function LobbyRender(props: LobbyPresenterProps) {
-
+    
     function handleStartSwipingACB() {
-      configDataForSwipeStart(props.model);
       props.sessionModel.setStatus("active", props.model.userId || "");
       window.location.href = "#/swipe";
     }
@@ -26,6 +25,10 @@ const Lobby = observer(
 
     if (props.sessionModel.status === "active") {
       window.location.href = "#/swipe";
+      if (!props.sessionModel.hasBeenActivated) {
+        props.sessionModel.setHasBeenActivated(true);
+        configDataForSwipeStart(props.model);
+      }
     }
 
     // Callback for extracting usernames
