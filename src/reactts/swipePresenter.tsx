@@ -96,7 +96,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 
 		const HAS_ALL_DETAILS_DATA = (
 			!!props.model.movieDetailsPrmsState.data
-			&& !!props.model.movieVideosPrmsState.data
+			// && !!props.model.movieVideosPrmsState.data
 			&& !!props.model.movieCreditsPrmsState.data
 			&& !!props.model.imdbRatingPrmsState.data
 			&& !!props.model.watchProvidersPrmsState.data
