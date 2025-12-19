@@ -16,6 +16,7 @@ import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import { MatchAnimationView } from "./matchAnimationView";
 import type { SessionType, UserInfoType } from "../SessionModel";
 import type { UserModelType } from "../UserModel";
+import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -124,7 +125,7 @@ function SwipeView(props: SwipeViewProps) {
   return (
     <div className="swipe-container">
       <div className="swipe-content">
-        {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <p>__loading__</p>}
+        {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <LoadingSpinner size={100} />}
         <div className="swipe-title">{outputTitle(firstDetail)}</div>
         <div className="controls">
           <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
