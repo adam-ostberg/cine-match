@@ -18,6 +18,7 @@ export type SessionType = {
     showMatchAnimation: boolean;
     currentMatchId: number | null; // The ID currently being displayed
     matchQueue: number[];
+    matchesIds: number[];
     setSessionId: (sessionId: string | null) => void;
     getSessionId: () => string | null;
     setStatus: (status: "waiting" | "active" | "matched", userId: string) => void;
@@ -37,6 +38,7 @@ export const SessionModel: SessionType = {
     showMatchAnimation: false,
     currentMatchId: null,
     matchQueue: [],
+    matchesIds: [],
 
     setSessionId(sessionId: string | null) {
         this.sessionId = sessionId;
@@ -84,6 +86,7 @@ export const SessionModel: SessionType = {
 
         console.log("Queueing match for ID:", movieId);
         console.log(this.matchQueue)
+        this.matchesIds.push(movieId);
         this.matchQueue.push(movieId);
 
         // If no animation is currently running, start the loop
