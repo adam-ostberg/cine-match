@@ -6,6 +6,8 @@ import { observeAuth } from "./authService";
 import { SessionModel } from "./SessionModel";
 import { UserModel } from "./UserModel";
 import type { Unsubscribe } from "firebase/auth";
+import { doc, updateDoc, arrayRemove } from "firebase/firestore";
+import { db } from "./firebaseConfig";
 
 declare global {
   interface Window {
@@ -89,3 +91,22 @@ window.userModel = reactiveUserModel;
 // Connect models to persistence
 connectToPersistence(reactiveModel, reaction);
 connectSessionToPersistence(reactiveSessionModel, reactiveUserModel, reactiveModel, reaction);
+
+// Handle page close/refresh and remove the user from session
+window.addEventListener("beforeunload", () => {
+  const sessionId = reactiveUserModel.currentSessionId;
+  const userId = reactiveUserModel.userId;
+  const username = reactiveUserModel.username;
+  
+  if (sessionId && userId) {
+    // Update the local model first
+    reactiveSessionModel.removeUser(userId);
+    
+    // Try to persist to Firestore using a synchronous approach
+    // This may not always complete, but it's the best we can do client-side
+    const docRef = doc(db, "sessions", sessionId);
+    updateDoc(docRef, {
+      participants: arrayRemove({ userId, username })
+    }).catch(console.error);
+  }
+});

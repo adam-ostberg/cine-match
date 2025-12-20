@@ -64,6 +64,11 @@ export class SessionModel {
     setLikes(likes: number[]) {
         this.likes = likes;
     }
+
+    // Remove the user with the given ID from the session
+    removeUser(userId: string) {
+        this.participants = this.participants.filter(u => u.userId !== userId);
+    }
     
     processQueue() {
         // If there are matches waiting

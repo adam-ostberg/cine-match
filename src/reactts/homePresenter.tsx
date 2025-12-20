@@ -88,6 +88,7 @@ const Home = observer(
                     <HomeView
                         userModel={props.userModel}
                         sessionModel={props.sessionModel}
+                        sessionId={props.userModel.currentSessionId || null}
                         onStartSession={sessionStartACB}
                         username={username}
                         onJoinSession={sessionJoinACB}

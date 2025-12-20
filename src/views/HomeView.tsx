@@ -8,6 +8,7 @@ import type { SessionModel } from "../SessionModel";
 export type HomeViewProps = {
   userModel: UserModel;
   sessionModel: SessionModel;
+  sessionId: string | null;
   movies: TMDBMoviePageResult[] | null;
   username: string | null;
   onStartSession: () => void;
@@ -32,6 +33,10 @@ export function HomeView(props: HomeViewProps) {
     const sessionId = sessionIdInput.value;
     props.onJoinSession(sessionId);
 
+  }
+
+  function onContinueSwipingACB() {
+    window.location.hash = "#/swipe";
   }
 
   /* function onStartSessionClickCB() { // For future implementation
@@ -61,22 +66,35 @@ export function HomeView(props: HomeViewProps) {
     return <div><p>Loading movies...</p></div>;
   } */
 
-  return (
+return (
     <div className="home">
       <Navbar userModel={props.userModel} sessionModel={props.sessionModel}/>
-      <p>Swipe to find your perfect movie</p>
-      <div className="carousel-view">
-        <div className="carousel-track">
-          {infiniteMovies.map(renderMovieCardCB)}
+      <div className="home-section">
+        <p>Swipe to find your perfect movie</p>
+        <div className="carousel-view">
+          <div className="carousel-track">
+            {infiniteMovies.map(renderMovieCardCB)}
+          </div>
         </div>
-      </div>
-      <div className="session-section">
-        <button className="primary-button" onClick={onStartSessionClickACB}>Create Session</button>
-        <p>or</p>
-        <div className="join-session-input">
-          <input id="session-id-input" type="text" placeholder="Enter Session ID" inputMode="numeric" pattern="\d*" />
-          <button className="secondary-button" onClick={onJoinSessionClickACB}>Join Session</button>
-        </div>
+        {props.userModel.currentUser?.uid ? (
+          props.sessionId ? (
+            <div className="currently-in-session-section">
+              <p>You are currently in a asession</p>
+              <button className="primary-button" onClick={onContinueSwipingACB}>Continue swiping</button>
+            </div>
+          ) : (
+            <div className="session-section">
+              <button className="primary-button" onClick={onStartSessionClickACB}>Create Session</button>
+              <p>or</p>
+              <div className="join-session-input">
+                <input id="session-id-input" type="text" placeholder="Enter Session ID" inputMode="numeric" pattern="\d*" />
+                <button className="secondary-button" onClick={onJoinSessionClickACB}>Join Session</button>
+              </div>
+            </div>
+          )
+        ) : (
+          <p>Please log in to create or join a session...</p>
+        )}
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ export type navbarViewProps = {
 	sessionStatus: string;
 	onLogoClick: () => void;
 	onSignOutClick: () => void;
+	onExitSession: () => void;
 }
 
 
@@ -21,6 +22,11 @@ export function NavbarView(props: navbarViewProps) {
 	function signOutClickACB() {
 		props.onSignOutClick();
 	}
+
+	function exitSessionACB() {
+		props.onExitSession();
+	}
+
 	const sessionActive = props.sessionStatus === "active" || props.sessionStatus === "matched";
 
 	function profileClickACB() {
@@ -33,7 +39,7 @@ export function NavbarView(props: navbarViewProps) {
 				CineMatch
 			</h1>
 			{sessionActive ?
-				<button> {/* Have not added functionality yet this button is so you can escape a swipe session lobby*/}
+				<button className="secondary-button" onClick={exitSessionACB}>
 					Exit Session
 				</button>
 				: ""
