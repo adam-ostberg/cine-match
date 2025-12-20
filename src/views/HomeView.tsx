@@ -70,14 +70,19 @@ export function HomeView(props: HomeViewProps) {
           {infiniteMovies.map(renderMovieCardCB)}
         </div>
       </div>
-      <div className="session-section">
-        <button className="primary-button" onClick={onStartSessionClickACB}>Create Session</button>
-        <p>or</p>
-        <div className="join-session-input">
-          <input id="session-id-input" type="text" placeholder="Enter Session ID" inputMode="numeric" pattern="\d*" />
-          <button className="secondary-button" onClick={onJoinSessionClickACB}>Join Session</button>
+      {props.userModel.currentUser?.uid ? (
+        <div className="session-section">
+          <button className="primary-button" onClick={onStartSessionClickACB}>Create Session</button>
+          <p>or</p>
+          <div className="join-session-input">
+            <input id="session-id-input" type="text" placeholder="Enter Session ID" inputMode="numeric" pattern="\d*" />
+            <button className="secondary-button" onClick={onJoinSessionClickACB}>Join Session</button>
+          </div>
         </div>
-      </div>
+      ):
+      (
+        <p>Please log in to create or join a session...</p>
+      )}
     </div>
   );
 }
