@@ -1,5 +1,5 @@
 import "../style.css"
-import { type TMDBMoviePageResult } from "../apiConfig.ts";
+import { getGenres, type TMDBMoviePageResult } from "../apiConfig.ts";
 /* npm install react-icons */
 import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
@@ -7,6 +7,22 @@ import { UserAvatar } from "../components/UserAvatar.tsx";
 import { Navbar } from "../reactts/navbarPresenter.tsx";
 import type { UserModelType } from "../UserModel.ts";
 import type { SessionType } from "../SessionModel.ts";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend
+);
+import { Bar } from 'react-chartjs-2';
 
 export type ProfileViewProps = {
   userModel: UserModelType;
@@ -42,6 +58,30 @@ export function ProfileView(props: ProfileViewProps) {
   function signOutClickACB() {
     props.onSignOutClick();
   }
+  /*
+  function getTopLikedGenres(movies: TMDBMoviePageResult[]): Array<string[] | number[]> {
+    const genreData = await getGenres();
+    const genreList = genreData?.genres;
+    const genreToCount = new Map<string, number>();
+    const idToGenreName = new Map<number, string>(genreList.map(g => [g.id, g.name]));
+
+    for (const movie of movies) {
+      const ids = movie.genre_ids.forEach(id => {
+        const genreName = idToGenreName.get(id);
+        if (!!genreName || genreName !== undefined) {
+          genreToCount.set(genreName, (genreToCount.get(genreName) ?? 0) + 1)
+        }
+      })
+    }
+    const entries = Array.from(genreToCount.entries())
+      .sort((a, b) => b[1] - a[1])   // sort by value desc
+      .slice(0, 5);                 // take top 5
+
+    const genres = entries.map(([label]) => label);
+    const likeCounts = entries.map(([, value]) => value);
+      
+    return [genres, likeCounts];
+  }*/
 
   function renderLikedMovieCB(movie: TMDBMoviePageResult) {
     if (!movie.poster_path) return null;
@@ -119,6 +159,9 @@ export function ProfileView(props: ProfileViewProps) {
               </div>
             )}
           </div>
+          <div className="section">
+            <BarChart labels={['Jan', 'Feb', 'Mar', 'Apr']} values={[120, 190, 300, 250]}/>
+          </div>
         </div>
       </div>
     </>
@@ -138,4 +181,33 @@ function LikedMoviesList(likedMoviesTitles: string[]) {
       ))}
     </ul>
   );
+}
+
+type BarChartProps = {
+  labels: string[];
+  values: number[];
+};
+
+export function BarChart({ labels, values }: BarChartProps) {
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Sales',
+        data: values,
+        backgroundColor: '#4f46e5',
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+      },
+    },
+  };
+
+  return <Bar data={data} options={options} />;
 }

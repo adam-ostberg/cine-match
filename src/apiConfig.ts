@@ -88,28 +88,27 @@ export function apiAuth() {
     .catch(handleErrorACB);
 }
 
-export function getGenres() {
+export interface Genre {
+  id: number;
+  name: string;
+}
+
+export interface GenresResponse {
+  genres: Genre[];
+}
+
+export async function getGenres(): Promise<GenresResponse> {
   const ENDPOINT = "/genre/movie/list";
 
   function handleResponseACB(response: Response) {
-    if (response.ok !== true) {
-      throw new Error();
+    if (!response.ok) {
+      throw new Error("Failed to fetch genres");
     }
     return response.json();
   }
 
-  function handleSuccessACB(data: object) {
-    return data;
-  }
-
-  function handleErrorACB(error: unknown) {
-    console.error(error);
-  }
-
   return fetch(BASE_URL + ENDPOINT, optionsGET)
-    .then(handleResponseACB)
-    .then(handleSuccessACB)
-    .catch(handleErrorACB);
+    .then(handleResponseACB) as Promise<GenresResponse>;
 }
 
 export type TMDBsearchData = {

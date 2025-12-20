@@ -3,12 +3,13 @@ import { observer } from "mobx-react-lite";
 import { SwipeView } from "../views/SwipeView";
 import type { ModelType } from "../MovieModel";
 import { Navbar } from "../reactts/navbarPresenter";
-import type { MovieDetails } from "../apiConfig";
+import { getGenres, type MovieDetails } from "../apiConfig";
 import { DetailsView } from "../views/DetailsView";
 import { useState, useEffect, useRef } from "react";
 import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import type { UserModelType } from "../UserModel";
 import type { SessionType } from "../SessionModel";
+import { resolvePromise, type PromiseState } from "../resolvePromise";
 
 export type SwipePresenterProps = {
 	userModel: UserModelType;
@@ -93,6 +94,9 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			setShowDetails(false); // Hide details overlay
 			//hideRootAndMainContentOverflow(true);
 		}
+		const genreListPrmsState: PromiseState = {promise: null, data: null, error: null};
+		const genreListPrms = getGenres();
+		resolvePromise(genreListPrms, genreListPrmsState);
 
 		const HAS_ALL_DETAILS_DATA = (
 			!!props.model.movieDetailsPrmsState.data

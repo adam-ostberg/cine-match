@@ -1,4 +1,4 @@
-
+import { runInAction } from "mobx";
 
 export type PromiseState = {
     promise: any;
@@ -8,27 +8,36 @@ export type PromiseState = {
 
 export function resolvePromise(prms: Promise<any>, promiseState: PromiseState) {
     if (!prms) {
-        promiseState.promise = null;
-        promiseState.data = null;
-        promiseState.error = null;
+        runInAction(() => {
+            promiseState.promise = null;
+            promiseState.data = null;
+            promiseState.error = null;
+        })
         return;
     }
-    promiseState.promise = prms;
-    promiseState.data = null;
-    promiseState.error = null;
+    runInAction(() => {
+        promiseState.promise = prms;
+        promiseState.data = null;
+        promiseState.error = null;
+    })
+
     const thisCall = prms;
 
-    function handleDataACB(data: Promise<any>) {
+    function handleDataACB(data: any) {
         if (promiseState.promise !== thisCall) {
             return;
         }
-        promiseState.data = data;
+        runInAction(() => {
+            promiseState.data = data;
+        })
     }
     function handleErrorACB(err: any) {
         if (promiseState.promise !== thisCall) {
             return;
         }
-        promiseState.error = err
+        runInAction(() => {
+            promiseState.error = err
+        })
     }
     prms.then(handleDataACB).catch(handleErrorACB);
 }
