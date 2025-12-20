@@ -79,7 +79,7 @@ return (
         {props.userModel.currentUser?.uid ? (
           props.sessionId ? (
             <div className="currently-in-session-section">
-              <p>You are currently in a asession</p>
+              <p>You are currently in a session</p>
               <button className="primary-button" onClick={onContinueSwipingACB}>Continue swiping</button>
             </div>
           ) : (

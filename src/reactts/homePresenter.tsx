@@ -73,7 +73,11 @@ const Home = observer(
 			&& !!props.model.imdbRatingPrmsState.data
 			&& !!props.model.watchProvidersPrmsState.data
 		)
-		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> : "";
+		const details = showDetails && HAS_ALL_DETAILS_DATA 
+            ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} 
+            credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} 
+            watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> 
+            : "";
 
         const username = props.userModel.currentUser && props.userModel.username || null;
 

@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 export type LikesType = {
     moveId: string[];
@@ -107,6 +107,8 @@ export class SessionModel {
     }
 
     setHasBeenActivated(value: boolean) {
-        this.hasBeenActivated = value;
+        runInAction(() => {
+            this.hasBeenActivated = value;
+        })
     }
 }

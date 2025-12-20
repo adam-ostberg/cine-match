@@ -1,6 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
+  font-family: monospace, system-ui, sans-serif;
 }
 
 .mainContent::-webkit-scrollbar{
@@ -1360,7 +1361,7 @@ height: auto;
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
-  height: 100vh;
+  height: 90vh;
   box-sizing: border-box;
 }
 
@@ -1425,6 +1426,10 @@ height: auto;
   margin-top: 40px;
   margin-bottom: 20px;
   font-size: 1.5rem;
+  color: #ccc;
+}
+
+.gray-text {
   color: #ccc;
 }
 
@@ -1519,6 +1524,38 @@ height: auto;
   text-decoration: underline;
 }
 
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  position: absolute;
+  width: 80%;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  border-radius: 4px;
+
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: brightness(0.7);
+  -webkit-backdrop-filter: brightness(0.7);
+
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+.tooltip div {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip-wrapper:hover .tooltip {
+  opacity: 1;
+}
 .error-message {
   color: red;
 }
