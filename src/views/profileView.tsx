@@ -5,7 +5,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { Navbar } from "../reactts/navbarPresenter.tsx";
-import type { UserModelType } from "../UserModel.ts";
+import type { UserModelType, MatchType } from "../UserModel.ts";
 import type { SessionType } from "../SessionModel.ts";
 
 export type ProfileViewProps = {
@@ -13,7 +13,7 @@ export type ProfileViewProps = {
   sessionModel: SessionType;
   likedMovies: TMDBMoviePageResult[];
   likedMoviesTitles: string[];
-  matchedMovies: TMDBMoviePageResult[];
+  matchedMovies: MatchType[];
 
   onUsernameChange: (name: string) => void;
   onRemoveLike: (movie: TMDBMoviePageResult) => void
@@ -43,6 +43,7 @@ export function ProfileView(props: ProfileViewProps) {
     props.onSignOutClick();
   }
 
+  // TODO: Maybe remove this as its not linked to the new system
   function renderLikedMovieCB(movie: TMDBMoviePageResult) {
     if (!movie.poster_path) return null;
 
@@ -82,7 +83,6 @@ export function ProfileView(props: ProfileViewProps) {
       <div className="scroll-auto">
         <div className="profile-container">
           <h2>My Profile</h2>
-
           <div className="section profile-header">
             <IconButton>
               {props.userModel.userId ? <UserAvatar
@@ -108,6 +108,16 @@ export function ProfileView(props: ProfileViewProps) {
                 </button>
               </div>
             </div>
+          </div>
+          <div className="section">
+                <h3>Watch list (Your matches)</h3>
+                <div className="matches-cards">
+                  {
+                    props.matchedMovies.map((match: MatchType) => {
+                      return MatchCard(match);
+                    })
+                  }
+                </div>
           </div>
           <div className="section">
             <h3>Liked Movies (All Time)</h3>
@@ -137,5 +147,20 @@ function LikedMoviesList(likedMoviesTitles: string[]) {
         <li key={index}>{title}</li>
       ))}
     </ul>
+  );
+}
+
+function MatchCard(match: MatchType) {
+  return (
+    <div className="match-card" key={match.movieId}>
+      <h4 className="match-card-title">{match.title}</h4>
+      <img src={match.poster_path ?? ""} alt={"Poster of " + match.title} />
+      <p className="match-card-match-with">Watch with: </p>
+      {
+      match.usersInSession.map((username: string) => {
+        return <p>{username}</p>
+      })
+      }
+    </div>
   );
 }
