@@ -16,7 +16,7 @@ const Lobby = observer(
   function LobbyRender(props: LobbyPresenterProps) {
     
     function handleStartSwipingACB() {
-      props.sessionModel.setStatus("active", props.model.userId || "");
+      props.sessionModel.setStatus("active");
       window.location.href = "#/swipe";
     }
     function handleToOptionsViewACB() {

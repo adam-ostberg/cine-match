@@ -1,10 +1,10 @@
-import { observable, configure, reaction } from "mobx";
-configure({ enforceActions: "never" }); // we don't use Mobx actions in the Lab
+import { configure, reaction } from "mobx";
+configure({ enforceActions: "always" });
 import { MovieModel} from "./MovieModel";
 import { connectSessionToPersistence, connectToPersistence, connectUserToPersistence } from "./firebaseModel";
 import { observeAuth } from "./authService";
-import { SessionModel, type SessionType } from "./SessionModel";
-import { UserModel, type UserModelType } from "./UserModel";
+import { SessionModel } from "./SessionModel";
+import { UserModel } from "./UserModel";
 import type { Unsubscribe } from "firebase/auth";
 
 declare global {

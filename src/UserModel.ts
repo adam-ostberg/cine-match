@@ -59,6 +59,14 @@ export class UserModel  {
     setLikes(likes: any[]) {
         this.likes = likes;
     }
+
+    setReady(value: boolean) {
+        this.ready = value;
+    }
+
+    setMatches(newMatches: any[]) {
+        this.matches = newMatches;
+    }
     
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {

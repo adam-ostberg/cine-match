@@ -1348,7 +1348,7 @@ height: auto;
 }
 
 .profile-container {
-  max-width: 800px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 40px 20px;
   height: 100vh;
@@ -1474,4 +1474,38 @@ height: auto;
   .profile-container .seed-results-container {
     justify-content: center;
   }
+}
+
+.matches-cards {
+  display: flex;
+  gap: 40px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.match-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 200px;
+  border-radius: 10px;
+  padding: 5px 30px;
+  object-fit: cover;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.match-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.match-card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 10px 0 20px 0;
+  text-align: center;
+}
+
+.match-card-match-with {
+  text-decoration: underline;
 }

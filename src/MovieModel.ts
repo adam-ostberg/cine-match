@@ -418,12 +418,16 @@ export class MovieModel {
     fetchGenres() {
         const genresPrms = getMovieList().then((data: any) => {
             if (data && data.genres) {
-                this.genres = data.genres;
+                this.setGenres(data.genres);
             }
             return data;
         });
         resolvePromise(genresPrms, this.genresPrmsState);
         return genresPrms
+    }
+
+    setGenres(genres: any[]) {
+        this.genres = genres;
     }
 
     setSessionId(sessionId: string | null) {
@@ -432,13 +436,6 @@ export class MovieModel {
 
     getCurrentSessionId() {
         return this.currentSessionId;
-    }
-
-    async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
-        if (this.currentSessionId && this.userId) {
-            console.log("testing");
-            //await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
-        }
     }
 
     setUsername(username: string) {

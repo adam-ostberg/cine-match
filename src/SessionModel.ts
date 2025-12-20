@@ -61,15 +61,30 @@ export class SessionModel {
         return this.sessionId;
     }
 
-    setStatus(status: "waiting" | "active" | "matched", userId: string) {
-        if (this.hostId !== userId) return; // Only host can change status
+    setStatus(status: "waiting" | "active" | "matched") {
         this.status = status;
+    }
+
+    setHostId(id: string) {
+        this.hostId = id;
     }
 
     addUser(user: UserInfoType) {
         if (!this.participants.find(u => u.userId === user.userId)) {
             this.participants.push(user);
         }
+    }
+
+    setReady(value: boolean) {
+        this.ready = value;
+    }
+
+    setParticipants(participants: UserInfoType[]) {
+        this.participants = participants;
+    }
+
+    setLikes(likes: number[]) {
+        this.likes = likes;
     }
     
     processQueue() {

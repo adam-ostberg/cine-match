@@ -56,7 +56,7 @@ const Profile = observer(
         onRemoveLike={handleRemoveLikeACB}
         onMovieClick={handleMovieClickACB}
         onSignOutClick={handleSignOutACB}
-        matchedMovies={[]}
+        matchedMovies={props.userModel.matches}
       />
     );
   }

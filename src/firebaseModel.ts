@@ -4,10 +4,10 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, onValue } from "firebase/database";
 import { firebaseConfig } from "./firebaseConfig";
 import type { MovieModel } from "./MovieModel";
-import type { LikesType, SessionType } from "./SessionModel";
+import { SessionModel } from "./SessionModel";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot as firestoreOnSnapshot, collection, getDocs } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/auth";
-import type { UserModelType } from "./UserModel";
+import type { UserModel } from "./UserModel";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -73,7 +73,7 @@ export function connectToPersistence(model: MovieModel, reaction: any) {
   reaction(modelInterestsACB, writeToCloudACB);
 }
 
-export function connectSessionToPersistence(session: SessionType, userModel: UserModelType, model: MovieModel, watchFunction: any) {
+export function connectSessionToPersistence(session: SessionModel, userModel: UserModel, model: MovieModel, watchFunction: any) {
   let unsubscribeFirestore: Unsubscribe | null = null;
   
   // Flag to prevent write-back loops when receiving Firestore updates
@@ -93,12 +93,12 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
 
     // Reset session state if no session
     if (!sessionId) {
-      session.ready = false;
-      session.sessionId = null;
-      session.participants = [];
-      session.hostId = "";
-      session.likes = [];
-      session.status = "waiting";
+      session.setReady(false);
+      session.setSessionId(null);
+      session.setParticipants([]);
+      session.setHostId("");
+      session.setLikes([]);
+      session.setStatus("waiting");
       return;
     }
 
@@ -118,11 +118,11 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
       isUpdatingFromFirestore = true;
 
       // Update local session model with Firestore data
-      session.sessionId = data.sessionId || sessionId;
-      session.participants = data.participants || [];
-      session.hostId = data.hostId || "";
-      session.status = data.status || "waiting";
-      session.ready = true;
+      session.setSessionId(data.sessionId || sessionId);
+      session.setParticipants(data.participants || []);
+      session.setHostId(data.hostId || "");
+      session.setStatus(data.status || "waiting");
+      session.setReady(true);
 
       // Reset flag after updates are applied (use setTimeout to let MobX reactions complete)
       setTimeout(() => {
@@ -141,7 +141,7 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
       }
       model.insertMovieLikesIntoQueue(movieLikeIds);
       const idQueue = [...session.likes, ...movieLikeIds];
-      session.likes = [...new Set(idQueue)]; // removes duplicates
+      session.setLikes([...new Set(idQueue)]); // removes duplicates
     }, (error) => {
       console.error("Error listening to likes collection:", error);
     });
@@ -183,7 +183,7 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
   watchFunction(statusACB, persistStatusACB);
 }
 
-export function connectUserToPersistence(user: UserModelType, watchFunction: any) {
+export function connectUserToPersistence(user: UserModel, watchFunction: any) {
   if (!user.currentUser) return;
 
   const docRef = doc(firestore, "users", user.userId);
@@ -213,7 +213,7 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
     setDoc(docRef, modelData, { merge: true })?.catch(console.error);
   }
 
-  user.ready = false;
+  user.setReady(false);
 
   // Set up real-time listener for this user document
   const unsubscribeFirestore = firestoreOnSnapshot(docRef, (docSnap) => {
@@ -230,8 +230,8 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
     // Update local user model with Firestore data
     user.setUsername(data.username ?? "");
     user.setLikes(data.likes ?? []);
-    user.matches = data.matches ?? [];
-    user.ready = true;
+    user.setMatches(data.matches ?? []); 
+    user.setReady(true);
 
     // Reset flag after updates are applied
     setTimeout(() => {

@@ -4,6 +4,8 @@ import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot,
 import type { SessionType, UserInfoType } from "./SessionModel.ts";
 import type { UserModelType, MatchType, UserModel } from "./UserModel.ts";
 
+const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
+
 export type UserType = {
     username: string,
     email: string,
@@ -176,7 +178,7 @@ export function listenToSession(sessionId: string, model: ModelType, sessionMode
                     const matchData: MatchType = {
                         movieId: data.match.movieId,
                         title: data.match.title,
-                        poster_path: data.match.poster_path || null,
+                        poster_path: (TMDB_BASE_URL + "/w300" + data.match.poster_path) || null,
                         usersInSession: usersInSession,
                     }
 
