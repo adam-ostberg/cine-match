@@ -5,7 +5,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { Navbar } from "../reactts/navbarPresenter.tsx";
-import type { UserModel, MatchType } from "../UserModel.ts";
+import type { UserModel, MatchType, FriendRequestType, FriendType } from "../UserModel.ts";
 import type { SessionModel } from "../SessionModel.ts";
 import {
   Chart as ChartJS,
@@ -30,11 +30,15 @@ export type ProfileViewProps = {
   likedMovies: TMDBMoviePageResult[];
   likedMoviesTitles: string[];
   matchedMovies: MatchType[];
+  friendRequests: FriendRequestType[];
+  friends: FriendType[];
 
   onUsernameChange: (name: string) => void;
   onRemoveLike: (movie: TMDBMoviePageResult) => void
   onMovieClick: (id: number) => void;
   onSignOutClick: () => void;
+  onSendFriendRequest: (friendUsername: string) => void;
+  onAcceptFriendRequest: (fromUsername: string, fromUserId: string) => void;
 }
 
 export function ProfileView(props: ProfileViewProps) {
@@ -57,6 +61,19 @@ export function ProfileView(props: ProfileViewProps) {
 
   function signOutClickACB() {
     props.onSignOutClick();
+  }
+
+  function sendFriendRequestACB() {
+    const friendUsernameInput = document.getElementById("friend-username-input") as HTMLInputElement;
+    if (friendUsernameInput) {
+      const friendUsername = friendUsernameInput.value.trim();
+      props.onSendFriendRequest(friendUsername);
+      friendUsernameInput.value = ""; // Clear input after sending request
+    }
+  }
+
+  function acceptFriendRequestClick(fromUsername: string, fromUserId: string) {
+    props.onAcceptFriendRequest(fromUsername, fromUserId);
   }
 
   /*
@@ -85,6 +102,20 @@ export function ProfileView(props: ProfileViewProps) {
   }*/
 
   // TODO: Maybe remove this as its not linked to the new system
+
+  function FriendRequestList(friendRequests: FriendRequestType[]) {
+    return (
+      <ul>
+        {friendRequests.map((request, index) => (
+          <div>
+            <p key={index}>{request.fromUsername}</p>
+            <button className="secondary-button" onClick={() => acceptFriendRequestClick(request.fromUsername, request.fromUserId)}>Accept</button>
+          </div>
+        ))}
+      </ul>
+    );
+  }
+
   function renderLikedMovieCB(movie: TMDBMoviePageResult) {
     if (!movie.poster_path) return null;
 
@@ -140,6 +171,7 @@ export function ProfileView(props: ProfileViewProps) {
               <div className="search-row">
                 <input
                   id="username-input"
+                  className="username-input"
                   type="text"
                   placeholder="Change username"
                   onKeyDown={handleSearchKeyDownACB}
@@ -151,14 +183,34 @@ export function ProfileView(props: ProfileViewProps) {
             </div>
           </div>
           <div className="section">
-                <h3>Watch list (Your matches)</h3>
-                <div className="matches-cards">
-                  {
-                    props.matchedMovies.map((match: MatchType) => {
-                      return MatchCard(match);
-                    })
-                  }
-                </div>
+            <h3>Friends</h3>
+            {props.friendRequests.length === 0 ? (
+              <p>No pending friend requests...</p>
+            ) : (
+              <div className="friend-requests-list">
+                <p>Friend requests</p>
+                {FriendRequestList(props.friendRequests)}
+              </div>
+            )}
+            <div className="add-friend-section">
+              <h4>Add friend:</h4>
+              <div className="add-friend-input">
+                <input id="friend-username-input" className="username-input" type="text" placeholder="Friend's username" />
+                <button className="secondary-button" onClick={sendFriendRequestACB}>Send request</button>
+              </div>
+              <h4>Current friends</h4>
+              {FriendsList(props.friends)}
+            </div>
+          </div>
+          <div className="section">
+            <h3>Watch list (Your matches)</h3>
+            <div className="matches-cards">
+              {
+                props.matchedMovies.map((match: MatchType) => {
+                  return MatchCard(match);
+                })
+              }
+            </div>
           </div>
           <div className="section">
             <h3>Liked Movies (All Time)</h3>
@@ -191,6 +243,16 @@ function LikedMoviesList(likedMoviesTitles: string[]) {
         <li key={index}>{title}</li>
       ))}
     </ul>
+  );
+}
+
+function FriendsList(friends: FriendType[]) {
+  return (
+    <div>
+      {friends.map((friend, index) => (
+        <p key={index}>{friend.username}</p>
+      ))}
+    </div>
   );
 }
 

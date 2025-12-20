@@ -14,6 +14,12 @@ export type MatchType = {
     usersInSession: string[];
 }
 
+export type FriendRequestType = {
+    fromUserId: string;
+    fromUsername: string;
+    status: "pending" | "accepted" | "rejected";
+}
+
 export class UserModel  {
     userId = "";
     ready = false;
@@ -23,6 +29,7 @@ export class UserModel  {
     likes: any[] = [];
     matches: any[] = [];
     friends: FriendType[] = [];
+    friendRequests: FriendRequestType[] = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -60,6 +67,10 @@ export class UserModel  {
     setFriends(newFriends: FriendType[]) {
         this.friends = newFriends;
     }
+
+    setFriendRequests(requests: FriendRequestType[]) {
+        this.friendRequests = requests;
+    }
     
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
@@ -77,5 +88,21 @@ export class UserModel  {
 
     addFriend(friend: FriendType) {
         this.friends = [...this.friends, friend];
+    }
+
+    addFriendRequest(request: FriendRequestType) {
+        // Add new friend request if it already doesn't exist
+        if (!this.friendRequests.find(r => r.fromUserId === request.fromUserId)) {
+            this.friendRequests = [...this.friendRequests, request];
+        }
+    }
+
+    removeFriendRequest(userId: string) {
+        this.friendRequests = this.friendRequests.filter(r => r.fromUserId !== userId);
+    }
+
+    acceptFriendRequest(userId: string, username: string) {
+        this.removeFriendRequest(userId);
+        this.addFriend({userId, username});
     }
 }

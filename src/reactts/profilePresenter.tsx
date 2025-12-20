@@ -5,6 +5,7 @@ import type { UserModel } from "../UserModel";
 import type { TMDBMoviePageResult } from "../apiConfig.ts";
 import { signOutUser } from "../authService";
 import type { SessionModel } from "../SessionModel.ts";
+import { sendFriendRequest, acceptFriendRequest } from "../firestoreModel.ts";
 
 export type ProfilePresenterProps = {
   model: MovieModel;
@@ -44,6 +45,24 @@ const Profile = observer(
       });
     }
 
+    async function handleSendFriendRequestACB(friendUsername: string) {
+      try {
+        await sendFriendRequest(props.userModel, friendUsername);
+      } catch (e: any) {
+        // TODO add beter UX for this!
+        alert("Failed to send friend request: " + e.message);
+      }
+    }
+
+    async function handleAcceptFriendRequestACB(fromUsername: string, fromUserId: string) {
+      try {
+        await acceptFriendRequest(props.userModel, fromUserId, fromUsername);
+      } catch (e: any) {
+        // TODO add beter UX for this!
+        alert("Failed to accept friend request: " + e.message);
+      }
+    }
+
     const likedMovieTitles = props.userModel.likes.map(extactLikedMovieTitlesCB);
 
     return (
@@ -57,6 +76,10 @@ const Profile = observer(
         onMovieClick={handleMovieClickACB}
         onSignOutClick={handleSignOutACB}
         matchedMovies={props.userModel.matches}
+        friendRequests={props.userModel.friendRequests}
+        friends={props.userModel.friends}
+        onSendFriendRequest={handleSendFriendRequestACB}
+        onAcceptFriendRequest={handleAcceptFriendRequestACB}
       />
     );
   }

@@ -1,6 +1,6 @@
 import { db } from "./firebaseConfig.ts";
 import { MovieModel } from "./MovieModel.ts";
-import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot, getDocs, where, collection, query, writeBatch, arrayRemove } from "firebase/firestore";
 import type { SessionModel, UserInfoType } from "./SessionModel.ts";
 import { type MatchType, UserModel } from "./UserModel.ts";
 
@@ -193,4 +193,72 @@ export function listenToSession(sessionId: string, model: MovieModel, sessionMod
 
     // We need to return the unsubscribe function so we can stop listening when not needed
     return unsubscribe;
+}
+
+export async function sendFriendRequest(fromUser: UserModel, toUsername: string): Promise<boolean> {
+    // Find the target user by their username
+    const userRef = collection(db, "users");
+    const q = query(userRef, where("username", "==", toUsername));
+    const querySnapshot = await getDocs(q);
+
+    // If there is no user with that username return false and tell the user
+    if (querySnapshot.empty) {
+        console.error("User not found!");
+        return false;
+    }
+
+    const targetDoc = querySnapshot.docs[0];
+    const targetUserId = targetDoc.id;
+
+    // You should not be able to send a friend request to yourself
+    if (targetUserId === fromUser.userId) {
+        console.error("Cannot send friend request to yourself");
+        return false;
+    }
+
+    // Add request to target users friendRequests array
+    const targetRef = doc(db, "users", targetUserId);
+    await updateDoc(targetRef, {
+        friendRequests: arrayUnion({
+            fromUserId: fromUser.userId,
+            fromUsername: fromUser.username,
+            status: "pending"
+        })
+    });
+
+    return true;
+}
+
+export async function acceptFriendRequest(userModel: UserModel, fromUserId: string, fromUsername: string): Promise<boolean> {
+    // We need to be logged in to accept a friend request
+    const userId = userModel.userId;
+    if (!userId) return false;
+
+    const batch = writeBatch(db);
+
+    // Get the document references
+    const currentUserRef = doc(db, "users", userId);
+    const otherUserRef = doc(db, "users", fromUserId);
+
+    // Update current user: add friend, remove request
+    /*
+    batch.update(currentUserRef, {
+        friends: arrayUnion({ userId: fromUserId, username: fromUsername }),
+        friendRequests: arrayRemove({
+            fromUserId: fromUserId,
+            fromUsername: fromUsername,
+            status: "pending"
+        })
+    });
+    */
+
+    userModel.acceptFriendRequest(fromUserId, fromUsername);
+
+    // Update other user: add friend
+    batch.update(otherUserRef, {
+        friends: arrayUnion({ userId: userId, username: userModel.username })
+    });
+
+    await batch.commit();
+    return true;
 }
