@@ -44,11 +44,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 
 			console.log("Liked");
 		}
-
-		function navBarlogoClickedACB() {
-			window.location.hash = "#/";
-		}
-
+		
 		/* [TODO] For some reason funkar inte knappen längre */
 		function moreInfoClickedACB() {
 			//hideRootAndMainContentOverflow();
