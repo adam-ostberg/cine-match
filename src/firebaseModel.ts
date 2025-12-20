@@ -222,6 +222,8 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
       username: user.username,
       likes: [...user.likes],
       matches: [...user.matches],
+      friends: [...user.friends],
+      friendRequests: [...user.friendRequests],
     };
   }
 
@@ -233,6 +235,8 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
       username: user.username,
       likes: user.likes,
       matches: user.matches,
+      friends: user.friends,
+      friendRequests: user.friendRequests,
     };
 
     setDoc(docRef, modelData, { merge: true })?.catch(console.error);
@@ -255,7 +259,9 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     // Update local user model with Firestore data
     user.setUsername(data.username ?? "");
     user.setLikes(data.likes ?? []);
-    user.setMatches(data.matches ?? []); 
+    user.setMatches(data.matches ?? []);
+    user.setFriends(data.friends ?? []);
+    user.setFriendRequests(data.friendRequests ?? []);
     user.setReady(true);
 
     // Reset flag after updates are applied

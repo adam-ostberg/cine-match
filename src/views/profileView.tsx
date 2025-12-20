@@ -5,26 +5,10 @@ import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { Navbar } from "../reactts/navbarPresenter.tsx";
-import type { UserModel, MatchType } from "../UserModel.ts";
+import type { UserModel, MatchType, FriendRequestType, FriendType } from "../UserModel.ts";
 import type { SessionModel } from "../SessionModel.ts";
 import type { MovieModel } from "../MovieModel.ts";
 import { CustomTooltip } from "../tooltip.tsx";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-);
-import { Bar } from 'react-chartjs-2';
 import type { LikedMovie } from "../reactts/profilePresenter.tsx";
 
 
@@ -35,17 +19,23 @@ export type ProfileViewProps = {
   likedMovies: LikedMovie[];
   likedMoviesTitles: string[];
   matchedMovies: MatchType[];
+  friendRequests: FriendRequestType[];
+  friends: FriendType[];
 
   onUsernameChange: (name: string) => void;
   onRemoveLike: (movie: TMDBMoviePageResult) => void
   onMovieClick: (id: number) => void;
   onSignOutClick: () => void;
+  onSendFriendRequest: (friendUsername: string) => void;
+  onAcceptFriendRequest: (fromUsername: string, fromUserId: string) => void;
 }
 
 export function ProfileView(props: ProfileViewProps) {
 
   const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
   const POSTER_WIDTH_URL = "w780/";
+  const matchedMovies = [...props.matchedMovies];
+  const likedMovies = [...props.likedMovies];
 
   function handleSearchKeyDownACB(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
@@ -66,35 +56,36 @@ export function ProfileView(props: ProfileViewProps) {
   function signOutClickACB() {
     props.onSignOutClick();
   }
-  const enoughMatches = (props.matchedMovies.length ?? 0) > 0;
-  /*
-  function getTopLikedGenres(movies: TMDBMoviePageResult[]): [string[], number[]] {
-    if (!movies || (movies.length ?? 0) === 0) return [[], []];
-    const genreList = props.model.genres ?? [];
-    const genreToCount = new Map<string, number>();
-    const idToGenreName = new Map<number, string>(genreList.map(g => [g.id, g.name]));
 
-    for (const movie of movies) {
-      const ids = movie.genre_ids.forEach(id => {
-        const genreName = idToGenreName.get(id);
-        if (!!genreName || genreName !== undefined) {
-          genreToCount.set(genreName, (genreToCount.get(genreName) ?? 0) + 1)
-        }
-      })
+  function sendFriendRequestACB() {
+    const friendUsernameInput = document.getElementById("friend-username-input") as HTMLInputElement;
+    if (friendUsernameInput) {
+      const friendUsername = friendUsernameInput.value.trim();
+      props.onSendFriendRequest(friendUsername);
+      friendUsernameInput.value = ""; // Clear input after sending request
     }
-    const entries = Array.from(genreToCount.entries())
-      .sort((a, b) => b[1] - a[1])   // sort by value desc
-      .slice(0, 5);                 // take top 5
-
-    const genres = entries.map(([label]) => label);
-    const likeCounts = entries.map(([, value]) => value);
-      
-    return [genres, likeCounts];
   }
-  const [likedGenres, genreLikeCounts] = getTopLikedGenres(props.likedMovies);
-  */
+
+  function acceptFriendRequestClick(fromUsername: string, fromUserId: string) {
+    props.onAcceptFriendRequest(fromUsername, fromUserId);
+  }
+  const enoughMatches = (props.matchedMovies.length ?? 0) > 0;
 
   // TODO: Maybe remove this as its not linked to the new system
+
+  function FriendRequestList(friendRequests: FriendRequestType[]) {
+    return (
+      <ul>
+        {friendRequests.map((request, index) => (
+          <div>
+            <p key={index}>{request.fromUsername}</p>
+            <button className="secondary-button" onClick={() => acceptFriendRequestClick(request.fromUsername, request.fromUserId)}>Accept</button>
+          </div>
+        ))}
+      </ul>
+    );
+  }
+
   function renderLikedMovieCB(movie: TMDBMoviePageResult) {
     if (!movie.poster_path) return null;
     function movieClickACB() {
@@ -173,6 +164,7 @@ export function ProfileView(props: ProfileViewProps) {
               <div className="search-row">
                 <input
                   id="username-input"
+                  className="username-input"
                   type="text"
                   placeholder="Change username"
                   onKeyDown={handleSearchKeyDownACB}
@@ -184,12 +176,32 @@ export function ProfileView(props: ProfileViewProps) {
             </div>
           </div>
           <div className="section">
+            <h3>Friends</h3>
+            {props.friendRequests.length === 0 ? (
+              <p>No pending friend requests...</p>
+            ) : (
+              <div className="friend-requests-list">
+                <p>Friend requests</p>
+                {FriendRequestList(props.friendRequests)}
+              </div>
+            )}
+            <div className="add-friend-section">
+              <h4>Add friend:</h4>
+              <div className="add-friend-input">
+                <input id="friend-username-input" className="username-input" type="text" placeholder="Friend's username" />
+                <button className="secondary-button" onClick={sendFriendRequestACB}>Send request</button>
+              </div>
+              <h4>Current friends</h4>
+              {FriendsList(props.friends)}
+            </div>
+          </div>
+          <div className="section">
                 <h3>Watch list (Last 30 matches)</h3>
                 
                 <div className={enoughMatches ? "seed-results-container" : ""}>
                   {
                     enoughMatches ?
-                    props.matchedMovies?.slice(0, 30)?.reverse().map((match: MatchType) => {
+                    matchedMovies.reverse()?.slice(0, 30).map((match: MatchType) => {
                       return MatchCard(match, props.userModel.username);
                     }) ?? ""
                     : <p>You haven't matched with anyone yet how sad!</p>
@@ -202,7 +214,7 @@ export function ProfileView(props: ProfileViewProps) {
               <p>You haven't liked any movies yet. Go explore!</p>
             ) : (
               <div className="seed-results-container">
-                {props.likedMovies?.slice(0, 49).reverse().map(likedMoviesOutput) ?? ""}
+                {likedMovies?.reverse().slice(0, 49).map(likedMoviesOutput) ?? ""}
               </div>
             )}
           </div>
@@ -223,35 +235,12 @@ export function ProfileView(props: ProfileViewProps) {
   );
 }
 
-
-
-
-type BarChartProps = {
-  labels: string[];
-  values: number[];
-};
-
-export function BarChart({ labels, values }: BarChartProps) {
-  if (!labels || !values) return;
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: 'Sales',
-        data: values,
-        backgroundColor: '#4f46e5',
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-      },
-    },
-  };
-
-  return <Bar data={data} options={options} />;
+function FriendsList(friends: FriendType[]) {
+  return (
+    <div>
+      {friends.map((friend, index) => (
+        <p key={index}>{friend.username}</p>
+      ))}
+    </div>
+  );
 }

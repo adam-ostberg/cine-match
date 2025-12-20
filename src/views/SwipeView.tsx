@@ -25,6 +25,7 @@ export type SwipeViewProps = {
   sessionShowMatchAnimation: boolean;
   userModel: UserModel;
   participants: UserInfoType[];
+  isFetchingIdQueue: boolean;
   onDislike: (id: number) => void;
   onLike: (id: number) => void;
   onMoreInfo: () => void;
@@ -47,6 +48,11 @@ function SwipeView(props: SwipeViewProps) {
   const [showMatchAnimation, setShowMatchAnimation] = useState(false);
   const [cachedDetails, setCachedDetails] = useState<MovieDetails[] | null>(null);
   const [swipeCardIsCached, setSwipeCardIsCached] = useState<boolean>(false);
+  const [isFetchingIdQueue, setIsFetchingIdQueue] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsFetchingIdQueue(props.isFetchingIdQueue);
+  }, [props.isFetchingIdQueue])
 
   // Whenever new data arrives, store it
   useEffect(() => {
@@ -86,7 +92,7 @@ function SwipeView(props: SwipeViewProps) {
     return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right", detail.id)} leftSwipeCB={() => handleSwipe("left", detail.id)} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card} isCached={swipeCardIsCached}/>
   }
   function outputTitle(firstDetail: MovieDetails | undefined) {
-    if (!firstDetail?.title) { return "" };
+    if (!firstDetail?.title || isFetchingIdQueue) { return "" };
     const title = firstDetail?.title ?? "";
     return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
   }
@@ -142,9 +148,13 @@ function SwipeView(props: SwipeViewProps) {
   return (
     <div className="swipe-container">
       <div className={`swipe-content ${props.sessionShowMatchAnimation 
-    ? "input-disabled" 
-    : ""}`}>
-        {detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <LoadingSpinner size={100} />}
+        ? "input-disabled" 
+        : ""}`}>
+        {
+          isFetchingIdQueue 
+          ? <LoadingSpinner size={100}/>
+          : detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <LoadingSpinner size={100}/>
+        }
         <div className="swipe-title">{outputTitle(firstDetail)}</div>
         <div className="controls">
           <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>

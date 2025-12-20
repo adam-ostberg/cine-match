@@ -24,11 +24,11 @@ const Lobby = observer(
     }
 
     if (props.sessionModel.status === "active") {
-      window.location.href = "#/swipe";
       if (!props.sessionModel.hasBeenActivated) {
         props.sessionModel.setHasBeenActivated(true);
         configDataForSwipeStart(props.model);
       }
+      window.location.href = "#/swipe";
     }
 
     // Callback for extracting usernames

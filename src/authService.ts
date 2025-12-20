@@ -7,12 +7,29 @@ import {
     type User
 } from "firebase/auth";
 
-import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, getDoc, getDocs, query, where, collection } from "firebase/firestore";
 
 import { UserModel } from "./UserModel";
 
+// Check if as username is already taken
+async function isUsernameTaken(username: string): Promise<boolean> {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("username", "==", username));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+}
+
 // Function for signing up a new user with email and password
 export async function signUpWithEmail(userModel: UserModel, username: string, email: string, password: string) {
+    // Check if the username is already taken
+    if (!username || username.trim() === "") {
+        throw new Error("Username cannot be empty");
+    }
+    
+    if (await isUsernameTaken(username)) {
+        throw new Error("Username is already taken");
+    }
+
     // First create the use in Firebase Auth with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;

@@ -46,6 +46,7 @@ export class MovieModel {
     alltimeLikedMoviesArray: TMDBMoviePageResult[] = [];
     profilePic: string | undefined = undefined;
     isEnsuringIdQueueHealth: boolean = false;
+    isFetchingIdQueue: boolean = false;
 
     // NEW:
     movieDetailsById: { [id: number]: PromiseState } = {};
@@ -158,6 +159,14 @@ export class MovieModel {
         
         resolvePromise(idQueuePrms, this.movieIdQueuePrmsState);
         return idQueuePrms;
+    }
+
+    clearIdQueue() {
+        this.movieIdQueuePrmsState = {promise: null, data: null, error: null};
+    }
+
+    setIsFetchingIdQueue(value: boolean) {
+        this.isFetchingIdQueue = value;
     }
 
     async ensureMovieIdQueueHealth() {
