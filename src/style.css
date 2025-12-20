@@ -1518,3 +1518,7 @@ height: auto;
 .match-card-match-with {
   text-decoration: underline;
 }
+
+.error-message {
+  color: red;
+}

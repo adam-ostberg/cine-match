@@ -1,11 +1,12 @@
 import "/src/style.css";
 
 type LoginViewProps = {
+    errorMessage: string | null;
     onLogin: (email: string, password: string) => void;
     onToCreateAccount: () => void;
 };
 
-export function LoginView({onLogin, onToCreateAccount}: LoginViewProps) {
+export function LoginView(props: LoginViewProps) {
   // Gets and returns the current values of the email and password input fields
   function getValues() {
     const emailInput = document.getElementById("email") as HTMLInputElement;
@@ -19,17 +20,18 @@ export function LoginView({onLogin, onToCreateAccount}: LoginViewProps) {
   
   function loginACB() {
     const loginValues = getValues();
-    onLogin(loginValues.email, loginValues.password);
+    props.onLogin(loginValues.email, loginValues.password);
   }
 
   function switchToCreateAccountACB() {
-    onToCreateAccount();
+    props.onToCreateAccount();
   }
 
   return (
     <div className="account-section">
         <div className="account-form">
           <h1>Login</h1>
+          {props.errorMessage && <p className="error-message">{props.errorMessage}</p>}
           <label>
             E-Mail:
           </label>

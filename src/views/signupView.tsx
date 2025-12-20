@@ -1,11 +1,12 @@
 import "/src/style.css";
 
 type SignupViewProps = {
+    errorMessage: string | null;
     onSignup: (username: string, email: string, password: string) => void;
     onToLogin: () => void;
 };
 
-export function SignupView({onSignup, onToLogin}: SignupViewProps) {
+export function SignupView(props: SignupViewProps) {
   // Gets and returns the current values of the email and password input fields
   function getValues() {
     const usernameInput = document.getElementById("username") as HTMLInputElement;
@@ -21,17 +22,18 @@ export function SignupView({onSignup, onToLogin}: SignupViewProps) {
 
   function signUpACB() {
     const signupValues = getValues();
-    onSignup(signupValues.username, signupValues.email, signupValues.password);
+    props.onSignup(signupValues.username, signupValues.email, signupValues.password);
   }
 
   function handleSwitchToLoginACB() {
-    onToLogin();
+    props.onToLogin();
   }
 
   return (
     <div className="account-section">
         <div className="account-form">
           <h1>Create an account!</h1>
+          {props.errorMessage && <p className="error-message">{props.errorMessage}</p>}
           <label>
             Username:
           </label>

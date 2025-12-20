@@ -14,13 +14,23 @@ type AccountPresenterProps = {
 const Account = observer(
   function AccountRender(props: AccountPresenterProps) {
     const [showLogin, setShowLogin] = useState(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     async function handleLoginACB(email: string, password: string) {
       try {
         await signInWithEmail(props.userModel, email.trim(), password);
         window.location.hash = "#/";
       } catch (err: any) {
-        alert(err?.message ?? "Login failed");
+        switch (err?.message) {
+          case "Firebase: Error (auth/invalid-credential).":
+            setErrorMessage("Incorrect password or email");
+            break;
+          case "Firebase: Error (auth/invalid-email).":
+            setErrorMessage("Invalid email.");
+            break;
+          default:
+            setErrorMessage(err?.message ?? "Login failed");
+        }
       }
     }
 
@@ -30,7 +40,19 @@ const Account = observer(
         await signUpWithEmail(props.userModel, username.trim(), email.trim(), password);
         window.location.hash = "#/";
       } catch (err: any) {
-        alert(err?.message ?? "Signup failed");
+        switch (err?.message) {
+          case "Firebase: Error (auth/invalid-credential).":
+            setErrorMessage("Incorrect password or email");
+            break;
+          case "Firebase: Error (auth/invalid-email).":
+            setErrorMessage("Invalid email.");
+            break;
+          case "Firebase: Error (auth/missing-password).":
+            setErrorMessage("Password is required.");
+            break;
+          default:
+            setErrorMessage(err?.message ?? "Login failed");
+        }
       }
     }
 
@@ -39,10 +61,12 @@ const Account = observer(
       <LoginView 
         onLogin={handleLoginACB}
         onToCreateAccount={() => setShowLogin(false)}
+        errorMessage={errorMessage}
       /> :
       <SignupView 
         onSignup={handleSignupACB}
         onToLogin={() => setShowLogin(true)}
+        errorMessage={errorMessage}
       />
     );
   }
