@@ -195,7 +195,8 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
   function getUserInfoACB() {
     return {
       username: user.username,
-      likes: user.likes,
+      likes: [...user.likes],
+      matches: [...user.matches],
     };
   }
 
@@ -206,6 +207,7 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
     const modelData = {
       username: user.username,
       likes: user.likes,
+      matches: user.matches,
     };
 
     setDoc(docRef, modelData, { merge: true })?.catch(console.error);
@@ -214,7 +216,7 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
   user.ready = false;
 
   // Set up real-time listener for this user document
-  const unsubscribe = firestoreOnSnapshot(docRef, (docSnap) => {
+  const unsubscribeFirestore = firestoreOnSnapshot(docRef, (docSnap) => {
     if (!docSnap.exists()) {
       console.warn("User document does not exist:", user.userId);
       return;
@@ -228,6 +230,7 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
     // Update local user model with Firestore data
     user.setUsername(data.username ?? "");
     user.setLikes(data.likes ?? []);
+    user.matches = data.matches ?? [];
     user.ready = true;
 
     // Reset flag after updates are applied
@@ -238,9 +241,12 @@ export function connectUserToPersistence(user: UserModelType, watchFunction: any
     console.error("Error listening to user document:", error);
   });
 
-  // Install the side effect for local changes
-  watchFunction(getUserInfoACB, persistUserModelACB);
+  // Install the side effect for local changes - this returns a disposer function
+  const unsubscribeReaction = watchFunction(getUserInfoACB, persistUserModelACB);
 
-  // Return unsubscribe function in case you need cleanup later
-  return unsubscribe;
+  // Return a combined cleanup function
+  return () => {
+    unsubscribeFirestore();
+    if (unsubscribeReaction) unsubscribeReaction();
+  };
 }

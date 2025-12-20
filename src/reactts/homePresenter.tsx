@@ -36,7 +36,7 @@ const Home = observer(
             window.location.hash = "#/lobby";
             const sessionId = await createSession(props.userModel);
             // @ts-ignore  /* [TODO] for npm build, remove */
-            const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel);
+            const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel, props.userModel);
         }
 
         async function sessionJoinACB(sessionId: string) {
@@ -49,7 +49,7 @@ const Home = observer(
 
             // TODO add this to the model so we can stop listening when leaving the home view
             // @ts-ignore
-            const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel);
+            const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel, props.userModel);
         }
 
         if (!props.model.popularMoviesPrmsState.data) {

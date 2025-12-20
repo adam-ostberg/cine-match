@@ -1,6 +1,13 @@
 import { type User } from "firebase/auth";
 import { handleSwipeInSession } from "./firestoreModel";
 
+export type MatchType = {
+    movieId: number;
+    title: string;
+    poster_path: string | null;
+    usersInSession: string[];
+}
+
 export type UserModelType = {
     userId: string;
     ready: boolean;
@@ -8,12 +15,14 @@ export type UserModelType = {
     username: string;
     currentSessionId: string | null;
     likes: any[];
+    matches: MatchType[];
     setUserId: (userId: string) => void;
     setCurrentUser: (user: User | null) => void;
     setUsername: (username: string) => void;
     setCurrentSessionId: (id: string | null) => void;
     setLikes: (likes: any[]) => void;
     reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
+    addMatch: (match: MatchType) => void;
 }
 
 export const UserModel: UserModelType = {
@@ -23,6 +32,7 @@ export const UserModel: UserModelType = {
     username: "",
     currentSessionId: null,
     likes: [],
+    matches: [],
 
     setUserId(userId: string) {
         this.userId = userId;
@@ -47,7 +57,15 @@ export const UserModel: UserModelType = {
     
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
-            await handleSwipeInSession(this.currentSessionId, this, {id: movieId, title, posterPath}, liked);
+            const didMatch = await handleSwipeInSession(this.currentSessionId, this, {id: movieId, title, posterPath}, liked);
+            if (didMatch) {
+                // TODO: Remove this!
+                console.log("A match was made for movie:", title);
+            }
         }
+    },
+
+    addMatch(match: MatchType) {
+        this.matches = [...this.matches, match];
     },
 }
