@@ -17,6 +17,7 @@ import type { SessionModel, UserInfoType } from "../SessionModel";
 import type { UserModel } from "../UserModel";
 import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
 import { UserAvatar } from "../components/UserAvatar.tsx";
+import { observer } from "mobx-react-lite";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -33,162 +34,164 @@ export type SwipeViewProps = {
 
 type SwipeDir = "left" | "right" | null;
 
+const SwipeView = observer(
+  function SwipeViewRender(props: SwipeViewProps) {
 
-function SwipeView(props: SwipeViewProps) {
+    const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
+    const POSTER_WIDTH_URL = "w780/";
 
-  const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
-  const POSTER_WIDTH_URL = "w780/";
-
-  function getDetailsQueue(details: MovieDetails[] | null) {
-    if (!details) { return };
-    const detailsQueue = [...details].reverse();
-    return detailsQueue
-  }
-
-  const [showMatchAnimation, setShowMatchAnimation] = useState(false);
-  const [cachedDetails, setCachedDetails] = useState<MovieDetails[] | null>(null);
-  const [swipeCardIsCached, setSwipeCardIsCached] = useState<boolean>(false);
-  const [isFetchingIdQueue, setIsFetchingIdQueue] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsFetchingIdQueue(props.isFetchingIdQueue);
-  }, [props.isFetchingIdQueue])
-
-  // Whenever new data arrives, store it
-  useEffect(() => {
-    const data = props.prefetchWindowPrmsState.data as MovieDetails[] | null;
-    if (data && Array.isArray(data) && data.length > 0) {
-      setSwipeCardIsCached(false);
-      setCachedDetails(data);
+    function getDetailsQueue(details: MovieDetails[] | null) {
+      if (!details) { return };
+      const detailsQueue = [...details].reverse();
+      return detailsQueue
     }
-    else {
-      setSwipeCardIsCached(true);
+
+    const [showMatchAnimation, setShowMatchAnimation] = useState(false);
+    const [cachedDetails, setCachedDetails] = useState<MovieDetails[] | null>(null);
+    const [swipeCardIsCached, setSwipeCardIsCached] = useState<boolean>(false);
+    const [isFetchingIdQueue, setIsFetchingIdQueue] = useState<boolean>(false);
+
+    useEffect(() => {
+      setIsFetchingIdQueue(props.isFetchingIdQueue);
+    }, [props.isFetchingIdQueue])
+
+    // Whenever new data arrives, store it
+    useEffect(() => {
+      const data = props.prefetchWindowPrmsState.data as MovieDetails[] | null;
+      if (data && Array.isArray(data) && data.length > 0) {
+        setSwipeCardIsCached(false);
+        setCachedDetails(data);
+      }
+      else {
+        setSwipeCardIsCached(true);
+      }
+    }, [props.prefetchWindowPrmsState.data]);
+
+    useEffect(() => {
+      setShowMatchAnimation(props.sessionShowMatchAnimation)
+    }, [props.sessionShowMatchAnimation]);
+
+    // Prefer the latest non-null data, but fall back to cached
+    const effectiveDetails = (props.prefetchWindowPrmsState.data as MovieDetails[] | null) || cachedDetails;
+    const detailsQueue = getDetailsQueue(effectiveDetails);
+
+    const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
+    const [swipeDirection, setSwipeDirection] = useState<SwipeDir>(null);
+    function handleSwipe(dir: "left" | "right", id: number) {
+
+      if (dir === "right") {
+        props.onLike(id);     
+      } else {
+        props.onDislike(id);
+      }
+      setSwipeDirection(null);
     }
-  }, [props.prefetchWindowPrmsState.data]);
 
-  useEffect(() => {
-    setShowMatchAnimation(props.sessionShowMatchAnimation)
-  }, [props.sessionShowMatchAnimation]);
-
-  // Prefer the latest non-null data, but fall back to cached
-  const effectiveDetails = (props.prefetchWindowPrmsState.data as MovieDetails[] | null) || cachedDetails;
-  const detailsQueue = getDetailsQueue(effectiveDetails);
-
-  const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
-  const [swipeDirection, setSwipeDirection] = useState<SwipeDir>(null);
-  function handleSwipe(dir: "left" | "right", id: number) {
-
-    if (dir === "right") {
-      props.onLike(id);     
-    } else {
-      props.onDislike(id);
+    function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
+      if (!detail) { return };
+      const is_top_card = index === array.length-1;
+      return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right", detail.id)} leftSwipeCB={() => handleSwipe("left", detail.id)} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card} isCached={swipeCardIsCached}/>
     }
-    setSwipeDirection(null);
-  }
+    function outputTitle(firstDetail: MovieDetails | undefined) {
+      if (!firstDetail?.title || isFetchingIdQueue) { return "" };
+      const title = firstDetail?.title ?? "";
+      return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
+    }
+    function outputParticipants(participant: UserInfoType) {
+      return (
+        <div key={participant.userId || Math.random()} className="sidebar-user-item">
+          {participant.userId ? (
+            <>
+              <UserAvatar
+                userId={participant.userId}
+                className="profile-pic" 
+                size={50}
+              />
+              <p>{participant.username}</p>
+            </>
+          ) : (
+            <>
+              <FaUserCircle size={50} className="profile-pic placeholder" />
+              <p>loading...</p>
+            </>
+          )}
+        </div>
+      );
+    }
+    const [isSidebarOpen, setSidebarIsOpen] = useState(true);
 
-  function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
-    if (!detail) { return };
-    const is_top_card = index === array.length-1;
-    return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right", detail.id)} leftSwipeCB={() => handleSwipe("left", detail.id)} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card} isCached={swipeCardIsCached}/>
-  }
-  function outputTitle(firstDetail: MovieDetails | undefined) {
-    if (!firstDetail?.title || isFetchingIdQueue) { return "" };
-    const title = firstDetail?.title ?? "";
-    return title.length < 35 ? title.slice(0, 35) : title.slice(0, 35) + "..."; 
-  }
-  function outputParticipants(participant: UserInfoType) {
+    const swipeSidebarClassNames = isSidebarOpen ? "swipe-sidebar is-open" : "swipe-sidebar";
+
+    useEffect(() => {
+      const mq = window.matchMedia('(max-width: 1023px)');
+
+      const sync = (matches: boolean) => {
+        if (matches) {
+          const sidebar = document.getElementById("swipeSidebar")
+          if (!!sidebar) { sidebar.style.transition = "none"};
+          setTimeout(() => {
+            if (!!sidebar) { sidebar.style.transition = "transform ease 0.2s" };
+          }, 300);
+        }
+        setSidebarIsOpen(!matches); // mobile => false, desktop => true
+      };
+      const onChange = (e: MediaQueryListEvent) => {
+        sync(e.matches);
+      };
+
+      // initial sync
+      sync(mq.matches);
+
+      mq.addEventListener('change', onChange);
+      return () => mq.removeEventListener('change', onChange);
+    }, []);
+
     return (
-      <div key={participant.userId || Math.random()} className="sidebar-user-item">
-        {participant.userId ? (
-          <>
-            <UserAvatar
-              userId={participant.userId}
-              className="profile-pic" 
-              size={50}
-            />
-            <p>{participant.username}</p>
-          </>
-        ) : (
-          <>
-            <FaUserCircle size={50} className="profile-pic placeholder" />
-            <p>loading...</p>
-          </>
+      <div className="swipe-container">
+        <div className={`swipe-content ${props.sessionShowMatchAnimation 
+          ? "input-disabled" 
+          : ""}`}>
+          {
+            isFetchingIdQueue 
+            ? <LoadingSpinner size={100}/>
+            : detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <LoadingSpinner size={100}/>
+          }
+          <div className="swipe-title">{outputTitle(firstDetail)}</div>
+          <div className="controls">
+            <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
+              <CloseRoundedIcon id="dislike-icon"/>
+            </IconButton>
+            <IconButton className="like-btn" onClick={() => setSwipeDirection("right")}>
+              <FavoriteIcon id="like-icon"/>
+            </IconButton>
+            <IconButton className="more-info-btn" onClick={props.onMoreInfo}>
+              <MoreHorizIcon />
+            </IconButton>
+          </div>
+        </div>
+        <aside className={swipeSidebarClassNames} id="swipeSidebar">
+          <IconButton className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
+            <TuneIcon />
+          </IconButton>
+          <div className="sidebar-content">
+            <h2>Status</h2>
+            <p id="current-session">Current Session id: {props.sessionModel.sessionId}</p>
+            <h2>Lobby</h2>
+            <div className="sidebar-lobby-container">
+              {props.participants.map(outputParticipants)}
+            </div>
+          </div>
+        </aside>
+        {props.sessionModel.showMatchAnimation && (
+          <MatchAnimationView
+            key={props.sessionModel.currentMatchId}
+          />
         )}
       </div>
     );
   }
-  const [isSidebarOpen, setSidebarIsOpen] = useState(true);
+);
 
-  const swipeSidebarClassNames = isSidebarOpen ? "swipe-sidebar is-open" : "swipe-sidebar";
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 1023px)');
-
-    const sync = (matches: boolean) => {
-      if (matches) {
-        const sidebar = document.getElementById("swipeSidebar")
-        if (!!sidebar) { sidebar.style.transition = "none"};
-        setTimeout(() => {
-          if (!!sidebar) { sidebar.style.transition = "transform ease 0.2s" };
-        }, 300);
-      }
-      setSidebarIsOpen(!matches); // mobile => false, desktop => true
-    };
-    const onChange = (e: MediaQueryListEvent) => {
-      sync(e.matches);
-    };
-
-    // initial sync
-    sync(mq.matches);
-
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
-
-  return (
-    <div className="swipe-container">
-      <div className={`swipe-content ${props.sessionShowMatchAnimation 
-        ? "input-disabled" 
-        : ""}`}>
-        {
-          isFetchingIdQueue 
-          ? <LoadingSpinner size={100}/>
-          : detailsQueue?.map((detail, index, array) => outputCardsCB(detail, index, array, swipeDirection)) ?? <LoadingSpinner size={100}/>
-        }
-        <div className="swipe-title">{outputTitle(firstDetail)}</div>
-        <div className="controls">
-          <IconButton className="dislike-btn" onClick={() => setSwipeDirection("left")}>
-            <CloseRoundedIcon id="dislike-icon"/>
-          </IconButton>
-          <IconButton className="like-btn" onClick={() => setSwipeDirection("right")}>
-            <FavoriteIcon id="like-icon"/>
-          </IconButton>
-          <IconButton className="more-info-btn" onClick={props.onMoreInfo}>
-            <MoreHorizIcon />
-          </IconButton>
-        </div>
-      </div>
-      <aside className={swipeSidebarClassNames} id="swipeSidebar">
-        <IconButton className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
-          <TuneIcon />
-        </IconButton>
-        <div className="sidebar-content">
-          <h2>Status</h2>
-          <p id="current-session">Current Session id: {props.sessionModel.sessionId}</p>
-          <h2>Lobby</h2>
-          <div className="sidebar-lobby-container">
-            {props.participants.map(outputParticipants)}
-          </div>
-        </div>
-      </aside>
-      {props.sessionModel.showMatchAnimation && (
-        <MatchAnimationView
-          key={props.sessionModel.currentMatchId}
-        />
-      )}
-    </div>
-  );
-}
 
 // @ts-ignore [TODO] remove
 const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card, isCached} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean, isCached: boolean}) => {
@@ -211,7 +214,7 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
   const opacity = useTransform(x, [-swipePixelLimit*1.9, 0, swipePixelLimit*1.9], [0, 1, 0]);
   const dislikeOpacity = useTransform(x, [-swipePixelLimit*1.5 ,-swipePixelLimit*0.8, 0, swipePixelLimit*0.8] , [0, 1, 0, 0]);
   const likeOpacity = useTransform(x, [-swipePixelLimit*0.8, 0, swipePixelLimit*0.8, swipePixelLimit*1.5] , [0, 0, 0.9, 0]);
-  isCached
+
   const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 
   const mapRange = (
@@ -231,7 +234,7 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
       const latestX = values[0] ?? 0;
       const latestY = values[1] ?? 0;
 
-      const yOpacity = mapRange(latestY, -80, 0, 0.7, 0);
+      const yOpacity = mapRange(latestY, -40, 0, 0.9, 0);
       let xOpacity = mapRange(Math.abs(latestX), 0, 50, 0.7, 0);
       if (Math.abs(latestX) > 10) {
         xOpacity = mapRange(Math.abs(latestX), 0, 30, 0.4, 0);
