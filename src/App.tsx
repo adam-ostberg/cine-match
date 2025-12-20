@@ -1,7 +1,7 @@
 import { Home } from "./reactts/homePresenter"; // Make sure path is correct
 import { createHashRouter, RouterProvider } from "react-router-dom";
 // import { OptionsView } from "./views/OptionsView";
-import { type ModelType } from "./MovieModel"
+import { MovieModel } from "./MovieModel"
 import { Details } from "./reactts/detailsPresenter";
 import { observer } from "mobx-react-lite";
 import { Swipe } from "./reactts/swipePresenter";
@@ -9,14 +9,14 @@ import { Options } from "./reactts/optionsPresenter";
 import { Account } from "./reactts/accountPresenter";
 import { Profile } from "./reactts/profilePresenter";
 import { Lobby } from "./reactts/lobbyPresenter";
-import type { SessionType } from "./SessionModel";
-import type { UserModelType } from "./UserModel";
+import type { SessionModel } from "./SessionModel";
+import type { UserModel } from "./UserModel";
 import { MatchAnimationView } from "./views/matchAnimationView.tsx";
 
 export type AppRenderProps = {
-	model: ModelType
-	sessionModel: SessionType
-	userModel: UserModelType;
+	model: MovieModel
+	sessionModel: SessionModel
+	userModel: UserModel;
 }
 
 const App = observer(

@@ -1,7 +1,7 @@
-import type { ModelType } from "./MovieModel";
-import type { SessionType } from "./SessionModel";
+import { MovieModel } from "./MovieModel";
+import { SessionModel } from "./SessionModel";
 
-export function isUserSessionHost(model: ModelType, sessionModel: SessionType): boolean {
+export function isUserSessionHost(model: MovieModel, sessionModel: SessionModel): boolean {
     // If no user or no host, return false
     if (!model.userId || !sessionModel.hostId) {
         return false;

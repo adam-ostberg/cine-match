@@ -1,13 +1,13 @@
 
 import { observer } from "mobx-react-lite";
 import { OptionsView } from "../views/OptionsView.tsx";
-import type { ModelType } from "../MovieModel.ts";
+import {  MovieModel } from "../MovieModel.ts";
 import type { TMDBMoviePage, TMDBMoviePageResult } from "../apiConfig.ts";
 import { useNavigate } from "react-router-dom";
 // import type { TMDBGenre } from "../apiConfig.ts";
 
 export type OptionsPresenterProps = {
-    model: ModelType;
+    model: MovieModel;
 }
 
 const Options = observer(

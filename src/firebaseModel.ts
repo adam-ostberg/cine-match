@@ -3,7 +3,7 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, onValue } from "firebase/database";
 import { firebaseConfig } from "./firebaseConfig";
-import type { ModelType } from "./MovieModel";
+import type { MovieModel } from "./MovieModel";
 import type { LikesType, SessionType } from "./SessionModel";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot as firestoreOnSnapshot, collection, getDocs } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/auth";
@@ -17,7 +17,7 @@ const firestore = getFirestore(app);
 window.db = db; // For console testing (like Dinnermodel)
 
 // Mostly from DinnerModel:
-export function connectToPersistence(model: ModelType, reaction: any) {
+export function connectToPersistence(model: MovieModel, reaction: any) {
   // Since we has multiple users, we save under the specific userId
 
   function modelInterestsACB() {
@@ -73,7 +73,7 @@ export function connectToPersistence(model: ModelType, reaction: any) {
   reaction(modelInterestsACB, writeToCloudACB);
 }
 
-export function connectSessionToPersistence(session: SessionType, userModel: UserModelType, model: ModelType, watchFunction: any) {
+export function connectSessionToPersistence(session: SessionType, userModel: UserModelType, model: MovieModel, watchFunction: any) {
   let unsubscribeFirestore: Unsubscribe | null = null;
   
   // Flag to prevent write-back loops when receiving Firestore updates

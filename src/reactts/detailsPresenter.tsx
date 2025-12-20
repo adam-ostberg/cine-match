@@ -1,11 +1,11 @@
 
 import { observer } from "mobx-react-lite";
 import { DetailsView } from "../views/DetailsView.tsx";
-import type { ModelType } from "../MovieModel.ts";
+import {  MovieModel } from "../MovieModel.ts";
 import { useNavigate } from "react-router-dom";
 
 export type DetailsPresenterProps = {
-  model: ModelType;
+  model: MovieModel;
 }
 
 const Details = observer(  // needed for the presenter to update (its view) when relevant parts of the model change

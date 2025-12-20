@@ -2,12 +2,12 @@ import "../style.css";
 
 import type { TMDBMoviePageResult } from "../apiConfig";
 import { Navbar } from "../reactts/navbarPresenter";
-import type { UserModelType } from "../UserModel";
-import type { SessionType } from "../SessionModel";
+import type { UserModel } from "../UserModel";
+import type { SessionModel } from "../SessionModel";
 
 export type HomeViewProps = {
-  userModel: UserModelType;
-  sessionModel: SessionType;
+  userModel: UserModel;
+  sessionModel: SessionModel;
   movies: TMDBMoviePageResult[] | null;
   username: string | null;
   onStartSession: () => void;

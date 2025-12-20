@@ -14,17 +14,17 @@ import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import TuneIcon from '@mui/icons-material/Tune';
 import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import { MatchAnimationView } from "./matchAnimationView";
-import type { SessionType, UserInfoType } from "../SessionModel";
-import type { UserModelType } from "../UserModel";
+import type { SessionModel, UserInfoType } from "../SessionModel";
+import type { UserModel, UserModelType } from "../UserModel";
 import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
   currentSessionId: string | null;
-  sessionModel: SessionType;
+  sessionModel: SessionModel;
   sessionShowMatchAnimation: boolean;
-  userModel: UserModelType;
+  userModel: UserModel;
   onDislike: (id: number) => void;
   onLike: (id: number) => void;
   onMoreInfo: () => void;

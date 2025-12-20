@@ -1,20 +1,20 @@
 
 import { observer } from "mobx-react-lite";
 import { SwipeView } from "../views/SwipeView";
-import type { ModelType } from "../MovieModel";
+import type { MovieModel } from "../MovieModel";
 import { Navbar } from "../reactts/navbarPresenter";
-import { getGenres, type MovieDetails } from "../apiConfig";
+import { getGenres } from "../apiConfig";
 import { DetailsView } from "../views/DetailsView";
 import { useState, useEffect, useRef } from "react";
 import { hideRootAndMainContentOverflow } from "../helperFunctions";
-import type { UserModelType } from "../UserModel";
-import type { SessionType } from "../SessionModel";
+import type { UserModel } from "../UserModel";
+import type { SessionModel } from "../SessionModel";
 import { resolvePromise, type PromiseState } from "../resolvePromise";
 
 export type SwipePresenterProps = {
-	userModel: UserModelType;
-	sessionModel: SessionType;
-	model: ModelType
+	userModel: UserModel;
+	sessionModel: SessionModel;
+	model: MovieModel;
 }
 
 const Swipe = observer(  // needed for the presenter to update (its view) when relevant parts of the model change

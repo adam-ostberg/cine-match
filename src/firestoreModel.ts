@@ -2,7 +2,7 @@ import { db } from "./firebaseConfig.ts";
 import { type ModelType } from "./MovieModel.ts";
 import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot, collection } from "firebase/firestore";
 import type { SessionType, UserInfoType } from "./SessionModel.ts";
-import type { UserModelType, MatchType } from "./UserModel.ts";
+import type { UserModelType, MatchType, UserModel } from "./UserModel.ts";
 
 export type UserType = {
     username: string,
@@ -75,7 +75,7 @@ export async function joinSession(userModel: UserModelType, sessionId: string) {
     }
 }
 
-export async function handleSwipeInSession(sessionId: string, userModel: UserModelType, movie: {id: number, title: string, posterPath: string}, liked: boolean): boolean {
+export async function handleSwipeInSession(sessionId: string, userModel: UserModel, movie: {id: number, title: string, posterPath: string}, liked: boolean): boolean {
     if (!liked) return false; // Only likes are relevant for matching
 
     const sessionRef = doc(db, "sessions", sessionId);

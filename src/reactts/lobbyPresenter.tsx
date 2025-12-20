@@ -1,15 +1,15 @@
 import { observer } from "mobx-react-lite";
 import { LobbyView } from "../views/lobbyView";
-import type { ModelType } from "../MovieModel";
-import type { SessionType, UserInfoType } from "../SessionModel";
+import { MovieModel } from "../MovieModel";
+import { SessionModel, type UserInfoType } from "../SessionModel";
 import { isUserSessionHost } from "../sessionHelpers";
-import type { UserModelType } from "../UserModel";
+import type { UserModel } from "../UserModel";
 import { configDataForSwipeStart } from "../helperFunctions";
 
 export type LobbyPresenterProps = {
-  model: ModelType;
-  sessionModel: SessionType;
-  userModel: UserModelType;
+  model: MovieModel;
+  sessionModel: SessionModel;
+  userModel: UserModel;
 }
 
 const Lobby = observer(

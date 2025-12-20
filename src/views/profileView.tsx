@@ -5,8 +5,8 @@ import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { Navbar } from "../reactts/navbarPresenter.tsx";
-import type { UserModelType } from "../UserModel.ts";
-import type { SessionType } from "../SessionModel.ts";
+import type { UserModel, UserModelType } from "../UserModel.ts";
+import type { SessionModel } from "../SessionModel.ts";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,8 +25,8 @@ ChartJS.register(
 import { Bar } from 'react-chartjs-2';
 
 export type ProfileViewProps = {
-  userModel: UserModelType;
-  sessionModel: SessionType;
+  userModel: UserModel;
+  sessionModel: SessionModel;
   likedMovies: TMDBMoviePageResult[];
   likedMoviesTitles: string[];
   matchedMovies: TMDBMoviePageResult[];

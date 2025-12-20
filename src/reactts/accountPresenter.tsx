@@ -3,12 +3,12 @@ import { LoginView } from "../views/loginView";
 import { SignupView } from "../views/signupView";
 import { signInWithEmail, signUpWithEmail } from "../authService";
 import { useState } from "react";
-import type { ModelType } from "../MovieModel";
-import type { UserModelType } from "../UserModel";
+import type { MovieModel } from "../MovieModel";
+import type { UserModel } from "../UserModel";
 
 type AccountPresenterProps = {
-  model: ModelType;
-  userModel: UserModelType;
+  model: MovieModel;
+  userModel: UserModel;
 }
 
 const Account = observer(

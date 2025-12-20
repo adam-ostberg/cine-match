@@ -4,12 +4,12 @@ import { HomeView } from "../views/HomeView.tsx";
 import type { TMDBMoviePageResult } from "../apiConfig.ts";
 // import type { PromiseState } from "../resolvePromise.ts";
 import { createSession, joinSession, listenToSession } from "../firestoreModel.ts";
-import { type ModelType } from "../MovieModel.ts";
+import { MovieModel } from "../MovieModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
 import { hideRootAndMainContentOverflow } from "../helperFunctions.ts";
-import type { UserModelType } from "../UserModel.ts";
-import type { SessionType } from "../SessionModel.ts";
+import { UserModel } from "../UserModel.ts";
+import { SessionModel } from "../SessionModel.ts";
 /*
 export type HomeModel = {
     initiateStart: () => void;
@@ -19,9 +19,9 @@ export type HomeModel = {
 */
 
 export type HomePresenterProps = {
-    model: ModelType;
-    userModel: UserModelType;
-    sessionModel: SessionType;
+    model: MovieModel;
+    userModel: UserModel;
+    sessionModel: SessionModel;
 }
 
 const Home = observer(

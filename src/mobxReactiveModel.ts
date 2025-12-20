@@ -1,6 +1,6 @@
 import { observable, configure, reaction } from "mobx";
 configure({ enforceActions: "never" }); // we don't use Mobx actions in the Lab
-import { model, type ModelType } from "./MovieModel";
+import { MovieModel} from "./MovieModel";
 import { connectSessionToPersistence, connectToPersistence, connectUserToPersistence } from "./firebaseModel";
 import { observeAuth } from "./authService";
 import { SessionModel, type SessionType } from "./SessionModel";
@@ -9,13 +9,13 @@ import type { Unsubscribe } from "firebase/auth";
 
 declare global {
   interface Window {
-    model: ModelType; // or give it a specific type
-    sessionModel: SessionType;
-    userModel: UserModelType;
+    model: MovieModel; // or give it a specific type
+    sessionModel: SessionModel;
+    userModel: UserModel;
   }
 }
 
-export const reactiveModel = observable(model);
+export const reactiveModel = new MovieModel();
 
 reactiveModel.fetchPopularMovies();
 reactiveModel.fetchGenres().then(() => reactiveModel.toggleAllGenres());
@@ -27,11 +27,8 @@ function startDefaultDebugConfig() {
 }
 //startDefaultDebugConfig();
 
-
-
-export const reactiveSessionModel = observable(SessionModel);
-export const reactiveUserModel = observable(UserModel);
-
+export const reactiveSessionModel = new SessionModel();
+export const reactiveUserModel = new UserModel();
 
 
 function currentMovieIdACB() {

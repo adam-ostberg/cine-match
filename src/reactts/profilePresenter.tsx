@@ -1,15 +1,15 @@
 import { observer } from "mobx-react-lite";
 import { ProfileView } from "../views/profileView.tsx";
-import type { ModelType } from "../MovieModel.ts";
-import type { UserModelType } from "../UserModel";
+import type { MovieModel } from "../MovieModel.ts";
+import type { UserModel } from "../UserModel";
 import type { TMDBMoviePageResult } from "../apiConfig.ts";
 import { signOutUser } from "../authService";
-import type { SessionType } from "../SessionModel.ts";
+import type { SessionModel } from "../SessionModel.ts";
 
 export type ProfilePresenterProps = {
-  model: ModelType;
-  userModel: UserModelType;
-  sessionModel: SessionType;
+  model: MovieModel;
+  userModel: UserModel;
+  sessionModel: SessionModel;
 }
 
 type LikedMovie = {

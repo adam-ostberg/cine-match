@@ -1,12 +1,12 @@
 import { observer } from "mobx-react-lite";
-import { type UserModelType } from "../UserModel"
+import { UserModel } from "../UserModel"
 import { NavbarView } from "../views/NavbarView";
 import { signOutUser } from "../authService";
-import type { SessionType } from "../SessionModel";
+import type { SessionModel } from "../SessionModel";
 
 type NavbarPresenterProps = {
-  userModel: UserModelType;
-  sessionModel: SessionType;
+  userModel: UserModel;
+  sessionModel: SessionModel;
 }
 
 const Navbar = observer(

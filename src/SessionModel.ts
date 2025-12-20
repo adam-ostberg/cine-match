@@ -1,3 +1,5 @@
+import { makeAutoObservable } from "mobx";
+
 export type LikesType = {
     moveId: string[];
 }
@@ -29,39 +31,46 @@ export type SessionType = {
     setHasBeenActivated: (value: boolean) => void,
 }
 
-export const SessionModel: SessionType = {
-    ready: false,
-    sessionId: null,
-    created: "",
-    hostId: "",
-    status: "waiting",
-    hasBeenActivated: false,
-    participants: [],
-    likes: [],
-    showMatchAnimation: false,
-    currentMatchId: null,
-    matchQueue: [],
-    matchesIds: [],
+export class SessionModel {
+    ready = false;
+    sessionId: string | null = null;
+    created = "";
+    hostId = "";
+    status: "waiting" | "active" | "matched" = "waiting";
+    hasBeenActivated = false;
+
+    participants: UserInfoType[] = [];
+    likes: number[] = [];
+
+    showMatchAnimation = false;
+    currentMatchId: number | null = null;
+
+    matchQueue: number[] = [];
+    matchesIds: number[] = [];
+
+    constructor() {
+        makeAutoObservable(this);
+    }
 
     setSessionId(sessionId: string | null) {
         this.setHasBeenActivated(false);
         this.sessionId = sessionId;
-    },
+    }
 
     getSessionId() {
         return this.sessionId;
-    },
+    }
 
     setStatus(status: "waiting" | "active" | "matched", userId: string) {
         if (this.hostId !== userId) return; // Only host can change status
         this.status = status;
-    },
+    }
 
     addUser(user: UserInfoType) {
         if (!this.participants.find(u => u.userId === user.userId)) {
             this.participants.push(user);
         }
-    },
+    }
     
     processQueue() {
         // If there are matches waiting
@@ -80,7 +89,7 @@ export const SessionModel: SessionType = {
             this.currentMatchId = null;
             console.log("Match queue finished.");
         }
-    },
+    }
 
     queueMatch(movieId: number) {
         // Prevent adding duplicates to the queue or current animation (maybe stupid/shallow logic)
@@ -97,7 +106,7 @@ export const SessionModel: SessionType = {
         if (!this.showMatchAnimation) {
             this.processQueue();
         }
-    },
+    }
 
     setHasBeenActivated(value: boolean) {
         this.hasBeenActivated = value;

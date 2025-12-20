@@ -1,8 +1,6 @@
 // https://www.npmjs.com/package/countries-and-timezones
 import { getCountryForTimezone } from "countries-and-timezones";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import type { ModelType } from "./MovieModel";
+import { MovieModel } from "./MovieModel";
 import { fetchMoviesPages, getMovieDetails, getPopularMovies, type MovieDetails, type TMDBMoviePageResult } from "./apiConfig";
 import { fetchImdbRatings } from "./testImdbApi";
 
@@ -77,10 +75,10 @@ export function getPopularityColor(score: number): string {
     }
 }
 
-export async function configDataForSwipeStart(model: ModelType) {
+export async function configDataForSwipeStart(model: MovieModel) {
   const idQueue = await model.setMovieIdQueue()
   model.currentMovieEffect();
-  if (Array.isArray(idQueue) || idQueue.length > 0) {
+  if (Array.isArray(idQueue) && idQueue.length > 0) {
     console.log(idQueue);
     console.log("Setting current movie id to " + idQueue[0]);
     model.setCurrentMovieId(idQueue[0]);

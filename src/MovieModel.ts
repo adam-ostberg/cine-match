@@ -4,6 +4,8 @@ import { getImdbRating } from "./imdbApiConfig";
 import { handleSwipeInSession } from "./firestoreModel";
 import { fetchImdbRatings } from "./testImdbApi";
 import { type LikesType } from "./SessionModel";
+import { filterByRatingAndRuntime, getFilteredPopularMovies } from "./helperFunctions";
+import { makeAutoObservable, runInAction } from "mobx";
 
 export type ModelType = {
     username: string;
@@ -33,6 +35,7 @@ export type ModelType = {
     alltimeLikedMovieIds: number[]; 
     alltimeLikedMoviesArray: TMDBMoviePageResult[];
     profilePic: string | undefined;
+    isEnsuringIdQueueHealth: boolean;
     setRuntime: (min: number, max: number) => void;
     initiateStart: () => void;
     setId: (id: string | null) => void;
@@ -46,9 +49,10 @@ export type ModelType = {
     /* getPopularMovies: () => Promise<TMDBMoviePageResult[]>; */
     fetchPopularMovies: () => Promise<TMDBMoviePageResult[]>;
     setMovieIdQueue: () => Promise<any>;
+    ensureMovieIdQueueHealth: () => Promise<any>;
     insertRecommendedMovieIntoQueue: (movieId: number) => void;
     insertMovieLikesIntoQueue: (likes: number[]) => void;
-    filterMoviesByOptionParams: (data: TMDBMoviePageResult[]) => Promise<number[] | undefined>;
+    filterMoviesByRatingAndRuntimeParams: (data: TMDBMoviePageResult[]) => Promise<number[] | undefined>;
     filterAndGetIdsFromMoviesACB: (data: any) => number[];
     nextMovie: () => void;
     toggleGenre: (id: number) => void;
@@ -91,52 +95,57 @@ export type Video = {
     "id": string
 }
 
-export const model: ModelType = {
-    userId: null,
-    genres: [],
-    genresPrmsState: {promise: null, data: null, error: null},
-    likes: [],
-    dislikes: [],
-    currentSessionId: null, /* Added for it to work for me, might class with other implementation */
-    selectedGenreIds: [],
-    selectedSeededIds: [],
-    minRating: 0,
-    minRuntime: 0,
-    maxRuntime: 400,
-    curMovieId: 550,
-    movieDetailsPrmsState: {promise: null, data: null, error: null}, 
-    movieVideosPrmsState: {promise: null, data: null, error: null}, 
-    movieIdQueuePrmsState: {promise: null, data: null, error: null},
-    popularMoviesPrmsState: {promise: null, data: null, error: null},
-    movieCreditsPrmsState: {promise: null, data: null, error: null},
-    imdbRatingPrmsState: {promise: null, data: null, error: null},
-    watchProvidersPrmsState: {promise: null, data: null, error: null},
-    prefetchWindowPrmsState: {promise: null, data: null, error: null},
-    searchMoviesPrmsState: {promise: null, data: null, error: null},
-    getRecPrmsState: {promise: null, data: null, error: null},
-    getCurrentSessionUsernamesPrmsState: {promise: null, data: null, error: null},
-    username: "", // temp placeholder
-    alltimeLikedMovieIds: [],
-    alltimeLikedMoviesArray: [],
-    profilePic: undefined,
+export class MovieModel {
+    userId: string | null = null;
+    genres: any[] = [];
+    genresPrmsState: PromiseState = {promise: null, data: null, error: null};
+    likes: number[] = [];
+    dislikes: number[] = [];
+    currentSessionId: string | null = null; /* Added for it to work for me, might class with other implementation */
+    selectedGenreIds: number[] = [];
+    selectedSeededIds: any[] = [];
+    minRating: number = 0;
+    minRuntime: number = 0;
+    maxRuntime: number = 400;
+    curMovieId: number = 550;
+    movieDetailsPrmsState: PromiseState = {promise: null, data: null, error: null};
+    movieVideosPrmsState: PromiseState = {promise: null, data: null, error: null};
+    movieIdQueuePrmsState: PromiseState = {promise: null, data: null, error: null};
+    popularMoviesPrmsState: PromiseState = {promise: null, data: null, error: null};
+    movieCreditsPrmsState: PromiseState = {promise: null, data: null, error: null};
+    imdbRatingPrmsState: PromiseState = {promise: null, data: null, error: null};
+    watchProvidersPrmsState: PromiseState = {promise: null, data: null, error: null};
+    prefetchWindowPrmsState: PromiseState = {promise: null, data: null, error: null};
+    searchMoviesPrmsState: PromiseState = {promise: null, data: null, error: null};
+    getRecPrmsState: PromiseState = {promise: null, data: null, error: null};
+    getCurrentSessionUsernamesPrmsState: PromiseState = {promise: null, data: null, error: null};
+    username: string = ""; // temp placeholder
+    alltimeLikedMovieIds: number[] = [];
+    alltimeLikedMoviesArray: TMDBMoviePageResult[] = [];
+    profilePic: string | undefined = undefined;
+    isEnsuringIdQueueHealth: boolean = false;
 
     // NEW:
-    movieDetailsById: {},
-    PREFETCH_SIZE: 5,
+    movieDetailsById: { [id: number]: PromiseState } = {};
+    PREFETCH_SIZE: number = 5;
+
+    constructor() {
+        makeAutoObservable(this);
+    }
 
     setId(id: string | null) {
         this.userId = id;
-    },
+    }
 
     // Placeholder
     initiateStart() {
         console.log("Session started");
-    },
+    }
 
     setCurrentMovieId(id: number | undefined | void | null) {
         if (!id) return;
         this.curMovieId = id;
-    },
+    }
 
     getLatestPrefetchMovieId() {
         if (!this.prefetchWindowPrmsState.data || !Array.isArray(this.prefetchWindowPrmsState.data)) return;
@@ -144,7 +153,7 @@ export const model: ModelType = {
 
         const latestId = this.prefetchWindowPrmsState.data[0].id;
         return latestId;
-    },
+    }
 
     currentMovieEffect() {
         this.prefetchMovieDetails(this.curMovieId);
@@ -166,12 +175,12 @@ export const model: ModelType = {
         else {
             this.ensurePrefetchWindow();
         }
-    },
+    }
 
     getCurMovieCredits() {
         const movieCreditsPrms = getMovieCredits(this.curMovieId);
         resolvePromise(movieCreditsPrms, this.movieCreditsPrmsState);
-    },
+    }
 
     getCurMovieTrailer() {
         function filterByTrailerACB(data: TMDBVideoResults): TMDBVideoType | undefined {
@@ -189,57 +198,57 @@ export const model: ModelType = {
         const movieVideosPrms = getMovieVideos(this.curMovieId).then(filterByTrailerACB)
         resolvePromise(movieVideosPrms, this.movieVideosPrmsState)
         return movieVideosPrms  
-    },
+    }
 
     getCurWatchProviders() {
         const watchProvidersPrms = getWatchProviders(this.curMovieId);
         resolvePromise(watchProvidersPrms, this.watchProvidersPrmsState);
         return watchProvidersPrms;
-    },
+    }
 
     getMovieImdbRating(id: number) {
         const imdbRatingPrms = getImdbId(id).then(getImdbRating);
         resolvePromise(imdbRatingPrms, this.imdbRatingPrmsState);
-    },
+    }
 
     filterAndGetIdsFromMoviesACB(movies: TMDBMoviePageResult[]) {
         const ids: number[] =  [this.curMovieId, ...movies.map(m => m.id)];
         return ids;
-    },
+    }
 
-    setMovieIdQueue() {
+    async setMovieIdQueue() {
 
-        const recommendationPrmses = this.selectedSeededIds.map(id => this.getRecommendations(id))
-        const popularMoviesPrms = fetchMoviesPages(getPopularMovies, 1, 1);
-        const fetchPrmses = [...recommendationPrmses, popularMoviesPrms]
+        const recommendationPrmses = this.selectedSeededIds.map(id => this.getRecommendations(id));
+        const recommendationData = await Promise.all(recommendationPrmses);
 
-        function getDataACB(response: any) {
-            return response as Array<TMDBMoviePageResult[]>; 
-        }
-        function getMovieResultsACB(data: Array<TMDBMoviePageResult[]>): TMDBMoviePageResult[] {
-            const recommendedMovies = data.slice(0, data.length-1).flat().map(movie => ({...movie, sourceType: "recommended"})) // every element but the last
-            const popularMovies = data[data.length-1].flat().map(movie => ({...movie, sourceType: "popular"})) // the last element
+        let recommendationMovies = recommendationData.flat().filter(movie =>
+            movie.genre_ids.some(genre => this.selectedGenreIds.includes(genre)) // filter by selected genres
+            && !this.likes.includes(movie.id) // not in liked
+            && !this.dislikes.includes(movie.id) // not in disliked            
+        );
+        recommendationMovies = await filterByRatingAndRuntime(recommendationMovies, this.minRating, this.minRuntime, this.maxRuntime);
 
-            const allMovies = [...recommendedMovies, ...popularMovies];
-
-            const seen = new Set<number | string>();
-            const allMoviesNonDuplicates = allMovies.filter(movie => { // removes duplicates
-                if (seen.has(movie.id)) return false;
-                seen.add(movie.id);
-                return true;
-            });
-
-            return allMoviesNonDuplicates;
-        }
-        const prms = Promise.all(fetchPrmses)
-            .then(getDataACB)
-            .then(getMovieResultsACB)
-            .then(this.filterMoviesByOptionParams.bind(this))
+        const idQueuePrms = getFilteredPopularMovies(0, 30, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime)
+            .then((popularMovies) => {
+                const ids = [...recommendationMovies, ...popularMovies].map(movie => movie.id); // our queue
+                return [...new Set(ids)] // removes duplicates
+            })
         
-        resolvePromise(prms, this.movieIdQueuePrmsState);
+        resolvePromise(idQueuePrms, this.movieIdQueuePrmsState);
+        return idQueuePrms;
+    }
 
-        return prms;
-    },
+    async ensureMovieIdQueueHealth() {
+        if (!Array.isArray(this.movieIdQueuePrmsState.data) || !this.movieIdQueuePrmsState.data) return;
+
+        if (this.movieIdQueuePrmsState.data.length < 18 && !this.isEnsuringIdQueueHealth) {
+            this.isEnsuringIdQueueHealth = true;
+            const popularMovies = await getFilteredPopularMovies(30, 100, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime);
+            const newIdQueue = [...this.movieIdQueuePrmsState.data, ...popularMovies.map(movie => movie.id)];
+            this.movieIdQueuePrmsState.data = [...new Set(newIdQueue)]; // removes duplicates
+            this.isEnsuringIdQueueHealth = false;
+        }
+    }
 
     async insertRecommendedMovieIntoQueue(movieId: number) {
 
@@ -265,7 +274,7 @@ export const model: ModelType = {
             const idQueue = selMoviesIds;
             this.movieIdQueuePrmsState.data = idQueue;                
         }
-    },
+    }
 
     insertMovieLikesIntoQueue(likes: number[]) {
         const establishedIdQueue = this.movieIdQueuePrmsState.data ?? [];
@@ -279,7 +288,7 @@ export const model: ModelType = {
             idQueue.splice(4, 0, ...filteredMovieIds);
             this.movieIdQueuePrmsState.data = idQueue;
         }
-    },
+    }
 
     fetchPopularMovies() {
         const prms = fetchMoviesPages(getPopularMovies, 1, 1);
@@ -288,7 +297,7 @@ export const model: ModelType = {
         resolvePromise(prms, this.popularMoviesPrmsState);
 
         return prms;
-    },
+    }
 
     /* For OptionsView */
     searchMovie(q: string) {
@@ -300,7 +309,7 @@ export const model: ModelType = {
             }
         const prms = searchTMDBMovies(searchData);
         resolvePromise(prms, this.searchMoviesPrmsState);
-    },
+    }
 
     getRecommendations(id: number): Promise<TMDBMoviePageResult[]> {
         // wrapper function that matches the signature: (page) => Promise
@@ -313,59 +322,7 @@ export const model: ModelType = {
         
         resolvePromise(prms, this.getRecPrmsState);
         return prms;
-    },
-
-    async filterMoviesByOptionParams(data: TMDBMoviePageResult[]): Promise<number[] | undefined>  {
-        const filteredData = data.filter(movie =>
-            movie.genre_ids.some(genre => this.selectedGenreIds.includes(genre)) // filter by selected gebres
-            && !this.likes.includes(movie.id) // not in liked
-            && !this.dislikes.includes(movie.id) // not in disliked
-        );
-        if (filteredData.length === 0) return;
-
-        const details: MovieDetails[] = [];
-
-        function sleep(ms: number): Promise<void> {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        for (const movie of filteredData) {
-            const detail = await getMovieDetails(movie.id) as MovieDetails;
-            if (!detail) {
-                continue;
-            }
-            details.push(detail);
-            await sleep(10); // Do this to avoid API Rate limiting
-        }
-
-        const imdbIds = details.map(detail => detail.imdb_id);
-
-        const ratings = (await fetchImdbRatings(imdbIds)).data.titles;
-
-        const movieIdToRating = new Map<number, number>();
-        const movieIdToRuntime = new Map<number, number>();
-
-        for (const detail of details) {
-            movieIdToRuntime.set(detail.id, detail.runtime);
-            const rating = ratings.find(movie => movie.id === detail.imdb_id);
-            if (!rating || !rating.ratingsSummary.aggregateRating) continue;
-            movieIdToRating.set(detail.id, rating.ratingsSummary.aggregateRating)
-        }
-
-        const result = filteredData
-            .filter(movie => {
-                const rating = movieIdToRating.get(movie.id);
-                const runtime = movieIdToRuntime.get(movie.id);
-                if (!rating  || rating <= this.minRating) { return false };
-                if (!runtime || runtime <= this.minRuntime || runtime >= this.maxRuntime) { return false };
-                return true
-            })
-            .map(movie => {
-                return {...movie, imdbRating: movieIdToRating.get(movie.id), runtime: movieIdToRuntime.get(movie.id)}
-            });
-
-        return result.map(movie => movie.id);
-    },
+    }
 
     toggleSeededIconToMovie(id: number) {
         function keepOtherSeededCB(existingId: number) {
@@ -378,7 +335,7 @@ export const model: ModelType = {
             // If it wasn't selected, we want to add it.
             this.selectedSeededIds = [...this.selectedSeededIds, id];
         }
-    },
+    }
 
     toggleGenre(id: number) {
         function keepOtherGenresCB(existingId: number) {
@@ -391,7 +348,7 @@ export const model: ModelType = {
             // If it wasn't selected, we want to add it.
             this.selectedGenreIds = [...this.selectedGenreIds, id];
         }
-    },
+    }
 
     toggleAllGenres() {
         // If all are currently selected, clear them. Otherwise, select all.
@@ -404,23 +361,24 @@ export const model: ModelType = {
         } else {
             this.selectedGenreIds = this.genres.map(selectAllCB);
         }
-    },
+    }
 
     setMinRating(rating: number) {
         this.minRating = rating;
-    },
+    }
 
     setRuntime(min: number, max: number) {
         this.minRuntime = min;
         this.maxRuntime = max;
-    },
+    }
 
     nextMovie() {
         const movieIdsQueue = this.movieIdQueuePrmsState.data;
         if (!movieIdsQueue) { return };
         movieIdsQueue.shift(); 
+        this.ensureMovieIdQueueHealth();
         this.curMovieId = movieIdsQueue[0];
-    },
+    }
 
     prefetchMovieDetails(id: number) {
 
@@ -439,7 +397,7 @@ export const model: ModelType = {
         const prms = getMovieDetails(id);
         resolvePromise(prms, state);  // This now updates a MobX-observable object
         return prms
-    },
+    }
 
     ensurePrefetchWindow() {
         const movieIdsQueue = this.movieIdQueuePrmsState.data as number[] | null;
@@ -455,7 +413,7 @@ export const model: ModelType = {
 
         // allPrms resolves to an array of movie details (same order as ids)
         resolvePromise(allPrms, this.prefetchWindowPrmsState);
-    },
+    }
 
     fetchGenres() {
         const genresPrms = getMovieList().then((data: any) => {
@@ -466,26 +424,26 @@ export const model: ModelType = {
         });
         resolvePromise(genresPrms, this.genresPrmsState);
         return genresPrms
-    },
+    }
 
     setSessionId(sessionId: string | null) {
         this.currentSessionId = sessionId;
-    },
+    }
 
     getCurrentSessionId() {
         return this.currentSessionId;
-    },
+    }
 
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
             console.log("testing");
             //await handleSwipeInSession(this.currentSessionId, this.userId, {id: movieId, title, posterPath}, liked);
         }
-    },
+    }
 
     setUsername(username: string) {
         this.username = username;
-    },
+    }
 
     toggleAlltimeLike(movie: TMDBMoviePageResult, removePossible: boolean = true) { /* [TODO] Make a reaction to add movie details to AlltimeLiked */
         const targetId = movie.id;
@@ -503,11 +461,11 @@ export const model: ModelType = {
             // If it wasn't selected, we want to add it.
             this.alltimeLikedMoviesArray = [...this.alltimeLikedMoviesArray, movie];
         }
-    },
+    }
 
     addToLiked(id: number) {
         this.likes.push(id);
-    },
+    }
     addToDisliked(id: number) {
         this.dislikes.push(id);
     }

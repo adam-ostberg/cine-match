@@ -1,5 +1,6 @@
 import { type User } from "firebase/auth";
 import { handleSwipeInSession } from "./firestoreModel";
+import { makeAutoObservable } from "mobx";
 
 export type MatchType = {
     movieId: number;
@@ -25,35 +26,39 @@ export type UserModelType = {
     addMatch: (match: MatchType) => void;
 }
 
-export const UserModel: UserModelType = {
-    userId: "",
-    ready: false,
-    currentUser: null as User | null,
-    username: "",
-    currentSessionId: null,
-    likes: [],
-    matches: [],
+export class UserModel  {
+    userId = "";
+    ready = false;
+    currentUser: User | null = null;
+    username = "";
+    currentSessionId: string | null = null;
+    likes: any[] = [];
+    matches: any[] = [];
+
+    constructor() {
+        makeAutoObservable(this);
+    }
 
     setUserId(userId: string) {
         this.userId = userId;
-    },
+    }
 
     // For updating the current authenticated user, done via auth observer
     setCurrentUser(user: User | null) {
         this.currentUser = user;
-    },
+    }
 
     setUsername(username: string) {
         this.username = username;
-    },
+    }
 
     setCurrentSessionId(id: string | null) {
         this.currentSessionId = id;
-    },
+    }
 
     setLikes(likes: any[]) {
         this.likes = likes;
-    },
+    }
     
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
@@ -63,9 +68,9 @@ export const UserModel: UserModelType = {
                 console.log("A match was made for movie:", title);
             }
         }
-    },
+    }
 
     addMatch(match: MatchType) {
         this.matches = [...this.matches, match];
-    },
+    }
 }
