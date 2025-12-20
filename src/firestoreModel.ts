@@ -2,7 +2,7 @@ import { db } from "./firebaseConfig.ts";
 import { type ModelType } from "./MovieModel.ts";
 import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot, collection } from "firebase/firestore";
 import type { SessionType, UserInfoType } from "./SessionModel.ts";
-import type { UserModelType } from "./UserModel.ts";
+import type { UserModelType, MatchType } from "./UserModel.ts";
 
 export type UserType = {
     username: string,
@@ -75,8 +75,8 @@ export async function joinSession(userModel: UserModelType, sessionId: string) {
     }
 }
 
-export async function handleSwipeInSession(sessionId: string, userModel: UserModelType, movie: {id: number, title: string, posterPath: string}, liked: boolean) {
-    if (!liked) return; // Only likes are relevant for matching
+export async function handleSwipeInSession(sessionId: string, userModel: UserModelType, movie: {id: number, title: string, posterPath: string}, liked: boolean): boolean {
+    if (!liked) return false; // Only likes are relevant for matching
 
     const sessionRef = doc(db, "sessions", sessionId);
     const movieLikesRef = doc(db, "sessions", sessionId, "likes", movie.id.toString());
@@ -120,9 +120,22 @@ export async function handleSwipeInSession(sessionId: string, userModel: UserMod
             // Save the like
             transaction.set(movieLikesRef, { likedBy }, { merge: true });
         });
+
+        await addLikeToUser(userModel, movie);
+
         console.log("Swipe recorded successfully");
+        return true;
     } catch (e) {
         console.error("Transaction failed: ", e);
+        return false;
+    }
+}
+
+async function addLikeToUser(userModel: UserModelType, movie: {id: number, title: string, posterPath: string}) {
+    const userId = userModel.currentUser?.uid;
+
+    if (!userId) {
+        console.error("No user logged in.");
         return;
     }
 
@@ -140,23 +153,12 @@ export async function handleSwipeInSession(sessionId: string, userModel: UserMod
     } catch (e) {
         console.error("Failed to update user likes: ", e);
     }
-
-    /*
-    const userLikes = userModel.likes;
-
-    if (!userLikes.includes(movie.title)) {
-        // User hasnt liked this movie before so we add it to their list
-        console.log("trying to add movie to user likes");
-        userModel.likes.push(movie.title);
-    }
-    */
-
 }
 
-export function listenToSession(sessionId: string, model: ModelType, sessionModel: SessionType) {
+export function listenToSession(sessionId: string, model: ModelType, sessionModel: SessionType, userModel: UserModelType) {
     const docRef = doc(db, "sessions", sessionId);
     // @ts-ignore  /* For npm run build */
-    const m = model
+    const m = model;
     // onSnapshot triggers every time the data in firestore changes
     const unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
@@ -168,6 +170,17 @@ export function listenToSession(sessionId: string, model: ModelType, sessionMode
                 if (data.match) {
                     // Use queueMatch to handle it safely
                     sessionModel.queueMatch(data.match.movieId);
+
+                    const usersInSession = data.participants?.map((p: UserInfoType) => p.username) || [];
+
+                    const matchData: MatchType = {
+                        movieId: data.match.movieId,
+                        title: data.match.title,
+                        poster_path: data.match.poster_path || null,
+                        usersInSession: usersInSession,
+                    }
+
+                    userModel.addMatch(matchData);
                 }
                 // TODO!!! Update the model with match data and call some function to show the match screen
                 

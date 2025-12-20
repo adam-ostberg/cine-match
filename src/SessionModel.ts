@@ -15,7 +15,7 @@ export type SessionType = {
     status: "waiting" | "active" | "matched";
     hasBeenActivated: boolean;
     participants: UserInfoType[];
-    likes: number[]
+    likes: number[];
     showMatchAnimation: boolean;
     currentMatchId: number | null; // The ID currently being displayed
     matchQueue: number[];

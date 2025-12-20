@@ -47,13 +47,8 @@ observeAuth((user) => {
   reactiveModel.setId(user ? user.uid : null);
 });
 
-// Automatically update the current user in the user model based on auth
-observeAuth((user) => {
-    reactiveUserModel.setCurrentUser(user);
-});
-
 // Track the unsubscribe function for user persistence
-let userPersistenceUnsubscribe: Unsubscribe | undefined;
+let userPersistenceUnsubscribe: (() => void) | undefined;
 
 // Automatically update the current user in the user model based on auth
 observeAuth((user) => {
@@ -63,13 +58,20 @@ observeAuth((user) => {
       userPersistenceUnsubscribe = undefined;
     }
 
-    reactiveUserModel.setCurrentUser(user);
-    
-    // Connect to persistence AFTER user is set
-    if (user) {
-      reactiveUserModel.setUserId(user.uid);
-      userPersistenceUnsubscribe = connectUserToPersistence(reactiveUserModel, reaction);
+    // Reset user model state on sign out
+    if (!user) {
+      reactiveUserModel.setCurrentUser(null);
+      reactiveUserModel.setUserId("");
+      reactiveUserModel.setUsername("");
+      reactiveUserModel.setLikes([]);
+      reactiveUserModel.matches = [];
+      reactiveUserModel.ready = false;
+      return;
     }
+
+    reactiveUserModel.setCurrentUser(user);
+    reactiveUserModel.setUserId(user.uid);
+    userPersistenceUnsubscribe = connectUserToPersistence(reactiveUserModel, reaction);
 });
 
 reaction(currentMovieIdACB, movieIdEffectACB);
