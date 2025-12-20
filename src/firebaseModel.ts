@@ -149,7 +149,6 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
   }
 
   // Watch for status changes only - this is the main thing clients might update
-  // Note: participants are managed via arrayUnion in joinSession, not here
   // Note: hostId should never be changed after session creation
   function statusACB() {
     return session.status;
@@ -175,12 +174,38 @@ export function connectSessionToPersistence(session: SessionType, userModel: Use
     setDoc(docRef, { status: newStatus }, { merge: true }).catch(console.error);
   }
 
+  // Watch for participants changes any user can remove themselves
+  function participantsACB() {
+    // Return a serialized version to trigger reaction on changes
+    return JSON.stringify(session.participants);
+  }
+
+  function persistParticipantsACB() {
+    const sessionId = userModel.currentSessionId;
+    
+    // We dont persist if:
+    // Session not ready
+    // No session ID
+    // This update came from Firestore (prevents loop)
+    if (!session.ready || !sessionId || isUpdatingFromFirestore) {
+      return;
+    }
+
+    const docRef = doc(firestore, "sessions", sessionId);
+
+    // Update participants in Firestore
+    setDoc(docRef, { participants: session.participants }, { merge: true }).catch(console.error);
+  }
+
   // Install the side effects
   // 1. Watch for session ID changes to set up/tear down Firestore listener
   watchFunction(sessionIdACB, onSessionIdChangeACB, { fireImmediately: true });
   
   // 2. Watch for status changes (host-only writes)
   watchFunction(statusACB, persistStatusACB);
+
+  // 3. Watch for participants changes (any user can remove themselves)
+  watchFunction(participantsACB, persistParticipantsACB);
 }
 
 export function connectUserToPersistence(user: UserModelType, watchFunction: any) {

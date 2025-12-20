@@ -24,6 +24,7 @@ export type SessionType = {
     getSessionId: () => string | null;
     setStatus: (status: "waiting" | "active" | "matched", userId: string) => void;
     addUser: (user: UserInfoType) => void;
+    removeUser: (userId: string) => void;
     queueMatch: (movieId: number) => void; // Adds to queue
     processQueue: () => void;
     setHasBeenActivated: (value: boolean) => void,
@@ -61,6 +62,11 @@ export const SessionModel: SessionType = {
         if (!this.participants.find(u => u.userId === user.userId)) {
             this.participants.push(user);
         }
+    },
+
+    // Remove the user with the given ID from the session
+    removeUser(userId: string) {
+        this.participants = this.participants.filter(u => u.userId !== userId);
     },
     
     processQueue() {

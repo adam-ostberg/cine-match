@@ -103,6 +103,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			onDislike={swipeDislikeACB} onLike={swipeLikeACB} onMoreInfo={moreInfoClickedACB} 
 			currentSessionId={props.model.currentSessionId} sessionModel={props.sessionModel}
 			userModel={props.userModel} sessionShowMatchAnimation={props.sessionModel.showMatchAnimation}
+			participants={props.sessionModel.participants}
 			/>);
 
 		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView 

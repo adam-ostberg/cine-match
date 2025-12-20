@@ -23,11 +23,21 @@ const Navbar = observer(
       });
     }
 
+    function handleExitSessionACB() {
+      const userId = props.userModel.userId;
+      if (userId) {
+        props.sessionModel.removeUser(userId);
+      }
+      props.sessionModel.setSessionId(null);
+      props.userModel.setCurrentSessionId(null);
+      window.location.hash = "#/";
+    }
+
     const user = props.userModel;
     const username = (user.currentUser && user.username) || null;
 
     return (
-      <NavbarView onLogoClick={logoClickACB} onSignOutClick={handleSignOutACB} username={username} userId={user.userId || ""} sessionStatus={props.sessionModel.status}/>
+      <NavbarView onLogoClick={logoClickACB} onSignOutClick={handleSignOutACB} onExitSession={handleExitSessionACB} username={username} userId={user.userId || ""} sessionStatus={props.sessionModel.status}/>
     );
   }
 );

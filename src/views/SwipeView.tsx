@@ -24,6 +24,7 @@ export type SwipeViewProps = {
   currentSessionId: string | null;
   sessionModel: SessionType;
   sessionShowMatchAnimation: boolean;
+  participants: UserInfoType[];
   userModel: UserModelType;
   onDislike: (id: number) => void;
   onLike: (id: number) => void;
@@ -167,7 +168,7 @@ function SwipeView(props: SwipeViewProps) {
           <p id="current-session">Current Session id: {props.sessionModel.sessionId}</p>
           <h2>Lobby</h2>
           <div className="sidebar-lobby-container">
-            {props.sessionModel.participants.map(outputParticipants)}
+            {props.participants.map(outputParticipants)}
           </div>
         </div>
       </aside>
