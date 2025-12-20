@@ -2,6 +2,11 @@ import { type User } from "firebase/auth";
 import { handleSwipeInSession } from "./firestoreModel";
 import { makeAutoObservable } from "mobx";
 
+export type FriendType = {
+    userId: string;
+    username: string;
+}
+
 export type MatchType = {
     movieId: number;
     title: string;
@@ -17,6 +22,7 @@ export class UserModel  {
     currentSessionId: string | null = null;
     likes: any[] = [];
     matches: any[] = [];
+    friends: FriendType[] = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -50,6 +56,10 @@ export class UserModel  {
     setMatches(newMatches: any[]) {
         this.matches = newMatches;
     }
+
+    setFriends(newFriends: FriendType[]) {
+        this.friends = newFriends;
+    }
     
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
         if (this.currentSessionId && this.userId) {
@@ -63,5 +73,9 @@ export class UserModel  {
 
     addMatch(match: MatchType) {
         this.matches = [...this.matches, match];
+    }
+
+    addFriend(friend: FriendType) {
+        this.friends = [...this.friends, friend];
     }
 }
