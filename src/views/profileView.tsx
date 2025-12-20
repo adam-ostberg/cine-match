@@ -75,14 +75,15 @@ export function ProfileView(props: ProfileViewProps) {
 
   function FriendRequestList(friendRequests: FriendRequestType[]) {
     return (
-      <ul>
+      <div className="friends-list">
         {friendRequests.map((request, index) => (
-          <div>
-            <p key={index}>{request.fromUsername}</p>
+          <div className="friend-item" key={index}>
+            <UserAvatar userId={request.fromUserId} size={60}/>
+            <p>{request.fromUsername}</p>
             <button className="secondary-button" onClick={() => acceptFriendRequestClick(request.fromUsername, request.fromUserId)}>Accept</button>
           </div>
         ))}
-      </ul>
+      </div>
     );
   }
 
@@ -237,9 +238,13 @@ export function ProfileView(props: ProfileViewProps) {
 
 function FriendsList(friends: FriendType[]) {
   return (
-    <div>
+    <div className="friends-list">
       {friends.map((friend, index) => (
-        <p key={index}>{friend.username}</p>
+        <div className="friend-item" key={index}>
+          <UserAvatar userId={friend.userId} size={60}/>
+          <p>{friend.username}</p>
+          <button className="secondary-button">Invite</button>
+        </div>
       ))}
     </div>
   );

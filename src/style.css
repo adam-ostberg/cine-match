@@ -1358,7 +1358,7 @@ height: auto;
 }
 
 .profile-container {
-  max-width: 1500px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
   height: 90vh;
@@ -1558,4 +1558,25 @@ height: auto;
 }
 .error-message {
   color: red;
+}
+
+.friends-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: left;
+}
+
+.friend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.friend-item p {
+  margin: 8px;
+  font-size: 0.9rem;
+  color: white;
 }
