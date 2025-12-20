@@ -10,13 +10,6 @@ import { DetailsView } from "../views/DetailsView.tsx";
 import { hideRootAndMainContentOverflow } from "../helperFunctions.ts";
 import { UserModel } from "../UserModel.ts";
 import { SessionModel } from "../SessionModel.ts";
-/*
-export type HomeModel = {
-    initiateStart: () => void;
-    popularMoviesPrmsState: PromiseState;
-    setCurrentMovieId: (id: number) => void;
-}
-*/
 
 export type HomePresenterProps = {
     model: MovieModel;
@@ -33,6 +26,7 @@ const Home = observer(
                 alert("Please log in first.");
                 return;
             }
+            props.model.clearMovieFilters();
             window.location.hash = "#/lobby";
             const sessionId = await createSession(props.userModel);
             // @ts-ignore  /* [TODO] for npm build, remove */
@@ -44,6 +38,7 @@ const Home = observer(
                 alert("Please log in first.");
                 return;
             }
+            props.model.clearMovieFilters();
             window.location.hash = "#/lobby";
             await joinSession(props.userModel, sessionId); // TODO get session ID from user input
 
