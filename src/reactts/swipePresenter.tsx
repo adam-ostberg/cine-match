@@ -49,6 +49,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		/* [TODO] For some reason funkar inte knappen längre */
 		function moreInfoClickedACB() {
 			//hideRootAndMainContentOverflow();
+			props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
 			setShowDetails(true);
 			//document.location.hash = "/details";
 		}
