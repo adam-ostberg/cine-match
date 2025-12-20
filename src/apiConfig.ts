@@ -14,6 +14,7 @@ export type ProductionCompany = {
   name: string;
   origin_country: string;
 };
+
 export type ProductionCountry = {
   iso_3166_1: string;
   name: string;
