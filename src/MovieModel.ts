@@ -382,6 +382,14 @@ export class MovieModel {
         }
     }
 
+    clearMovieFilters() {
+        this.selectedGenreIds = this.genres.map(genre => genre.id);
+        this.selectedSeededIds = [];
+        this.minRating = 0;
+        this.minRuntime = 0;
+        this.maxRuntime = 400;
+    }
+
     addToLiked(id: number) {
         this.likes.push(id);
     }
