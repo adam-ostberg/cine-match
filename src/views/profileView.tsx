@@ -5,7 +5,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { Navbar } from "../reactts/navbarPresenter.tsx";
-import type { UserModel, UserModelType, MatchType } from "../UserModel.ts";
+import type { UserModel, MatchType } from "../UserModel.ts";
 import type { SessionModel } from "../SessionModel.ts";
 import {
   Chart as ChartJS,

@@ -9,28 +9,6 @@ export type UserInfoType = {
     username: string;
 }
 
-export type SessionType = {
-    ready: boolean;
-    sessionId: string | null;
-    created: string;
-    hostId: string;
-    status: "waiting" | "active" | "matched";
-    hasBeenActivated: boolean;
-    participants: UserInfoType[];
-    likes: number[];
-    showMatchAnimation: boolean;
-    currentMatchId: number | null; // The ID currently being displayed
-    matchQueue: number[];
-    matchesIds: number[];
-    setSessionId: (sessionId: string | null) => void;
-    getSessionId: () => string | null;
-    setStatus: (status: "waiting" | "active" | "matched", userId: string) => void;
-    addUser: (user: UserInfoType) => void;
-    queueMatch: (movieId: number) => void; // Adds to queue
-    processQueue: () => void;
-    setHasBeenActivated: (value: boolean) => void,
-}
-
 export class SessionModel {
     ready = false;
     sessionId: string | null = null;

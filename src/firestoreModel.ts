@@ -1,8 +1,8 @@
 import { db } from "./firebaseConfig.ts";
-import { type ModelType } from "./MovieModel.ts";
-import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot, collection } from "firebase/firestore";
-import type { SessionType, UserInfoType } from "./SessionModel.ts";
-import type { UserModelType, MatchType, UserModel } from "./UserModel.ts";
+import { MovieModel } from "./MovieModel.ts";
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot } from "firebase/firestore";
+import type { SessionModel, UserInfoType } from "./SessionModel.ts";
+import { type MatchType, UserModel } from "./UserModel.ts";
 
 const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
 
@@ -16,7 +16,7 @@ export type UserType = {
 };
 
 // Create a new session in Firebase and return the session ID
-export async function createSession(user: UserModelType) {
+export async function createSession(user: UserModel) {
     // First check if the user is logged in
     if (!user.currentUser) {
         alert("You must be logged in to create a session.");
@@ -48,7 +48,7 @@ export async function createSession(user: UserModelType) {
     return sessionId;
 }
 
-export async function joinSession(userModel: UserModelType, sessionId: string) {
+export async function joinSession(userModel: UserModel, sessionId: string) {
     // First check if the user is logged in
     if (!userModel.currentUser) {
         alert("You must be logged in to join a session.");
@@ -77,7 +77,7 @@ export async function joinSession(userModel: UserModelType, sessionId: string) {
     }
 }
 
-export async function handleSwipeInSession(sessionId: string, userModel: UserModel, movie: {id: number, title: string, posterPath: string}, liked: boolean): boolean {
+export async function handleSwipeInSession(sessionId: string, userModel: UserModel, movie: {id: number, title: string, posterPath: string}, liked: boolean): Promise<boolean> {
     if (!liked) return false; // Only likes are relevant for matching
 
     const sessionRef = doc(db, "sessions", sessionId);
@@ -133,7 +133,7 @@ export async function handleSwipeInSession(sessionId: string, userModel: UserMod
     }
 }
 
-async function addLikeToUser(userModel: UserModelType, movie: {id: number, title: string, posterPath: string}) {
+async function addLikeToUser(userModel: UserModel, movie: {id: number, title: string, posterPath: string}) {
     const userId = userModel.currentUser?.uid;
 
     if (!userId) {
@@ -157,7 +157,7 @@ async function addLikeToUser(userModel: UserModelType, movie: {id: number, title
     }
 }
 
-export function listenToSession(sessionId: string, model: ModelType, sessionModel: SessionType, userModel: UserModelType) {
+export function listenToSession(sessionId: string, model: MovieModel, sessionModel: SessionModel, userModel: UserModel) {
     const docRef = doc(db, "sessions", sessionId);
     // @ts-ignore  /* For npm run build */
     const m = model;

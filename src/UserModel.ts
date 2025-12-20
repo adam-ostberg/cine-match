@@ -9,23 +9,6 @@ export type MatchType = {
     usersInSession: string[];
 }
 
-export type UserModelType = {
-    userId: string;
-    ready: boolean;
-    currentUser: User | null;
-    username: string;
-    currentSessionId: string | null;
-    likes: any[];
-    matches: MatchType[];
-    setUserId: (userId: string) => void;
-    setCurrentUser: (user: User | null) => void;
-    setUsername: (username: string) => void;
-    setCurrentSessionId: (id: string | null) => void;
-    setLikes: (likes: any[]) => void;
-    reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
-    addMatch: (match: MatchType) => void;
-}
-
 export class UserModel  {
     userId = "";
     ready = false;

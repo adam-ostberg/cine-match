@@ -9,10 +9,10 @@ import {
 
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 
-import type { UserModelType } from "./UserModel";
+import { UserModel } from "./UserModel";
 
 // Function for signing up a new user with email and password
-export async function signUpWithEmail(userModel: UserModelType, username: string, email: string, password: string) {
+export async function signUpWithEmail(userModel: UserModel, username: string, email: string, password: string) {
     // First create the use in Firebase Auth with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -31,7 +31,7 @@ export async function signUpWithEmail(userModel: UserModelType, username: string
 }
 
 // Sign in an existing user with email and password
-export async function signInWithEmail(userModel: UserModelType, email: string, password: string) {
+export async function signInWithEmail(userModel: UserModel, email: string, password: string) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 

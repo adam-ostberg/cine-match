@@ -1,86 +1,8 @@
 import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie, type MovieDetails } from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
-import { handleSwipeInSession } from "./firestoreModel";
-import { fetchImdbRatings } from "./testImdbApi";
-import { type LikesType } from "./SessionModel";
 import { filterByRatingAndRuntime, getFilteredPopularMovies } from "./helperFunctions";
 import { makeAutoObservable, runInAction } from "mobx";
-
-export type ModelType = {
-    username: string;
-    userId: string | null;
-    genres: [];
-    genresPrmsState: PromiseState;
-    likes: number[];
-    dislikes: number[];
-    curMovieId: number;
-    movieDetailsPrmsState: PromiseState;
-    movieVideosPrmsState: PromiseState;
-    movieIdQueuePrmsState: PromiseState;
-    popularMoviesPrmsState: PromiseState;
-    movieCreditsPrmsState: PromiseState; 
-    imdbRatingPrmsState: PromiseState;
-    watchProvidersPrmsState: PromiseState;
-    searchMoviesPrmsState: PromiseState;
-    getRecPrmsState: PromiseState;
-    getCurrentSessionUsernamesPrmsState: PromiseState;
-    currentSessionId: string | null;
-    selectedGenreIds: number[];
-    selectedSeededIds: number[];
-    minRating: number;
-    minRuntime: number;
-    maxRuntime: number;
-    prefetchWindowPrmsState: PromiseState;
-    alltimeLikedMovieIds: number[]; 
-    alltimeLikedMoviesArray: TMDBMoviePageResult[];
-    profilePic: string | undefined;
-    isEnsuringIdQueueHealth: boolean;
-    setRuntime: (min: number, max: number) => void;
-    initiateStart: () => void;
-    setId: (id: string | null) => void;
-    setCurrentMovieId: (id: number | undefined | void | null) => void;
-    getLatestPrefetchMovieId: () => number | void;
-    currentMovieEffect: () => void;
-    getCurMovieCredits: () => void;
-    getCurMovieTrailer: () => Promise<TMDBVideoType | undefined>;
-    getCurWatchProviders: () => Promise<WatchProvidersResponse | any>;
-    getMovieImdbRating: (id: number) => void;
-    /* getPopularMovies: () => Promise<TMDBMoviePageResult[]>; */
-    fetchPopularMovies: () => Promise<TMDBMoviePageResult[]>;
-    setMovieIdQueue: () => Promise<any>;
-    ensureMovieIdQueueHealth: () => Promise<any>;
-    insertRecommendedMovieIntoQueue: (movieId: number) => void;
-    insertMovieLikesIntoQueue: (likes: number[]) => void;
-    filterMoviesByRatingAndRuntimeParams: (data: TMDBMoviePageResult[]) => Promise<number[] | undefined>;
-    filterAndGetIdsFromMoviesACB: (data: any) => number[];
-    nextMovie: () => void;
-    toggleGenre: (id: number) => void;
-    toggleAllGenres: () => void;
-    setMinRating: (rating: number) => void;
-    searchMovie: (q: string) => void;
-    getRecommendations: (id: number) => Promise<TMDBMoviePageResult[]>;
-    toggleSeededIconToMovie: (id: number) => void;
-    toggleAlltimeLike: (movie: TMDBMoviePageResult, removePossible?: boolean) => void
-    setUsername: (username: string) => void;
-    
-
-    // NEW:
-    movieDetailsById: { [id: number]: PromiseState };
-    PREFETCH_SIZE: number;
-
-    prefetchMovieDetails: (id: number) => Promise<void | object> | void;
-    ensurePrefetchWindow: () => void;
-    fetchGenres: () => Promise<any>;
-
-    // Session management
-    setSessionId: (sessionId: string | null) => void;
-    getCurrentSessionId: () => string | null;
-
-    reportSwipe: (movieId: number, title: string, posterPath: string, liked: boolean) => void;
-    addToLiked: (movieId: number) => void;
-    addToDisliked: (movieId: number) => void;
-}
 
 export type Video = {
     "iso_639_1": string,

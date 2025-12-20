@@ -10,12 +10,11 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useState } from "react";
 import { type PanInfo } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
-import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import TuneIcon from '@mui/icons-material/Tune';
 import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import { MatchAnimationView } from "./matchAnimationView";
 import type { SessionModel, UserInfoType } from "../SessionModel";
-import type { UserModel, UserModelType } from "../UserModel";
+import type { UserModel } from "../UserModel";
 import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 
