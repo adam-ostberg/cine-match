@@ -27,12 +27,8 @@ function startDefaultDebugConfig() {
 }
 //startDefaultDebugConfig();
 
-
-
 export const reactiveSessionModel = observable(SessionModel);
 export const reactiveUserModel = observable(UserModel);
-
-
 
 function currentMovieIdACB() {
   return reactiveModel.curMovieId;
