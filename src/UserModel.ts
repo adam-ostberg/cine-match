@@ -20,6 +20,13 @@ export type FriendRequestType = {
     status: "pending" | "accepted" | "rejected";
 }
 
+export type InviteType = {
+    fromUserId: string;
+    fromUsername: string;
+    sessionId: string;
+    sentAt: Date;
+}
+
 export class UserModel  {
     userId = "";
     ready = false;
@@ -28,6 +35,7 @@ export class UserModel  {
     currentSessionId: string | null = null;
     likes: any[] = [];
     matches: any[] = [];
+    invite: InviteType | null = null;
     friends: FriendType[] = [];
     friendRequests: FriendRequestType[] = [];
 
@@ -70,6 +78,14 @@ export class UserModel  {
 
     setFriendRequests(requests: FriendRequestType[]) {
         this.friendRequests = requests;
+    }
+
+    setInvite(invite: InviteType | null) {
+        this.invite = invite;
+    }
+
+    removeInvite() {
+        this.invite = null;
     }
     
     async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {

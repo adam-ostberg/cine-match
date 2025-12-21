@@ -12,6 +12,7 @@ import { Lobby } from "./reactts/lobbyPresenter";
 import type { SessionModel } from "./SessionModel";
 import type { UserModel } from "./UserModel";
 import { MatchAnimationView } from "./views/matchAnimationView.tsx";
+import { InvitePresenter } from "./reactts/invitePresenter.tsx";
 
 export type AppRenderProps = {
 	model: MovieModel
@@ -62,6 +63,7 @@ const App = observer(
 
 		return (
 			<div className="mainContent">
+				<InvitePresenter userModel={props.userModel} sessionModel={props.sessionModel} />
 				<RouterProvider router={router} />
 			</div>
 		);

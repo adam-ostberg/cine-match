@@ -224,6 +224,7 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
       matches: [...user.matches],
       friends: [...user.friends],
       friendRequests: [...user.friendRequests],
+      invite: user.invite,
     };
   }
 
@@ -237,6 +238,7 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
       matches: user.matches,
       friends: user.friends,
       friendRequests: user.friendRequests,
+      invite: user.invite,
     };
 
     setDoc(docRef, modelData, { merge: true })?.catch(console.error);
@@ -262,6 +264,7 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     user.setMatches(data.matches ?? []);
     user.setFriends(data.friends ?? []);
     user.setFriendRequests(data.friendRequests ?? []);
+    user.setInvite(data.invite ?? null);
     user.setReady(true);
 
     // Reset flag after updates are applied
