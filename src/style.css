@@ -446,6 +446,24 @@ height: auto;
   box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
+.destructive-button {
+  border: 1px solid red;
+  background-color: rgba(179, 81, 81, 0.2); /* Transparent green */
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 16px;
+  border-radius: 5px;
+  /* background-color: var(--btn-green); */ /* <--Uncomment here: better? */
+  transition: transform 0.3s ease;
+}
+
+.destructive-button:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(179, 81, 81, 0.7); /* Glow */
+}
+
 .details-container {
   position: absolute;
   top: 96%;

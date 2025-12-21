@@ -39,7 +39,7 @@ export function NavbarView(props: navbarViewProps) {
 				CineMatch
 			</h1>
 			{sessionActive ?
-				<button className="secondary-button" onClick={exitSessionACB}>
+				<button className="destructive-button" onClick={exitSessionACB}>
 					Exit Session
 				</button>
 				: ""
