@@ -84,7 +84,7 @@ export function NavbarView(props: navbarViewProps) {
 								</button>
 								: ""
 							}
-							<button className="secondary-button" onClick={signOutClickACB}>Sign Out</button>
+							<button className="secondary-button" onClick={signOutClickACB}>Log Out</button>
 						</div>
 						<IconButton className="profile-button" onClick={profileClickACB}>
 							<p className="username">{props.username}</p>

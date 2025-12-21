@@ -33,7 +33,7 @@ export function LobbyView(props: LobbyViewProps) {
 
         
         <div className="lobby-actions">
-            <button className="primary-button" onClick={toOptionsViewACB}>Filter</button>
+            <button className="primary-button gray-button" onClick={toOptionsViewACB}>Filter Movie Algoritm</button>
             {props.isHost ? (
                 <button className="primary-button" onClick={startSwipingACB}>Begin Swiping</button>
             ) : (

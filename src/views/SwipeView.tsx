@@ -18,6 +18,7 @@ import type { UserModel } from "../UserModel";
 import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { observer } from "mobx-react-lite";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -169,6 +170,7 @@ const SwipeView = observer(
             </IconButton>
           </div>
         </div>
+        {DisplayUpSwipeAnim(isFetchingIdQueue)}
         <aside className={swipeSidebarClassNames} id="swipeSidebar">
           <IconButton className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
             <TuneIcon />
@@ -381,6 +383,47 @@ return (
   </motion.div>
 );
 }
+
+
+function DisplayUpSwipeAnim(isFetchingIdQueue: boolean) {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const DURATION_MS = 4220; // match animation length
+    const t = setTimeout(() => setVisible(false), DURATION_MS);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!isFetchingIdQueue) return null;
+  if (!visible) return null;
+  return (
+  <div
+    style={{
+      position: "fixed",
+      width: "80vim",
+      height: "80vmin",
+      aspectRatio: "1 / 1",
+      top: "60%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      pointerEvents: "none",
+    }}>
+    <DotLottieReact
+      src="src/assets/SwipeUpAnim.lottie"
+      autoplay
+      loop
+      loopCount={2}
+      style={{
+        width: "100%",
+        height: "100%",
+        zIndex: 2,
+      }}
+    />
+  </div>
+  );
+}
+
+
 
 export { SwipeView, SwipeCard };
 

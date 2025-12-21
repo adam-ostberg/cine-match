@@ -63,8 +63,8 @@ observeAuth((user) => {
       reactiveUserModel.setUserId("");
       reactiveUserModel.setUsername("");
       reactiveUserModel.setLikes([]);
-      reactiveUserModel.matches = [];
-      reactiveUserModel.ready = false;
+      reactiveUserModel.setMatches([]);
+      reactiveUserModel.setReady(false);
       return;
     }
 

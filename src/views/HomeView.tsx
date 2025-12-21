@@ -75,7 +75,9 @@ return (
     <div className="home">
       <Navbar userModel={props.userModel} sessionModel={props.sessionModel}/>
       <div className="home-section">
-        <p>Swipe to find your perfect movie</p>
+        <div style={{display: "flex", flexDirection: "column", alignItems: "center", marginTop: "2vh"}}>
+          <p>Swipe to find your perfect movie</p>
+        </div>
         <div className="carousel-view">
           <div className="carousel-track">
             {infiniteMovies.map(renderMovieCardCB)}
@@ -100,8 +102,14 @@ return (
             </div>
           )
         ) : (
-          <p>Please log in to create or join a session...</p>
+          <div className="session-section">
+            <p>Please log in to create or join a session...</p>
+						<button className="secondary-button" style={{fontSize: "22px", width: "200px"}} onClick={() => { window.location.hash = "#/account" }}>
+							Log In
+						</button>
+          </div>
         )}
+        
       </div>
     </div>
   );
