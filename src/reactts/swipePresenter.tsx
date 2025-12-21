@@ -58,8 +58,8 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			if (props.sessionModel.showMatchAnimation && props.sessionModel.currentMatchId) {
 				// point the state to the matched movie
 				if (previousCardMovieIdRef.current === null) {
-          previousCardMovieIdRef.current = props.model.curMovieId;
-        }
+					previousCardMovieIdRef.current = props.model.curMovieId;
+				}
 				props.model.setCurrentMovieId(props.sessionModel.currentMatchId);
 				props.model.currentMovieEffect();
 
