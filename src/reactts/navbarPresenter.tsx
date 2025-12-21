@@ -28,6 +28,7 @@ const Navbar = observer(
       if (userId) {
         props.sessionModel.removeUser(userId);
       }
+      props.sessionModel.clearMatchVars();
       props.sessionModel.setSessionId(null);
       props.userModel.setCurrentSessionId(null);
       window.location.hash = "#/";

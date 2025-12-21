@@ -90,7 +90,7 @@ export class SessionModel {
 
     queueMatch(movieId: number) {
         // Prevent adding duplicates to the queue or current animation (maybe stupid/shallow logic)
-        if (this.currentMatchId === movieId || this.matchQueue.includes(movieId)) {
+        if (this.currentMatchId === movieId || this.matchQueue.includes(movieId) || this.matchesIds.includes(movieId)) {
             return;
         }
 
@@ -103,6 +103,14 @@ export class SessionModel {
         if (!this.showMatchAnimation) {
             this.processQueue();
         }
+    }
+
+    clearMatchVars() {
+        runInAction(() => {
+            this.matchQueue = [];
+            this.currentMatchId = null;
+            this.showMatchAnimation = false;
+        })
     }
 
     setHasBeenActivated(value: boolean) {

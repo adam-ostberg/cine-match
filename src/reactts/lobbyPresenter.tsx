@@ -25,6 +25,7 @@ const Lobby = observer(
 
     if (props.sessionModel.status === "active") {
       if (!props.sessionModel.hasBeenActivated) {
+        props.sessionModel.clearMatchVars();
         props.sessionModel.setHasBeenActivated(true);
         configDataForSwipeStart(props.model);
       }

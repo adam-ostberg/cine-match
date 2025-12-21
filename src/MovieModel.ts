@@ -199,11 +199,15 @@ export class MovieModel {
         if (!!this.movieIdQueuePrmsState.data) {
             const idQueue = [...this.movieIdQueuePrmsState.data]
             idQueue.splice(6, 0, ...selMoviesIds) // insert 5 movies into position 6 of the queue
-            this.movieIdQueuePrmsState.data = idQueue;
+            runInAction(() => {
+                this.movieIdQueuePrmsState.data = idQueue;
+            })
         }
         else {
             const idQueue = selMoviesIds;
-            this.movieIdQueuePrmsState.data = idQueue;                
+            runInAction(() => {
+                this.movieIdQueuePrmsState.data = idQueue;       
+            })
         }
     }
 
