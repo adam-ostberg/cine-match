@@ -66,6 +66,17 @@ const Home = observer(
             //hideRootAndMainContentOverflow(true);
         }
 
+        // Make the user exit the current session
+        function handleExitSessionACB() {
+            const userId = props.userModel.userId;
+
+            if (userId) {
+                props.sessionModel.removeUser(userId);
+            }
+            props.sessionModel.setSessionId(null);
+            props.userModel.setCurrentSessionId(null);
+        }
+
 		const HAS_ALL_DETAILS_DATA = (
 			!!props.model.movieDetailsPrmsState.data
 			// && !!props.model.movieVideosPrmsState.data
@@ -93,6 +104,7 @@ const Home = observer(
                         onJoinSession={sessionJoinACB}
                         movies={(props.model.popularMoviesPrmsState.data as TMDBMoviePageResult[]) || []}
                         onMovieClick={onMovieClickedACB}
+                        onExitSession={handleExitSessionACB}
                     />
                 </div>
                 {details}
