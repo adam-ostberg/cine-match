@@ -83,6 +83,11 @@ export class UserModel  {
     }
 
     addMatch(match: MatchType) {
+        // First we prevent duplicate matches by checking existing IDs
+        const existingIds = this.matches.map(m => m.movieId);
+        if (existingIds.includes(match.movieId)) return; 
+
+        // If the movie hasnt been matched before we add it to the list of users macthed movies
         this.matches = [...this.matches, match];
     }
 
