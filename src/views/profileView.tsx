@@ -36,7 +36,8 @@ export function ProfileView(props: ProfileViewProps) {
   const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
   const POSTER_WIDTH_URL = "w780/";
   const matchedMovies = [...props.matchedMovies];
-  const likedMovies = [...props.likedMovies];
+  const aggregatedMatchedMovies = mergeMatchesByMovie(matchedMovies.reverse()?.slice(0, 29));
+  const likedMovies = [...new Set(props.likedMovies)]; // remove duplicates
 
   function handleSearchKeyDownACB(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
@@ -222,7 +223,7 @@ export function ProfileView(props: ProfileViewProps) {
             <div className={enoughMatches ? "seed-results-container" : ""}>
               {
                 enoughMatches ?
-                matchedMovies.reverse()?.slice(0, 30).map((match: MatchType) => {
+                aggregatedMatchedMovies.map((match: MatchType) => {
                   return MatchCard(match, props.userModel.username);
                 }) ?? ""
                 : <p>You haven't matched with anyone yet how sad!</p>
@@ -254,4 +255,32 @@ export function ProfileView(props: ProfileViewProps) {
       </button>
     </div>)
   );
+}
+
+export function mergeMatchesByMovie(
+  // Combines movies with the same id and aggregates the users that it matched with during different sessions.
+  matches: MatchType[]
+): MatchType[] {
+  const map = new Map<number, MatchType>();
+
+  for (const match of matches) {
+    const existing = map.get(match.movieId);
+
+    if (!existing) {
+      map.set(match.movieId, {
+        ...match,
+        usersInSession: [...match.usersInSession],
+      });
+      continue;
+    }
+
+    existing.usersInSession = Array.from(
+      new Set([
+        ...existing.usersInSession,
+        ...match.usersInSession,
+      ])
+    );
+  }
+
+  return Array.from(map.values());
 }
