@@ -240,7 +240,6 @@ export async function acceptFriendRequest(userModel: UserModel, fromUserId: stri
     const currentUserRef = doc(db, "users", userId);
     const otherUserRef = doc(db, "users", fromUserId);
 
-    // Update current user: add friend, remove request
     /*
     batch.update(currentUserRef, {
         friends: arrayUnion({ userId: fromUserId, username: fromUsername }),
@@ -260,5 +259,56 @@ export async function acceptFriendRequest(userModel: UserModel, fromUserId: stri
     });
 
     await batch.commit();
+    return true;
+}
+
+export async function sendLobbyInvite(
+    fromUser: UserModel, 
+    toUserId: string, 
+    sessionId: string
+): Promise<boolean> {
+    // Ensure the client user is logged in
+    if (!fromUser.userId) return false;
+
+    // The invited users reference
+    const targetUserRef = doc(db, "users", toUserId);
+    
+    // Add the lobby invite to the target user
+    await updateDoc(targetUserRef, {
+        invite: {
+            fromUserId: fromUser.userId,
+            fromUsername: fromUser.username,
+            sessionId: sessionId,
+            sentAt: new Date().toISOString()
+        }
+    });
+
+    return true;
+}
+
+export async function acceptLobbyInvite(
+    userModel: UserModel,
+) {
+    // Ensure the client user is logged in
+    if (!userModel.currentUser) return false;
+
+    const inviteLobbyId = userModel.invite?.sessionId
+    // Remove the invite from user model
+    userModel.invite = null;
+
+    // Join the session
+    if (!inviteLobbyId) return false;
+
+    await joinSession(userModel, inviteLobbyId);
+    
+    return true;
+}
+
+export function declineLobbyInvite(userModel: UserModel){
+    // Ensure the client user is logged in
+    if (!userModel.currentUser) return false;
+
+    userModel.invite = null;
+    
     return true;
 }

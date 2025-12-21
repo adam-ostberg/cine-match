@@ -28,6 +28,7 @@ export type ProfileViewProps = {
   onSignOutClick: () => void;
   onSendFriendRequest: (friendUsername: string) => void;
   onAcceptFriendRequest: (fromUsername: string, fromUserId: string) => void;
+  onSendInvite: (toUserId: string) => void;
 }
 
 export function ProfileView(props: ProfileViewProps) {
@@ -66,6 +67,10 @@ export function ProfileView(props: ProfileViewProps) {
     }
   }
 
+  function sendInvite(toUserId: string) {
+    props.onSendInvite(toUserId);
+  }
+
   function acceptFriendRequestClick(fromUsername: string, fromUserId: string) {
     props.onAcceptFriendRequest(fromUsername, fromUserId);
   }
@@ -86,6 +91,21 @@ export function ProfileView(props: ProfileViewProps) {
       </div>
     );
   }
+
+  function FriendsList(friends: FriendType[]) {
+    return (
+      <div className="friends-list">
+        {friends.map((friend, index) => (
+          <div className="friend-item" key={index}>
+            <UserAvatar userId={friend.userId} size={60}/>
+            <p>{friend.username}</p>
+            <button className="secondary-button" onClick={() => sendInvite(friend.userId)}>Invite</button>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
 
   function renderLikedMovieCB(movie: TMDBMoviePageResult) {
     if (!movie.poster_path) return null;
@@ -116,10 +136,11 @@ export function ProfileView(props: ProfileViewProps) {
       </>
     );
   }
+
   function MatchCard(match: MatchType, ownUsername: string) {
     const otherUsers = match.usersInSession.filter(username => username !== ownUsername);
     const enoughUsers = (otherUsers.length ?? 0) > 0;
-    let participants = enoughUsers 
+    const participants = enoughUsers 
       ? [(<div className="">Matched with</div>), otherUsers.map(user => (<div>{user}</div>))]
       : [(<div>Matched with</div>), (<div>Yourself</div>)]
     if (participants.length > 5) {
@@ -197,17 +218,16 @@ export function ProfileView(props: ProfileViewProps) {
             </div>
           </div>
           <div className="section">
-                <h3>Watch list (Last 30 matches)</h3>
-                
-                <div className={enoughMatches ? "seed-results-container" : ""}>
-                  {
-                    enoughMatches ?
-                    matchedMovies.reverse()?.slice(0, 30).map((match: MatchType) => {
-                      return MatchCard(match, props.userModel.username);
-                    }) ?? ""
-                    : <p>You haven't matched with anyone yet how sad!</p>
-                  }
-                </div>
+            <h3>Watch list (Last 30 matches)</h3>
+            <div className={enoughMatches ? "seed-results-container" : ""}>
+              {
+                enoughMatches ?
+                matchedMovies.reverse()?.slice(0, 30).map((match: MatchType) => {
+                  return MatchCard(match, props.userModel.username);
+                }) ?? ""
+                : <p>You haven't matched with anyone yet how sad!</p>
+              }
+            </div>
           </div>
           <div className="section">
             <h3>Liked Movies (Last 50 liked)</h3>
@@ -233,19 +253,5 @@ export function ProfileView(props: ProfileViewProps) {
         Log In
       </button>
     </div>)
-  );
-}
-
-function FriendsList(friends: FriendType[]) {
-  return (
-    <div className="friends-list">
-      {friends.map((friend, index) => (
-        <div className="friend-item" key={index}>
-          <UserAvatar userId={friend.userId} size={60}/>
-          <p>{friend.username}</p>
-          <button className="secondary-button">Invite</button>
-        </div>
-      ))}
-    </div>
   );
 }

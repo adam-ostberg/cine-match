@@ -23,7 +23,6 @@ export class SessionModel {
     showMatchAnimation = false;
     currentMatchId: number | null = null;
 
-    alreadyMatchedIds: number[] = [];
     matchQueue: number[] = [];
     matchesIds: number[] = [];
 
@@ -76,10 +75,9 @@ export class SessionModel {
         if (this.matchQueue.length > 0) {
             // Take the first one out
             const nextId = this.matchQueue.shift();
-            if (nextId && !this.alreadyMatchedIds.includes(nextId ?? -1)) {
+            if (nextId) {
                 this.currentMatchId = nextId;
                 this.showMatchAnimation = true;
-                this.alreadyMatchedIds.push(nextId);
                 console.log("Animating match:", nextId);
             }
         } else {

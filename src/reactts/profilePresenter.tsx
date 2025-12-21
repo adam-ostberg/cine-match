@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { ProfileView } from "../views/profileView.tsx";
 import type { MovieModel } from "../MovieModel.ts";
-import type { UserModel } from "../UserModel";
+import type { UserModel, InviteType } from "../UserModel";
 import type { TMDBMoviePageResult } from "../apiConfig.ts";
 import { signOutUser } from "../authService";
 import type { SessionModel } from "../SessionModel.ts";
-import { sendFriendRequest, acceptFriendRequest } from "../firestoreModel.ts";
+import { sendFriendRequest, acceptFriendRequest, createSession, sendLobbyInvite } from "../firestoreModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
 
@@ -73,6 +73,21 @@ const Profile = observer(
       }
     }
 
+    async function handleSendInviteACB(toUserId: string) {
+      // Create a new session for the invite
+      const newSessionId = await createSession(props.userModel);
+
+      // Check if session creation was successful
+      if (!newSessionId) {
+        alert("Failed to create session for invite.");
+        return;
+      }
+
+      // Send the lobby invite to the relevant friend
+      await sendLobbyInvite(props.userModel, toUserId, newSessionId);
+      window.location.hash = "#/lobby";
+    }
+
     const likedMovieTitles = props.userModel.likes.map(extactLikedMovieTitlesCB);
     const profile = !!props.model.genresPrmsState.data 
       ?
@@ -91,6 +106,7 @@ const Profile = observer(
         friends={props.userModel.friends}
         onSendFriendRequest={handleSendFriendRequestACB}
         onAcceptFriendRequest={handleAcceptFriendRequestACB}
+        onSendInvite={handleSendInviteACB}
       />
       : "";
 

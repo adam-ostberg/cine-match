@@ -535,6 +535,24 @@ height: auto;
   box-shadow: 0 0 10px rgba(81, 179, 81, 0.7); /* Glow */
 }
 
+.destructive-button {
+  border: 1px solid red;
+  background-color: rgba(179, 81, 81, 0.2); /* Transparent green */
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 10px 16px;
+  border-radius: 5px;
+  /* background-color: var(--btn-green); */ /* <--Uncomment here: better? */
+  transition: transform 0.3s ease;
+}
+
+.destructive-button:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(179, 81, 81, 0.7); /* Glow */
+}
+
 .details-container {
   position: absolute;
   top: 96%;
@@ -1668,4 +1686,54 @@ height: auto;
   margin: 8px;
   font-size: 0.9rem;
   color: white;
+}
+
+.invite-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  
+  background-color: #2a2a2a;
+  border: 2px solid var(--btn-green);
+  border-radius: 15px;
+  padding: 40px;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  min-width: 300px;
+}
+
+.invite-notification p {
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0;
+  color: white;
+}
+
+.invite-buttons {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+}
+
+.invite-buttons button {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 1rem;
+}
+
+/* Optional: Add a backdrop overlay behind the popup */
+.invite-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  backdrop-filter: blur(3px);
 }

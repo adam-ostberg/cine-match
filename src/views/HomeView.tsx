@@ -14,6 +14,7 @@ export type HomeViewProps = {
   onStartSession: () => void;
   onJoinSession: (sessionId: string) => void;
   onMovieClick: (id: number) => void;
+  onExitSession: () => void;
 }
 
 export function HomeView(props: HomeViewProps) {
@@ -37,6 +38,10 @@ export function HomeView(props: HomeViewProps) {
 
   function onContinueSwipingACB() {
     window.location.hash = "#/swipe";
+  }
+
+  function exitSessionACB() {
+    props.onExitSession();
   }
 
   /* function onStartSessionClickCB() { // For future implementation
@@ -81,6 +86,8 @@ return (
             <div className="currently-in-session-section">
               <p>You are currently in a session</p>
               <button className="primary-button" onClick={onContinueSwipingACB}>Continue swiping</button>
+              <p>or</p>
+              <button className="destructive-button" onClick={exitSessionACB}>Exit Session</button>
             </div>
           ) : (
             <div className="session-section">
