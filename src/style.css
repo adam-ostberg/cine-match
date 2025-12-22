@@ -1854,3 +1854,7 @@ height: auto;
     min-height: auto;
   }
 }
+
+.email-text {
+  color: rgb(164, 164, 164);
+}

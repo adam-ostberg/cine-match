@@ -26,10 +26,6 @@ const Profile = observer(
     const [showDetails, setShowDetails] = useState(false); // State to control details overlay
     const [friendRequestMessage, setFriendRequestMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
-    function handleUsernameChangeACB(newName: string) {
-      props.userModel.setUsername(newName);
-    }
-
     function handleRemoveLikeACB(movie: TMDBMoviePageResult) {
       props.model.toggleAlltimeLike(movie, true);
     }
@@ -108,7 +104,6 @@ const Profile = observer(
         sessionModel={props.sessionModel}
         likedMovies={props.userModel.likes}
         likedMoviesTitles={likedMovieTitles}
-        onUsernameChange={handleUsernameChangeACB}
         onRemoveLike={handleRemoveLikeACB}
         onMovieClick={handleMovieClickACB}
         onSignOutClick={handleSignOutACB}

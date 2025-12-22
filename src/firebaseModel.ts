@@ -412,6 +412,7 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
   function getUserInfoACB() {
     return {
       username: user.username,
+      email: user.email,
       likes: [...user.likes],
       matches: [...user.matches],
       friends: [...user.friends],
@@ -427,6 +428,7 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     const modelData = {
       username: user.username,
       likes: user.likes,
+      email: user.email,
       matches: user.matches,
       friends: user.friends,
       friendRequests: user.friendRequests,
@@ -457,6 +459,7 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     user.setFriends(data.friends ?? []);
     user.setFriendRequests(data.friendRequests ?? []);
     user.setInvite(data.invite ?? null);
+    user.setEmail(data.email ?? "");
     user.setReady(true);
 
     // Reset flag after updates are applied
