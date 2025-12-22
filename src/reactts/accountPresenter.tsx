@@ -28,6 +28,9 @@ const Account = observer(
           case "Firebase: Error (auth/invalid-email).":
             setErrorMessage("Invalid email.");
             break;
+          case "Firebase: Error (auth/missing-password).":
+            setErrorMessage("Password is required.");
+            break;
           default:
             setErrorMessage(err?.message ?? "Login failed");
         }
