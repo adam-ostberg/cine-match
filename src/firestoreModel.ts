@@ -77,55 +77,47 @@ export async function joinSession(userModel: UserModel, sessionId: string) {
     }
 }
 
-export async function handleSwipeInSession(sessionId: string, userModel: UserModel, movie: {id: number, title: string, posterPath: string}, liked: boolean): Promise<boolean> {
-    if (!liked) return false; // Only likes are relevant for matching
-
+export async function persistSessionSwipe(
+    sessionId: string, 
+    userId: string, 
+    movie: { movieId: number; title: string; posterPath: string }
+): Promise<boolean> {
     const sessionRef = doc(db, "sessions", sessionId);
-    const movieLikesRef = doc(db, "sessions", sessionId, "likes", movie.id.toString());
-    const userId = userModel.currentUser?.uid || "";    // TODO: Maybe we should handle null case better
+    const movieLikesRef = doc(db, "sessions", sessionId, "likes", movie.movieId.toString());
 
     try {
-        // runTransaction handles race conditions for us
         await runTransaction(db, async (transaction) => {
-            // Get session data to see how many people are in the current session
             const sessionDoc = await transaction.get(sessionRef);
             if (!sessionDoc.exists()) throw "Session does not exist!";
             
             const participants = sessionDoc.data().participants || [];
             const totalParticipants = participants.length;
 
-            // Get current likes for this movie
             const movieDoc = await transaction.get(movieLikesRef);
-            let likedBy = [];
+            let likedBy: string[] = [];
             if (movieDoc.exists()) {
                 likedBy = movieDoc.data().likedBy || [];
             }
 
-            // Avoid double counting
             if (!likedBy.includes(userId)) {
                 likedBy.push(userId);
             }
 
-            // Check for Match
             if (likedBy.length >= totalParticipants && totalParticipants > 0) {
-                // We have a match! Update the main session document
                 transaction.update(sessionRef, {
                     match: {
-                        movieId: movie.id,
+                        movieId: movie.movieId,
                         title: movie.title,
-                        poster_path: movie.posterPath || "" // Pass relevant data
+                        poster_path: movie.posterPath || ""
                     },
                     status: "matched"
                 });
             }
 
-            // Save the like
             transaction.set(movieLikesRef, { likedBy }, { merge: true });
         });
 
-        await addLikeToUser(userModel, movie);
-
-        console.log("Swipe recorded successfully");
+        console.log("Session swipe recorded successfully");
         return true;
     } catch (e) {
         console.error("Transaction failed: ", e);

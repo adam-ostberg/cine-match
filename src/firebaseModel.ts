@@ -8,6 +8,7 @@ import { SessionModel } from "./SessionModel";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot as firestoreOnSnapshot, collection, getDocs } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/auth";
 import type { UserModel } from "./UserModel";
+import { persistSessionSwipe } from "./firestoreModel";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -216,6 +217,25 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
   // Flag to prevent write-back loops
   let isUpdatingFromFirestore = false;
 
+  // Watch for pending session swipes
+  function pendingSessionSwipeACB() {
+    return user.pendingSessionSwipe;
+  }
+
+  async function persistSessionSwipeACB(swipe: { movieId: number; title: string; posterPath: string } | null) {
+    // We need to have a valid swipe, session ID and user ID
+    if (!swipe || !user.currentSessionId || !user.userId) return;
+
+    // Persist the swipe to Firestore
+    try {
+      await persistSessionSwipe(user.currentSessionId, user.userId, swipe);
+    } catch (e) {
+      console.error("Failed to persist session swipe:", e);
+    } finally {
+      user.clearPendingSessionSwipe();
+    }
+  }
+
   // For checking changes
   function getUserInfoACB() {
     return {
@@ -277,10 +297,12 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
 
   // Install the side effect for local changes - this returns a disposer function
   const unsubscribeReaction = watchFunction(getUserInfoACB, persistUserModelACB);
+  const unsubscribeSwipeReaction = watchFunction(pendingSessionSwipeACB, persistSessionSwipeACB);
 
   // Return a combined cleanup function
   return () => {
     unsubscribeFirestore();
     if (unsubscribeReaction) unsubscribeReaction();
+    if (unsubscribeSwipeReaction) unsubscribeSwipeReaction();
   };
 }

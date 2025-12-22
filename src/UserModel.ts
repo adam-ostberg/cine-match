@@ -1,5 +1,4 @@
 import { type User } from "firebase/auth";
-import { handleSwipeInSession } from "./firestoreModel";
 import { makeAutoObservable } from "mobx";
 
 export type FriendType = {
@@ -38,6 +37,8 @@ export class UserModel  {
     invite: InviteType | null = null;
     friends: FriendType[] = [];
     friendRequests: FriendRequestType[] = [];
+    // This is for pending session swipes to be processed
+    pendingSessionSwipe: { movieId: number; title: string; posterPath: string } | null = null;
 
     constructor() {
         makeAutoObservable(this);
@@ -88,14 +89,22 @@ export class UserModel  {
         this.invite = null;
     }
     
-    async reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
-        if (this.currentSessionId && this.userId) {
-            const didMatch = await handleSwipeInSession(this.currentSessionId, this, {id: movieId, title, posterPath}, liked);
-            if (didMatch) {
-                // TODO: Remove this!
-                console.log("A match was made for movie:", title);
-            }
+    reportSwipe(movieId: number, title: string, posterPath: string, liked: boolean) {
+        // Only add likes and only if the user is in a session
+        if(!liked || !this.currentSessionId || !this.userId) return;
+
+        // Add the like to the model
+        const alreadyLiked = this.likes.some(m => m.movieId === movieId);
+        if (!alreadyLiked) {
+            this.likes = [...this.likes, {movieId: movieId, title: title, poster_path: posterPath}];
         }
+
+        // Set pending swipe for sesesion matching logic
+        this.pendingSessionSwipe = { movieId, title, posterPath };
+    }
+
+    clearPendingSessionSwipe() {
+        this.pendingSessionSwipe = null;
     }
 
     addMatch(match: MatchType) {
