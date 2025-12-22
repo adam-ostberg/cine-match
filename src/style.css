@@ -1183,6 +1183,10 @@ height: auto;
   justify-content: center;
 }
 
+.search-row input {
+  width: 45%;
+}
+
 .username-input {
   max-width: 300px;
   padding: 10px;
