@@ -1668,6 +1668,10 @@ height: auto;
   color: red;
 }
 
+.success-message {
+  color: var(--btn-green);
+}
+
 .friends-list {
   display: flex;
   flex-wrap: wrap;

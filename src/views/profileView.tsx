@@ -21,6 +21,7 @@ export type ProfileViewProps = {
   matchedMovies: MatchType[];
   friendRequests: FriendRequestType[];
   friends: FriendType[];
+  friendRequestMessage: { text: string; isError: boolean } | null;
 
   onUsernameChange: (name: string) => void;
   onRemoveLike: (movie: TMDBMoviePageResult) => void
@@ -107,7 +108,6 @@ export function ProfileView(props: ProfileViewProps) {
     );
   }
 
-
   function renderLikedMovieCB(movie: TMDBMoviePageResult) {
     if (!movie.poster_path) return null;
     function movieClickACB() {
@@ -156,6 +156,7 @@ export function ProfileView(props: ProfileViewProps) {
       </div>
     );
   }
+
   function likedMoviesOutput(movie: LikedMovie) {
     const POSTER_URL = TMDB_BASE_URL + POSTER_WIDTH_URL + movie.poster_path;
     return (
@@ -214,6 +215,11 @@ export function ProfileView(props: ProfileViewProps) {
                 <input id="friend-username-input" className="username-input" type="text" placeholder="Friend's username" />
                 <button className="secondary-button" onClick={sendFriendRequestACB}>Send request</button>
               </div>
+              {props.friendRequestMessage && (
+                <p className={props.friendRequestMessage.isError ? "error-message" : "success-message"}>
+                  {props.friendRequestMessage.text}
+                </p>
+              )}
               <h4>Current friends</h4>
               {FriendsList(props.friends)}
             </div>
