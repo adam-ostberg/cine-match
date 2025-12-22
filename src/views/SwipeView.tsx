@@ -10,7 +10,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useState } from "react";
 import { type PanInfo } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
-import TuneIcon from '@mui/icons-material/Tune';
+import ViewSidebarRoundedIcon from '@mui/icons-material/ViewSidebarRounded';
 import { MatchAnimationView } from "./matchAnimationView";
 import type { SessionModel, UserInfoType } from "../SessionModel";
 import type { UserModel } from "../UserModel";
@@ -176,7 +176,7 @@ const SwipeView = observer(
         {DisplayUpSwipeAnim(isFetchingIdQueue)}
         <aside className={swipeSidebarClassNames} id="swipeSidebar">
           <IconButton className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
-            <TuneIcon />
+            <ViewSidebarRoundedIcon />
           </IconButton>
           <div className="sidebar-content">
             <h2>Status</h2>
