@@ -75,8 +75,8 @@ export function HomeView(props: HomeViewProps) {
   } */
 
   const introText = props.userModel.currentUser
-    ? `Create a session and invite some friends to decide which movie to watch!`
-    : `CineMatch helps you and your friends decide upon a movie to watch. Create an account and invite your friends to a session to begin swiping until you find your perfect movie match!`;
+    ? "Create a session and invite friends to decide what movie to watch."
+    : "CineMatch helps you and your friends decide what movie to watch. Create an account, invite friends to a session, and start swiping until you find a match.";
 
 return (
     <div className="home">
