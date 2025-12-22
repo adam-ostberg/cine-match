@@ -1,10 +1,14 @@
+import { UserAvatar } from "../components/UserAvatar";
+import type { FriendType } from "../UserModel";
 
 export type LobbyViewProps = {
   lobbyId: string;
   usernames: string[];
   isHost: boolean;
+  friends: FriendType[];
   onStartSwiping: () => void;
   toOptionsView: () => void;
+  onInviteFriend: (friend: FriendType) => void;
 }
 
 export function LobbyView(props: LobbyViewProps) {
@@ -12,8 +16,29 @@ export function LobbyView(props: LobbyViewProps) {
   function startSwipingACB() {
     props.onStartSwiping();
   }
+
   function toOptionsViewACB() {
     props.toOptionsView();
+  }
+
+  function inviteFriendClickACB(friend: FriendType) {
+    props.onInviteFriend(friend);
+  }
+
+  function FriendsList(friends: FriendType[]) {
+    return (
+      <div className="friends-list">
+        {friends.map((friend) => 
+          props.usernames.includes(friend.username) ? null : (
+            <div key={friend.userId}>
+              <UserAvatar userId={friend.userId} size={40}/>
+              <p>{friend.username}</p>
+              <button className="secondary-button" onClick={() => inviteFriendClickACB(friend)}>Invite</button>
+            </div>
+          )
+        )}
+      </div>
+    );
   }
 
   return (
@@ -41,6 +66,7 @@ export function LobbyView(props: LobbyViewProps) {
             )}
         </div>
       </div>
+      {FriendsList(props.friends)}
     </div>
   );
 }
