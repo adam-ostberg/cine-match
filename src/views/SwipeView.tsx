@@ -1,8 +1,8 @@
 import "../style.css"
 import type { MovieDetails } from "../apiConfig";
-import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion"
+import { animate, motion, useMotionValue, useTransform } from "framer-motion"
 import type { PromiseState } from "../resolvePromise";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -11,7 +11,6 @@ import { useState } from "react";
 import { type PanInfo } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
 import TuneIcon from '@mui/icons-material/Tune';
-import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import { MatchAnimationView } from "./matchAnimationView";
 import type { SessionModel, UserInfoType } from "../SessionModel";
 import type { UserModel } from "../UserModel";
@@ -19,6 +18,9 @@ import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { observer } from "mobx-react-lite";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import heartImg from "../assets/heartImg.png";
+import dislikeImg from "../assets/dislikeImg.png";
+import settingsImg from "../assets/settingsImg.png";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -48,6 +50,7 @@ const SwipeView = observer(
     }
 
     const [showMatchAnimation, setShowMatchAnimation] = useState(false);
+    showMatchAnimation
     const [cachedDetails, setCachedDetails] = useState<MovieDetails[] | null>(null);
     const [swipeCardIsCached, setSwipeCardIsCached] = useState<boolean>(false);
     const [isFetchingIdQueue, setIsFetchingIdQueue] = useState<boolean>(false);
@@ -271,14 +274,14 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
     if (!is_top_card) return;
 
     if (info.offset.x > swipePixelLimit) {
-      const controls = animate(x, swipePixelLimit*2, {
+      animate(x, swipePixelLimit*2, {
         type: "tween",
         duration: 0.1,
         ease: "easeOut",
         onComplete: () => rightSwipeCB(),
       });
     } else if (info.offset.x < -swipePixelLimit) {
-      const controls = animate(x, -swipePixelLimit*2, {
+      animate(x, -swipePixelLimit*2, {
         type: "tween",
         duration: 0.1,
         ease: "easeOut",
@@ -293,7 +296,6 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
       animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     }
   };
-  const motionDivClassNames = isCached ? "swipe-card-wrapper" : "swipe-card-wrapper";
 return (
   <motion.div className="swipe-card-wrapper"
     style={{
@@ -321,7 +323,7 @@ return (
       }} 
     />
     <motion.img
-      src={"src/assets/heartImg.png"}
+      src={heartImg}
       alt={"Placeholder"}
       className="swipe-like-img"
       drag
@@ -341,7 +343,7 @@ return (
       }} 
     />
     <motion.img
-      src={"src/assets/dislikeImg.png"}
+      src={dislikeImg}
       alt={"Placeholder"}
       className="swipe-dislike-img"
       drag
@@ -361,7 +363,7 @@ return (
       }} 
     />
     <motion.img
-      src={"src/assets/settingsImg.png"}
+      src={settingsImg}
       alt={"Placeholder"}
       className="swipe-settings-img"
       drag
@@ -409,7 +411,7 @@ function DisplayUpSwipeAnim(isFetchingIdQueue: boolean) {
       pointerEvents: "none",
     }}>
     <DotLottieReact
-      src="src/assets/SwipeUpAnim.lottie"
+      src="/SwipeUpAnim.lottie"
       autoplay
       loop
       loopCount={2}

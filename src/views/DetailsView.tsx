@@ -5,7 +5,7 @@ import { minutesToHourAndMinutesText, getCountryCode, hideRootAndMainContentOver
 import { useState, useEffect, useRef } from "react";
 /* npm install react-icons */
 import { FaArrowLeft, FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaFire, FaUserCircle, FaExternalLinkAlt, /* FaPlus */ } from "react-icons/fa";
-import { MdOutlineSwipe, MdExitToApp } from "react-icons/md";
+import { MdOutlineSwipe } from "react-icons/md";
 import imdbLogo from "../assets/imdb_logo_2016.svg";
 
 export type DetailsViewProps = {
@@ -86,10 +86,6 @@ const DetailsView = observer(
       const director = crew.find(person => person.job == "Director");
       return director
     }
-    function getTopThreeWriters(crew: TMDBCrew[]): Array<TMDBCrew> {
-      const writers = crew.filter(person => person.department === "Writing").slice(0, 2);
-      return writers;
-    }
     function getTopActors(cast: TMDBCast[]): Array<TMDBCast> {
       const actors = cast.filter(person => person.known_for_department === "Acting"); // Only actors have a .order key
       const topSevenActors = actors.filter(person => person.order < 7).sort((a, b) => a.order - b.order);
@@ -104,48 +100,6 @@ const DetailsView = observer(
       iframeRef.current.contentWindow?.postMessage(`{"event":"command","func":"${action}"}`, '*');
       setIsMuted(!isMuted);
     }
-
-    /* function peopleTextOutput(people: TMDBCast[] | TMDBCrew[], headerText: string) {
-      let text = "";
-      let i = 0;
-      for (const person of people) {
-        if (i < people.length-1) {
-          text += person.name + ", ";
-        }
-        else {
-          text += person.name;
-        }
-        i += 1;
-      }
-      return <li><b>{headerText}</b>{text}</li>
-    }
-    function outputSpokenLanguagesCB(language: SpokenLanguages, index: number, array: SpokenLanguages[]) {
-      if (!language) { return };
-
-      return index < array.length-1 ? `${language.english_name}, ` : `${language.english_name}`;
-    }
-    function outputOriginCountryCB(countryCode: string, index: number, array: string[]) {
-      if (!countryCode) { return };
-      const country = countryName.of(countryCode);
-      return index < array.length-1 ? `${country}, ` : `${country}`; 
-    }
-    function outputBoxOfficeValue(value: number, header: string) {
-      if (!value || value <= 0) { return };
-      return <li><b>{header}: </b>{value.toLocaleString("en-us")}$</li>;
-    }
-    function outputBoxOffice(budget: number, revenue: number) {
-      if (budget <= 0 && revenue < 0) return;
-
-      return (
-        <div>
-          <h2>Box Office</h2>
-          <ul>
-            {outputBoxOfficeValue(details.budget, "Budget")}
-            {outputBoxOfficeValue(details.revenue, "Revenue")}
-          </ul>
-        </div>
-      );
-    } */
 
     function filterAndSortWatchProviders(options: CountryWatchOptions) {
       if (!options) {

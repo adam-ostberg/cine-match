@@ -6,7 +6,6 @@ import { Navbar } from "../reactts/navbarPresenter";
 import { getGenres } from "../apiConfig";
 import { DetailsView } from "../views/DetailsView";
 import { useState, useEffect, useRef } from "react";
-import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import type { UserModel } from "../UserModel";
 import type { SessionModel } from "../SessionModel";
 import { resolvePromise, type PromiseState } from "../resolvePromise";

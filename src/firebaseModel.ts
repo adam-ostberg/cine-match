@@ -5,7 +5,7 @@ import { getDatabase, ref, set, onValue } from "firebase/database";
 import { firebaseConfig } from "./firebaseConfig";
 import type { MovieModel } from "./MovieModel";
 import { SessionModel } from "./SessionModel";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot as firestoreOnSnapshot, collection, getDocs } from "firebase/firestore";
+import { getFirestore, doc, setDoc, onSnapshot as firestoreOnSnapshot, collection } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/auth";
 import type { UserModel } from "./UserModel";
 import { persistSessionSwipe } from "./firestoreModel";
@@ -146,7 +146,7 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
     }, (error) => {
       console.error("Error listening to likes collection:", error);
     });
-
+    unsubscribeLikes
   }
 
   // Watch for status changes only - this is the main thing clients might update

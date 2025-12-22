@@ -1,6 +1,6 @@
 import { db } from "./firebaseConfig.ts";
 import { MovieModel } from "./MovieModel.ts";
-import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot, getDocs, where, collection, query, writeBatch, arrayRemove } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, runTransaction, onSnapshot, getDocs, where, collection, query, writeBatch } from "firebase/firestore";
 import type { SessionModel, UserInfoType } from "./SessionModel.ts";
 import { type MatchType, UserModel } from "./UserModel.ts";
 
@@ -148,7 +148,7 @@ async function addLikeToUser(userModel: UserModel, movie: {id: number, title: st
         console.error("Failed to update user likes: ", e);
     }
 }
-
+addLikeToUser
 export function listenToSession(sessionId: string, model: MovieModel, sessionModel: SessionModel, userModel: UserModel) {
     const docRef = doc(db, "sessions", sessionId);
     // @ts-ignore  /* For npm run build */
@@ -230,6 +230,7 @@ export async function acceptFriendRequest(userModel: UserModel, fromUserId: stri
 
     // Get the document references
     const currentUserRef = doc(db, "users", userId);
+    currentUserRef
     const otherUserRef = doc(db, "users", fromUserId);
 
     /*

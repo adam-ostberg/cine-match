@@ -7,7 +7,6 @@ import { createSession, joinSession, listenToSession } from "../firestoreModel.t
 import { MovieModel } from "../MovieModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
-import { hideRootAndMainContentOverflow } from "../helperFunctions.ts";
 import { UserModel } from "../UserModel.ts";
 import { SessionModel } from "../SessionModel.ts";
 
