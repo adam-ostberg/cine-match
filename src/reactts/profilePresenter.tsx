@@ -5,7 +5,6 @@ import type { UserModel } from "../UserModel";
 import type { TMDBMoviePageResult } from "../apiConfig.ts";
 import { signOutUser } from "../authService";
 import type { SessionModel } from "../SessionModel.ts";
-import { sendFriendRequest, acceptFriendRequest, createSession, sendLobbyInvite } from "../firestoreModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
 
@@ -55,37 +54,29 @@ const Profile = observer(
       setShowDetails(false); // Hide details overlay
     }
 
-    async function handleSendFriendRequestACB(friendUsername: string) {
-      try {
-        await sendFriendRequest(props.userModel, friendUsername);
-      } catch (e: any) {
-        // TODO add beter UX for this!
-        alert("Failed to send friend request: " + e.message);
-      }
+    function handleSendFriendRequestACB(friendUsername: string) {
+      props.userModel.sendFriendRequest(friendUsername);
     }
 
-    async function handleAcceptFriendRequestACB(fromUsername: string, fromUserId: string) {
-      try {
-        await acceptFriendRequest(props.userModel, fromUserId, fromUsername);
-      } catch (e: any) {
-        // TODO add beter UX for this!
-        alert("Failed to accept friend request: " + e.message);
-      }
+    function handleAcceptFriendRequestACB(fromUsername: string, fromUserId: string) {
+      props.userModel.acceptFriendRequestAction(fromUserId, fromUsername);
     }
 
-    async function handleSendInviteACB(toUserId: string) {
-      // Create a new session for the invite
-      const newSessionId = await createSession(props.userModel);
-
-      // Check if session creation was successful
-      if (!newSessionId) {
-        alert("Failed to create session for invite.");
-        return;
-      }
-
-      // Send the lobby invite to the relevant friend
-      await sendLobbyInvite(props.userModel, toUserId, newSessionId);
-      window.location.hash = "#/lobby";
+    function handleSendInviteACB(toUserId: string) {
+      // First create a session, then send the invite
+      // We need to wait for session to be created before sending invite
+      props.userModel.createSessionAction();
+      
+      // Use a small delay to wait for session creation, then send invite
+      // This is a workaround - ideally we'd chain these in the persistence layer
+      const checkAndSendInvite = () => {
+        if (props.userModel.currentSessionId) {
+          props.userModel.sendLobbyInviteAction(toUserId);
+        } else {
+          setTimeout(checkAndSendInvite, 100);
+        }
+      };
+      setTimeout(checkAndSendInvite, 100);
     }
 
     const likedMovieTitles = props.userModel.likes.map(extactLikedMovieTitlesCB);

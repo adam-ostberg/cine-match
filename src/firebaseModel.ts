@@ -8,7 +8,16 @@ import { SessionModel } from "./SessionModel";
 import { getFirestore, doc, setDoc, onSnapshot as firestoreOnSnapshot, collection } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/auth";
 import type { UserModel } from "./UserModel";
-import { persistSessionSwipe } from "./firestoreModel";
+import { 
+  persistSessionSwipe, 
+  sendFriendRequest, 
+  acceptFriendRequest, 
+  createSession, 
+  joinSession, 
+  sendLobbyInvite,
+  acceptLobbyInvite,
+  declineLobbyInvite 
+} from "./firestoreModel";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -76,6 +85,7 @@ export function connectToPersistence(model: MovieModel, reaction: any) {
 
 export function connectSessionToPersistence(session: SessionModel, userModel: UserModel, model: MovieModel, watchFunction: any) {
   let unsubscribeFirestore: Unsubscribe | null = null;
+  let unsubscribeLikes: Unsubscribe | null = null;
   
   // Flag to prevent write-back loops when receiving Firestore updates
   let isUpdatingFromFirestore = false;
@@ -86,10 +96,14 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
   }
 
   function onSessionIdChangeACB(sessionId: string | null) {
-    // Clean up previous listener if exists
+    // Clean up previous listeners if exists
     if (unsubscribeFirestore) {
       unsubscribeFirestore();
       unsubscribeFirestore = null;
+    }
+    if (unsubscribeLikes) {
+      unsubscribeLikes();
+      unsubscribeLikes = null;
     }
 
     // Reset session state if no session
@@ -125,6 +139,27 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
       session.setStatus(data.status || "waiting");
       session.setReady(true);
 
+      // Check if a match has been found
+      if (data.match && data.match.movieId) {
+        console.log("Match detected in session:", data.match);
+        
+        // Queue the match animation
+        session.queueMatch(data.match.movieId);
+
+        // Build match data for user's match history
+        const usersInSession = data.participants?.map((p: { userId: string; username: string }) => p.username) || [];
+        const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
+        
+        const matchData = {
+          movieId: data.match.movieId,
+          title: data.match.title,
+          poster_path: data.match.poster_path ? (TMDB_BASE_URL + "w300" + data.match.poster_path) : null,
+          usersInSession: usersInSession,
+        };
+
+        userModel.addMatch(matchData);
+      }
+
       // Reset flag after updates are applied (use setTimeout to let MobX reactions complete)
       setTimeout(() => {
         isUpdatingFromFirestore = false;
@@ -133,8 +168,8 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
       console.error("Error listening to session:", error);
     });
 
-    // This updates evertime the likes collection changes in the firestore database.
-    const unsubscribeLikes = firestoreOnSnapshot(likeCollectionRef, (querySnapshot) => {
+      // This updates evertime the likes collection changes in the firestore database.
+      unsubscribeLikes = firestoreOnSnapshot(likeCollectionRef, (querySnapshot) => {
       // Callback runs every time the collection updates
       const movieLikeIds = querySnapshot.docs.map(doc => Number(doc.id));
       if (!movieLikeIds || !Array.isArray(movieLikeIds) || movieLikeIds.length === 0) {
@@ -224,15 +259,155 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
 
   async function persistSessionSwipeACB(swipe: { movieId: number; title: string; posterPath: string } | null) {
     // We need to have a valid swipe, session ID and user ID
-    if (!swipe || !user.currentSessionId || !user.userId) return;
+    if (!swipe) {
+      return;
+    }
+    
+    if (!user.currentSessionId || !user.userId) {
+      console.warn("Cannot persist swipe - missing sessionId or userId:", { 
+        sessionId: user.currentSessionId, 
+        userId: user.userId 
+      });
+      user.clearPendingSessionSwipe();
+      return;
+    }
+
+    console.log("Persisting session swipe:", { 
+      sessionId: user.currentSessionId, 
+      userId: user.userId, 
+      swipe 
+    });
 
     // Persist the swipe to Firestore
     try {
-      await persistSessionSwipe(user.currentSessionId, user.userId, swipe);
+      const result = await persistSessionSwipe(user.currentSessionId, user.userId, swipe);
+      console.log("Session swipe result:", result);
     } catch (e) {
       console.error("Failed to persist session swipe:", e);
     } finally {
       user.clearPendingSessionSwipe();
+    }
+  }
+
+  // Watch for pending friend requests
+  function pendingFriendRequestACB() {
+    return user.pendingFriendRequest;
+  }
+
+  // Persist friend request if there was one pending detected
+  async function persistFriendRequestACB(request: { toUsername: string } | null) {
+    if (!request) return;
+    try {
+      await sendFriendRequest(user, request.toUsername);
+    } catch (e: any) {
+      console.error("Failed to send friend request:", e);
+      alert("Failed to send friend request: " + e.message);
+    } finally {
+      user.clearPendingFriendRequest();
+    }
+  }
+
+  // Watch for pending accept friend request
+  function pendingAcceptFriendRequestACB() {
+    return user.pendingAcceptFriendRequest;
+  }
+
+  // Persist it
+  async function persistAcceptFriendRequestACB(request: { fromUserId: string; fromUsername: string } | null) {
+    if (!request) return;
+    try {
+      await acceptFriendRequest(user, request.fromUserId, request.fromUsername);
+    } catch (e: any) {
+      console.error("Failed to accept friend request:", e);
+      alert("Failed to accept friend request: " + e.message);
+    } finally {
+      user.clearPendingAcceptFriendRequest();
+    }
+  }
+
+  // Watch for pending lobby invites
+  function pendingLobbyInviteACB() {
+    return user.pendingLobbyInvite;
+  }
+
+  async function persistLobbyInviteACB(invite: { toUserId: string } | null) {
+    if (!invite || !user.currentSessionId) return;
+    try {
+      await sendLobbyInvite(user, invite.toUserId, user.currentSessionId);
+    } catch (e) {
+      console.error("Failed to send lobby invite:", e);
+    } finally {
+      user.clearPendingLobbyInvite();
+    }
+  }
+
+  // Watch for pending create session
+  function pendingCreateSessionACB() {
+    return user.pendingCreateSession;
+  }
+
+  // Persist the create session request
+  async function persistCreateSessionACB(shouldCreate: boolean) {
+    if (!shouldCreate) return;
+    try {
+      const sessionId = await createSession(user);
+      if (sessionId) {
+        window.location.hash = "#/lobby";
+      }
+    } catch (e) {
+      console.error("Failed to create session:", e);
+    } finally {
+      user.clearPendingCreateSession();
+    }
+  }
+
+  // Watch for pending join session
+  function pendingJoinSessionACB() {
+    return user.pendingJoinSession;
+  }
+
+  async function persistJoinSessionACB(joinRequest: { sessionId: string } | null) {
+    if (!joinRequest) return;
+    try {
+      await joinSession(user, joinRequest.sessionId);
+      window.location.hash = "#/lobby";
+    } catch (e) {
+      console.error("Failed to join session:", e);
+    } finally {
+      user.clearPendingJoinSession();
+    }
+  }
+
+  // Watch for pending accept lobby invite
+  function pendingAcceptLobbyInviteACB() {
+    return user.pendingAcceptLobbyInvite;
+  }
+
+  async function persistAcceptLobbyInviteACB(shouldAccept: boolean) {
+    if (!shouldAccept) return;
+    try {
+      await acceptLobbyInvite(user);
+      window.location.hash = "#/lobby";
+    } catch (e) {
+      console.error("Failed to accept lobby invite:", e);
+    } finally {
+      user.clearPendingAcceptLobbyInvite();
+    }
+  }
+
+  // Watch for pending decline lobby invite
+  function pendingDeclineLobbyInviteACB() {
+    return user.pendingDeclineLobbyInvite;
+  }
+
+  function persistDeclineLobbyInviteACB(shouldDecline: boolean) {
+    if (!shouldDecline) return;
+    try {
+      declineLobbyInvite(user);
+    } catch (e) {
+      console.error("Failed to decline lobby invite:", e);
+    } finally {
+      user.clearPendingDeclineLobbyInvite();
     }
   }
 
@@ -298,11 +473,25 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
   // Install the side effect for local changes - this returns a disposer function
   const unsubscribeReaction = watchFunction(getUserInfoACB, persistUserModelACB);
   const unsubscribeSwipeReaction = watchFunction(pendingSessionSwipeACB, persistSessionSwipeACB);
+  const unsubscribeFriendRequest = watchFunction(pendingFriendRequestACB, persistFriendRequestACB);
+  const unsubscribeAcceptFriendRequest = watchFunction(pendingAcceptFriendRequestACB, persistAcceptFriendRequestACB);
+  const unsubscribeLobbyInvite = watchFunction(pendingLobbyInviteACB, persistLobbyInviteACB);
+  const unsubscribeCreateSession = watchFunction(pendingCreateSessionACB, persistCreateSessionACB);
+  const unsubscribeJoinSession = watchFunction(pendingJoinSessionACB, persistJoinSessionACB);
+  const unsubscribeAcceptLobbyInvite = watchFunction(pendingAcceptLobbyInviteACB, persistAcceptLobbyInviteACB);
+  const unsubscribeDeclineLobbyInvite = watchFunction(pendingDeclineLobbyInviteACB, persistDeclineLobbyInviteACB);
 
   // Return a combined cleanup function
   return () => {
     unsubscribeFirestore();
     if (unsubscribeReaction) unsubscribeReaction();
     if (unsubscribeSwipeReaction) unsubscribeSwipeReaction();
+    if (unsubscribeFriendRequest) unsubscribeFriendRequest();
+    if (unsubscribeAcceptFriendRequest) unsubscribeAcceptFriendRequest();
+    if (unsubscribeLobbyInvite) unsubscribeLobbyInvite();
+    if (unsubscribeCreateSession) unsubscribeCreateSession();
+    if (unsubscribeJoinSession) unsubscribeJoinSession();
+    if (unsubscribeAcceptLobbyInvite) unsubscribeAcceptLobbyInvite();
+    if (unsubscribeDeclineLobbyInvite) unsubscribeDeclineLobbyInvite();
   };
 }

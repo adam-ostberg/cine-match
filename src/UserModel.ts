@@ -37,8 +37,15 @@ export class UserModel  {
     invite: InviteType | null = null;
     friends: FriendType[] = [];
     friendRequests: FriendRequestType[] = [];
-    // This is for pending session swipes to be processed
+    // Pending actions for persistence via side effects
     pendingSessionSwipe: { movieId: number; title: string; posterPath: string } | null = null;
+    pendingFriendRequest: { toUsername: string } | null = null;
+    pendingAcceptFriendRequest: { fromUserId: string; fromUsername: string } | null = null;
+    pendingLobbyInvite: { toUserId: string } | null = null;
+    pendingCreateSession: boolean = false;
+    pendingJoinSession: { sessionId: string } | null = null;
+    pendingAcceptLobbyInvite: boolean = false;
+    pendingDeclineLobbyInvite: boolean = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -105,6 +112,66 @@ export class UserModel  {
 
     clearPendingSessionSwipe() {
         this.pendingSessionSwipe = null;
+    }
+
+    // Friend request actions
+    sendFriendRequest(toUsername: string) {
+        this.pendingFriendRequest = { toUsername };
+    }
+
+    clearPendingFriendRequest() {
+        this.pendingFriendRequest = null;
+    }
+
+    acceptFriendRequestAction(fromUserId: string, fromUsername: string) {
+        this.pendingAcceptFriendRequest = { fromUserId, fromUsername };
+    }
+
+    clearPendingAcceptFriendRequest() {
+        this.pendingAcceptFriendRequest = null;
+    }
+
+    // Lobby invite actions
+    sendLobbyInviteAction(toUserId: string) {
+        this.pendingLobbyInvite = { toUserId };
+    }
+
+    clearPendingLobbyInvite() {
+        this.pendingLobbyInvite = null;
+    }
+
+    // Session actions
+    createSessionAction() {
+        this.pendingCreateSession = true;
+    }
+
+    clearPendingCreateSession() {
+        this.pendingCreateSession = false;
+    }
+
+    joinSessionAction(sessionId: string) {
+        this.pendingJoinSession = { sessionId };
+    }
+
+    clearPendingJoinSession() {
+        this.pendingJoinSession = null;
+    }
+
+    // Accept/Decline lobby invite actions
+    acceptLobbyInviteAction() {
+        this.pendingAcceptLobbyInvite = true;
+    }
+
+    clearPendingAcceptLobbyInvite() {
+        this.pendingAcceptLobbyInvite = false;
+    }
+
+    declineLobbyInviteAction() {
+        this.pendingDeclineLobbyInvite = true;
+    }
+
+    clearPendingDeclineLobbyInvite() {
+        this.pendingDeclineLobbyInvite = false;
     }
 
     addMatch(match: MatchType) {

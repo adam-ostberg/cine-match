@@ -2,7 +2,6 @@ import { observer } from "mobx-react-lite";
 import { UserModel } from "../UserModel"
 import type { SessionModel } from "../SessionModel";
 import { InviteView } from "../views/InviteView";
-import { acceptLobbyInvite, declineLobbyInvite } from "../firestoreModel";
 
 type InvitePresenterProps = {
   userModel: UserModel;
@@ -11,13 +10,12 @@ type InvitePresenterProps = {
 
 const InvitePresenter = observer(
   function InviteRender(props: InvitePresenterProps) {
-    async function handleAcceptInviteACB() {
-      await acceptLobbyInvite(props.userModel);
-      window.location.hash = "#/lobby";
+    function handleAcceptInviteACB() {
+      props.userModel.acceptLobbyInviteAction();
     }
 
-    async function handleDeclineInviteACB() {
-      declineLobbyInvite(props.userModel);
+    function handleDeclineInviteACB() {
+      props.userModel.declineLobbyInviteAction();
     }
 
    return props.userModel.invite ? (
