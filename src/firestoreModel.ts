@@ -208,6 +208,13 @@ export async function sendFriendRequest(fromUser: UserModel, toUsername: string)
         return false;
     }
 
+    // Check if the target user is already a friend
+    const isAlreadyFriend = fromUser.friends.some(friend => friend.userId === targetUserId);
+    if (isAlreadyFriend) {
+        console.error("User is already your friend");
+        return false;
+    }
+
     // Add request to target users friendRequests array
     const targetRef = doc(db, "users", targetUserId);
     await updateDoc(targetRef, {

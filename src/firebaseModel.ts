@@ -181,7 +181,6 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
     }, (error) => {
       console.error("Error listening to likes collection:", error);
     });
-
   }
 
   // Watch for status changes only - this is the main thing clients might update
