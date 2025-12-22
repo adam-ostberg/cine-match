@@ -167,7 +167,7 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
     });
 
       // This updates evertime the likes collection changes in the firestore database.
-      unsubscribeLikes = firestoreOnSnapshot(likeCollectionRef, (querySnapshot) => {
+    firestoreOnSnapshot(likeCollectionRef, (querySnapshot) => {
       // Callback runs every time the collection updates
       const movieLikeIds = querySnapshot.docs.map(doc => Number(doc.id));
       if (!movieLikeIds || !Array.isArray(movieLikeIds) || movieLikeIds.length === 0) {
@@ -179,7 +179,6 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
     }, (error) => {
       console.error("Error listening to likes collection:", error);
     });
-    unsubscribeLikes
   }
 
   // Watch for status changes only - this is the main thing clients might update

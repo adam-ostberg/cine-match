@@ -1607,7 +1607,7 @@ height: auto;
     flex-wrap: wrap;
   }
 
-  .profile-container .seed-results-container {
+  .profile-container {
     justify-content: center;
   }
 }

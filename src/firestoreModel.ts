@@ -125,30 +125,6 @@ export async function persistSessionSwipe(
     }
 }
 
-async function addLikeToUser(userModel: UserModel, movie: {id: number, title: string, posterPath: string}) {
-    const userId = userModel.currentUser?.uid;
-
-    if (!userId) {
-        console.error("No user logged in.");
-        return;
-    }
-
-    // Before we add the like to the users liked movies we check if its already there
-    const userLikesIds = userModel.likes.map(m => m.movieId);
-    // If the user has already liked this movie, we dont add it again
-    if (userLikesIds.includes(movie.id)) return;
-
-    // Add like to users list of likes movies aswell
-    const userLikesRef = doc(db, "users", userId);
-    try {
-        await updateDoc(userLikesRef, {
-            likes: arrayUnion({title: movie.title, movieId: movie.id, poster_path: movie.posterPath}),
-        });
-    } catch (e) {
-        console.error("Failed to update user likes: ", e);
-    }
-}
-addLikeToUser
 export function listenToSession(sessionId: string, model: MovieModel, sessionModel: SessionModel, userModel: UserModel) {
     const docRef = doc(db, "sessions", sessionId);
     // @ts-ignore  /* For npm run build */

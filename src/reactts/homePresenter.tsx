@@ -43,9 +43,7 @@ const Home = observer(
 
         function onMovieClickedACB(id: number) {
             setShowDetails(true);
-            //hideRootAndMainContentOverflow();
             props.model.setCurrentMovieId(id);
-            //window.location.hash = "#/details"; // Navigate to details
         }
         
         function closeDetailsACB() {
@@ -53,7 +51,6 @@ const Home = observer(
 			const background = document.querySelector(".details-view-background"); 
 			background?.classList.remove("is-dark");
             setShowDetails(false); // Hide details overlay
-            //hideRootAndMainContentOverflow(true);
         }
 
         // Make the user exit the current session
