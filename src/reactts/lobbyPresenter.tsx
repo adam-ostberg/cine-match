@@ -5,6 +5,7 @@ import { SessionModel, type UserInfoType } from "../SessionModel";
 import { isUserSessionHost } from "../sessionHelpers";
 import type { UserModel, FriendType } from "../UserModel";
 import { configDataForSwipeStart } from "../helperFunctions";
+import { Navbar } from "./navbarPresenter";
 
 export type LobbyPresenterProps = {
   model: MovieModel;
@@ -48,6 +49,7 @@ const Lobby = observer(
 
     return (
       <div>
+        {<Navbar userModel={props.userModel} sessionModel={props.sessionModel}/>}
         <LobbyView 
           lobbyId={props.userModel.currentSessionId || "No Session"} 
           usernames={usernames} 

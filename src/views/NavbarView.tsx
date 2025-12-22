@@ -9,7 +9,7 @@ import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 export type navbarViewProps = {
 	username: string | null;
 	userId: string;
-	sessionStatus: string;
+	sessionId: string | null;
 	onLogoClick: () => void;
 	onSignOutClick: () => void;
 	onExitSession: () => void;
@@ -32,7 +32,7 @@ export function NavbarView(props: navbarViewProps) {
 		props.onExitSession();
 	}
 
-	const sessionActive = props.sessionStatus === "active" || props.sessionStatus === "matched";
+	const sessionActive = !!props.sessionId;
 
 	function profileClickACB() {
 		window.location.hash = "#/profile";

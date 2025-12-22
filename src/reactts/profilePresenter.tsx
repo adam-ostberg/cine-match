@@ -118,21 +118,22 @@ const Profile = observer(
       />
       : "";
 
-
 		const HAS_ALL_DETAILS_DATA = (
 			!!props.model.movieDetailsPrmsState.data
-			// && !!props.model.movieVideosPrmsState.data
 			&& !!props.model.movieCreditsPrmsState.data
 			&& !!props.model.imdbRatingPrmsState.data
 			&& !!props.model.watchProvidersPrmsState.data
 		)
 		const details = showDetails && HAS_ALL_DETAILS_DATA 
-            ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} 
-            credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} 
-            watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> 
+            ? <DetailsView 
+              details={props.model.movieDetailsPrmsState.data} 
+              video={props.model.movieVideosPrmsState.data} 
+              credits={props.model.movieCreditsPrmsState.data} 
+              imdb={props.model.imdbRatingPrmsState.data} 
+              watchProviders={props.model.watchProvidersPrmsState.data} 
+              onClose={closeDetailsACB}
+            /> 
             : "";
-
-
     return (
       <div className="details-view-background" onClick={closeDetailsACB}>
         {profile}

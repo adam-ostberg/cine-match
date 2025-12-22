@@ -1,8 +1,8 @@
 import "../style.css"
 import type { MovieDetails } from "../apiConfig";
-import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion"
+import { animate, motion, useMotionValue, useTransform } from "framer-motion"
 import type { PromiseState } from "../resolvePromise";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -10,8 +10,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useState } from "react";
 import { type PanInfo } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
-import TuneIcon from '@mui/icons-material/Tune';
-import { hideRootAndMainContentOverflow } from "../helperFunctions";
+import ViewSidebarRoundedIcon from '@mui/icons-material/ViewSidebarRounded';
 import { MatchAnimationView } from "./matchAnimationView";
 import type { SessionModel, UserInfoType } from "../SessionModel";
 import type { UserModel } from "../UserModel";
@@ -19,6 +18,9 @@ import { LoadingSpinner } from "../components/LoadingSpinner.tsx";
 import { UserAvatar } from "../components/UserAvatar.tsx";
 import { observer } from "mobx-react-lite";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import heartImg from "../assets/heartImg.png";
+import dislikeImg from "../assets/dislikeImg.png";
+import settingsImg from "../assets/settingsImg.png";
 
 export type SwipeViewProps = {
   prefetchWindowPrmsState: PromiseState;
@@ -48,8 +50,8 @@ const SwipeView = observer(
     }
 
     const [showMatchAnimation, setShowMatchAnimation] = useState(false);
+    showMatchAnimation
     const [cachedDetails, setCachedDetails] = useState<MovieDetails[] | null>(null);
-    const [swipeCardIsCached, setSwipeCardIsCached] = useState<boolean>(false);
     const [isFetchingIdQueue, setIsFetchingIdQueue] = useState<boolean>(false);
 
     useEffect(() => {
@@ -60,11 +62,9 @@ const SwipeView = observer(
     useEffect(() => {
       const data = props.prefetchWindowPrmsState.data as MovieDetails[] | null;
       if (data && Array.isArray(data) && data.length > 0) {
-        setSwipeCardIsCached(false);
         setCachedDetails(data);
       }
       else {
-        setSwipeCardIsCached(true);
       }
     }, [props.prefetchWindowPrmsState.data]);
 
@@ -78,20 +78,30 @@ const SwipeView = observer(
 
     const firstDetail = !!detailsQueue ? detailsQueue[detailsQueue.length - 1] : undefined;
     const [swipeDirection, setSwipeDirection] = useState<SwipeDir>(null);
-    function handleSwipe(dir: "left" | "right", id: number) {
 
+    function handleSwipe(dir: "left" | "right", id: number) {
       if (dir === "right") {
-        props.onLike(id);     
+        props.onLike(id); // SWIPES RIGHT    
       } else {
-        props.onDislike(id);
+        props.onDislike(id); // SWIPES LEFT
       }
       setSwipeDirection(null);
     }
-
     function outputCardsCB(detail: MovieDetails, index: number, array: MovieDetails[], swipeDirection: SwipeDir) {
       if (!detail) { return };
       const is_top_card = index === array.length-1;
-      return <SwipeCard key={detail.id} id={detail.id} url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} rightSwipeCB={() => handleSwipe("right", detail.id)} leftSwipeCB={() => handleSwipe("left", detail.id)} upSwipeCB={props.onMoreInfo} swipeDirection={swipeDirection} is_top_card={is_top_card} isCached={swipeCardIsCached}/>
+      return (
+        <SwipeCard 
+          key={detail.id} 
+          id={detail.id} 
+          url={TMDB_BASE_URL + POSTER_WIDTH_URL + detail.poster_path} 
+          rightSwipeCB={() => handleSwipe("right", detail.id)} 
+          leftSwipeCB={() => handleSwipe("left", detail.id)} 
+          upSwipeCB={props.onMoreInfo} 
+          swipeDirection={swipeDirection} 
+          is_top_card={is_top_card}
+          />
+      );
     }
     function outputTitle(firstDetail: MovieDetails | undefined) {
       if (!firstDetail?.title || isFetchingIdQueue) { return "" };
@@ -120,16 +130,15 @@ const SwipeView = observer(
       );
     }
     const [isSidebarOpen, setSidebarIsOpen] = useState(true);
-
     const swipeSidebarClassNames = isSidebarOpen ? "swipe-sidebar is-open" : "swipe-sidebar";
 
     useEffect(() => {
       const mq = window.matchMedia('(max-width: 1023px)');
-
       const sync = (matches: boolean) => {
         if (matches) {
           const sidebar = document.getElementById("swipeSidebar")
-          if (!!sidebar) { sidebar.style.transition = "none"};
+          // temporarily removes transitions so the sidebar doesnt transition to width: 100vw when reducing screen width.
+          if (!!sidebar) { sidebar.style.transition = "none"}; 
           setTimeout(() => {
             if (!!sidebar) { sidebar.style.transition = "transform ease 0.2s" };
           }, 300);
@@ -173,7 +182,7 @@ const SwipeView = observer(
         {DisplayUpSwipeAnim(isFetchingIdQueue)}
         <aside className={swipeSidebarClassNames} id="swipeSidebar">
           <IconButton className="sidebar-toggle" aria-label="Toggle sidebar" onClick={() => setSidebarIsOpen(o => !o)}>
-            <TuneIcon />
+            <ViewSidebarRoundedIcon />
           </IconButton>
           <div className="sidebar-content">
             <h2>Status</h2>
@@ -194,9 +203,16 @@ const SwipeView = observer(
   }
 );
 
-
-// @ts-ignore [TODO] remove
-const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card, isCached} : {id: number, url: string, rightSwipeCB: CallableFunction, leftSwipeCB: CallableFunction, upSwipeCB: CallableFunction, swipeDirection: SwipeDir, is_top_card: boolean, isCached: boolean}) => {
+const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirection, is_top_card} : 
+  {
+    id: number, 
+    url: string, 
+    rightSwipeCB: CallableFunction, 
+    leftSwipeCB: CallableFunction, 
+    upSwipeCB: CallableFunction, 
+    swipeDirection: SwipeDir, 
+    is_top_card: boolean
+  }) => {
 
   const [screenHeight, setScreenHeight] = useState(window.innerHeight);
 
@@ -209,7 +225,7 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
   }, []);
 
   const swipeCardHeight = screenHeight * 0.65; // from 65vh
-  const swipePixelLimit = swipeCardHeight * 0.15;
+  const swipePixelLimit = swipeCardHeight * 0.15; // change the swipe boundaries based on how high the swipe card is
 
   const x = useMotionValue(0);
   const y = useMotionValue(0)
@@ -241,8 +257,6 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
       if (Math.abs(latestX) > 10) {
         xOpacity = mapRange(Math.abs(latestX), 0, 30, 0.4, 0);
       }
-
-      // choose behavior
       return Math.min(yOpacity, xOpacity);
     }
   );
@@ -271,14 +285,14 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
     if (!is_top_card) return;
 
     if (info.offset.x > swipePixelLimit) {
-      const controls = animate(x, swipePixelLimit*2, {
+      animate(x, swipePixelLimit*2, {
         type: "tween",
         duration: 0.1,
         ease: "easeOut",
         onComplete: () => rightSwipeCB(),
       });
     } else if (info.offset.x < -swipePixelLimit) {
-      const controls = animate(x, -swipePixelLimit*2, {
+      animate(x, -swipePixelLimit*2, {
         type: "tween",
         duration: 0.1,
         ease: "easeOut",
@@ -293,7 +307,6 @@ const SwipeCard = ({id, url, rightSwipeCB, leftSwipeCB, upSwipeCB, swipeDirectio
       animate(x, 0, { type: "tween", duration: 0.15, ease: "easeOut" });
     }
   };
-  const motionDivClassNames = isCached ? "swipe-card-wrapper" : "swipe-card-wrapper";
 return (
   <motion.div className="swipe-card-wrapper"
     style={{
@@ -321,7 +334,7 @@ return (
       }} 
     />
     <motion.img
-      src={"src/assets/heartImg.png"}
+      src={heartImg}
       alt={"Placeholder"}
       className="swipe-like-img"
       drag
@@ -341,7 +354,7 @@ return (
       }} 
     />
     <motion.img
-      src={"src/assets/dislikeImg.png"}
+      src={dislikeImg}
       alt={"Placeholder"}
       className="swipe-dislike-img"
       drag
@@ -361,7 +374,7 @@ return (
       }} 
     />
     <motion.img
-      src={"src/assets/settingsImg.png"}
+      src={settingsImg}
       alt={"Placeholder"}
       className="swipe-settings-img"
       drag
@@ -383,7 +396,6 @@ return (
   </motion.div>
 );
 }
-
 
 function DisplayUpSwipeAnim(isFetchingIdQueue: boolean) {
   const [visible, setVisible] = useState(true);
@@ -409,7 +421,7 @@ function DisplayUpSwipeAnim(isFetchingIdQueue: boolean) {
       pointerEvents: "none",
     }}>
     <DotLottieReact
-      src="src/assets/SwipeUpAnim.lottie"
+      src="/SwipeUpAnim.lottie"
       autoplay
       loop
       loopCount={2}
@@ -422,8 +434,6 @@ function DisplayUpSwipeAnim(isFetchingIdQueue: boolean) {
   </div>
   );
 }
-
-
 
 export { SwipeView, SwipeCard };
 

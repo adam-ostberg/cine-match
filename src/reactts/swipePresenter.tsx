@@ -6,7 +6,6 @@ import { Navbar } from "../reactts/navbarPresenter";
 import { getGenres } from "../apiConfig";
 import { DetailsView } from "../views/DetailsView";
 import { useState, useEffect, useRef } from "react";
-import { hideRootAndMainContentOverflow } from "../helperFunctions";
 import type { UserModel } from "../UserModel";
 import type { SessionModel } from "../SessionModel";
 import { resolvePromise, type PromiseState } from "../resolvePromise";
@@ -37,21 +36,16 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			// Report the swipe to the model
 			if (currentMovie) {
 				props.userModel.reportSwipe(currentMovie.id, currentMovie.title, currentMovie.poster_path || "", true);
-				//props.model.reportSwipe(currentMovie.id, currentMovie.title, currentMovie.poster_path || "", true);
 			}
 			props.model.addToLiked(id);
 			props.model.insertRecommendedMovieIntoQueue(id);
 			props.model.nextMovie();
-
 			console.log("Liked");
 		}
 		
-		/* [TODO] For some reason funkar inte knappen längre */
 		function moreInfoClickedACB() {
-			//hideRootAndMainContentOverflow();
 			props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
 			setShowDetails(true);
-			//document.location.hash = "/details";
 		}
 
 		useEffect(() => {
@@ -87,9 +81,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
                 previousCardMovieIdRef.current = null; // Clear the ref
             }
 			}
-
 			setShowDetails(false); // Hide details overlay
-			//hideRootAndMainContentOverflow(true);
 		}
 		const genreListPrmsState: PromiseState = {promise: null, data: null, error: null};
 		const genreListPrms = getGenres();
@@ -97,7 +89,6 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 
 		const HAS_ALL_DETAILS_DATA = (
 			!!props.model.movieDetailsPrmsState.data
-			// && !!props.model.movieVideosPrmsState.data
 			&& !!props.model.movieCreditsPrmsState.data
 			&& !!props.model.imdbRatingPrmsState.data
 			&& !!props.model.watchProvidersPrmsState.data
@@ -111,14 +102,16 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			participants={props.sessionModel.participants} isFetchingIdQueue={props.model.isFetchingIdQueue}
 			/>);
 
-		const details = showDetails && HAS_ALL_DETAILS_DATA ? <DetailsView 
-		details={props.model.movieDetailsPrmsState.data} 
-		video={props.model.movieVideosPrmsState.data} 
-		credits={props.model.movieCreditsPrmsState.data} 
-		imdb={props.model.imdbRatingPrmsState.data} 
-		watchProviders={props.model.watchProvidersPrmsState.data} 
-		onClose={closeDetailsACB}
-		isMatched={isMatchDetail}/> 
+		const details = showDetails && HAS_ALL_DETAILS_DATA 
+		? <DetailsView 
+			details={props.model.movieDetailsPrmsState.data} 
+			video={props.model.movieVideosPrmsState.data} 
+			credits={props.model.movieCreditsPrmsState.data} 
+			imdb={props.model.imdbRatingPrmsState.data} 
+			watchProviders={props.model.watchProvidersPrmsState.data} 
+			onClose={closeDetailsACB}
+			isMatched={isMatchDetail}
+		/> 
 		: "";
 
 		return (

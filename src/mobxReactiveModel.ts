@@ -5,7 +5,6 @@ import { connectSessionToPersistence, connectToPersistence, connectUserToPersist
 import { observeAuth } from "./authService";
 import { SessionModel } from "./SessionModel";
 import { UserModel } from "./UserModel";
-import type { Unsubscribe } from "firebase/auth";
 import { doc, updateDoc, arrayRemove } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -21,13 +20,6 @@ export const reactiveModel = new MovieModel();
 
 reactiveModel.fetchPopularMovies();
 reactiveModel.fetchGenres().then(() => reactiveModel.toggleAllGenres());
-
-function startDefaultDebugConfig() {
-  reactiveModel.toggleSeededIconToMovie(550);
-  const idQueuePrms = reactiveModel.setMovieIdQueue();
-  idQueuePrms.then(() => reactiveModel.currentMovieEffect());
-}
-//startDefaultDebugConfig();
 
 export const reactiveSessionModel = new SessionModel();
 export const reactiveUserModel = new UserModel();
@@ -74,15 +66,6 @@ observeAuth((user) => {
 });
 
 reaction(currentMovieIdACB, movieIdEffectACB);
-
-function sessionModelLikedACB() {
-  return reactiveSessionModel.likes;
-}
-function sessionLikesChangedEffectACB() {
-  return reactiveModel.insertMovieLikesIntoQueue(reactiveSessionModel.likes);
-}
-
-//reaction(sessionModelLikedACB, sessionLikesChangedEffectACB);
 
 window.model = reactiveModel;
 window.sessionModel = reactiveSessionModel;

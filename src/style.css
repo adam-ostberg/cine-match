@@ -237,7 +237,7 @@ height: auto;
     top: 24px;
   }
 
-  .home-section, .profile-container, .swipe-sidebar {
+  .home-section, .profile-container, .swipe-sidebar, .lobby-wrapper {
     margin-top: 75px;
   }
   .profile-container h2 {
@@ -400,7 +400,7 @@ height: auto;
   position: absolute;
   top: 0;
   left: 0;
-  transform: translateX(-100%) translateY(50%) rotate(180deg);
+  transform: translateX(-100%) translateY(50%);
   width: 50px;
   height: 50px;
   transition:
@@ -421,8 +421,8 @@ height: auto;
   height: 50px;
   color: white;
   border: 2px gray solid;
-  border-left: 0px;
-  border-radius: 0px 8px 8px 0px;
+  border-right: 0px;
+  border-radius: 8px 0px 0px 8px;
   transition: background-color ease 150ms;
 }
 
@@ -603,7 +603,8 @@ height: auto;
     width: 100vw;
   }
   .swipe-sidebar.is-open .sidebar-toggle {
-    transform: translateX(0%);
+    transform: translateX(0%) rotate(180deg);
+    top: 3vh;
   }
 }
 
@@ -1258,16 +1259,15 @@ height: auto;
 
 .lobby-wrapper {
   position: relative;
-  min-height: 100vh;
+  min-height: 90vh;
   background-color: var(--bg-color);
-  padding: 20px;
 }
 
 .lobby-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 90vh;
 }
 
 .lobby-content {

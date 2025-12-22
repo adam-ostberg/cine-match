@@ -6,7 +6,6 @@ import type { TMDBMoviePageResult } from "../apiConfig.ts";
 import { MovieModel } from "../MovieModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
-import { hideRootAndMainContentOverflow } from "../helperFunctions.ts";
 import { UserModel } from "../UserModel.ts";
 import { SessionModel } from "../SessionModel.ts";
 
@@ -20,13 +19,13 @@ const Home = observer(
     function HomeRender(props: HomePresenterProps) {
         const [showDetails, setShowDetails] = useState(false); // State to control details overlay
         function sessionStartACB() {
-            props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
             if (!props.userModel.currentUser) {
                 alert("Please log in first.");
                 return;
             }
-            props.model.clearMovieFilters();
             props.userModel.createSessionAction();
+            props.model.clearMovieFilters();
+            props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
         }
 
         function sessionJoinACB(sessionId: string) {
@@ -70,15 +69,18 @@ const Home = observer(
 
 		const HAS_ALL_DETAILS_DATA = (
 			!!props.model.movieDetailsPrmsState.data
-			// && !!props.model.movieVideosPrmsState.data
 			&& !!props.model.movieCreditsPrmsState.data
 			&& !!props.model.imdbRatingPrmsState.data
 			&& !!props.model.watchProvidersPrmsState.data
-		)
+		);
 		const details = showDetails && HAS_ALL_DETAILS_DATA 
-            ? <DetailsView details={props.model.movieDetailsPrmsState.data} video={props.model.movieVideosPrmsState.data} 
-            credits={props.model.movieCreditsPrmsState.data} imdb={props.model.imdbRatingPrmsState.data} 
-            watchProviders={props.model.watchProvidersPrmsState.data} onClose={closeDetailsACB}/> 
+            ? <DetailsView 
+                details={props.model.movieDetailsPrmsState.data} 
+                video={props.model.movieVideosPrmsState.data} 
+                credits={props.model.movieCreditsPrmsState.data} 
+                imdb={props.model.imdbRatingPrmsState.data} 
+                watchProviders={props.model.watchProvidersPrmsState.data} 
+                onClose={closeDetailsACB}/> 
             : "";
 
         const username = props.userModel.currentUser && props.userModel.username || null;
@@ -90,6 +92,7 @@ const Home = observer(
                         userModel={props.userModel}
                         sessionModel={props.sessionModel}
                         sessionId={props.userModel.currentSessionId || null}
+                        sessionStatus={props.sessionModel.status}
                         onStartSession={sessionStartACB}
                         username={username}
                         onJoinSession={sessionJoinACB}

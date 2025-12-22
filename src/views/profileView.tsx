@@ -1,5 +1,5 @@
 import "../style.css"
-import { getGenres, type TMDBMoviePageResult } from "../apiConfig.ts";
+import { type TMDBMoviePageResult } from "../apiConfig.ts";
 /* npm install react-icons */
 import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
@@ -88,36 +88,6 @@ export function ProfileView(props: ProfileViewProps) {
           </div>
         ))}
       </div>
-    );
-  }
-
-  function renderLikedMovieCB(movie: TMDBMoviePageResult) {
-    if (!movie.poster_path) return null;
-    function movieClickACB() {
-      props.onMovieClick(movie.id);
-    }
-    function removeLikeACB(e: React.MouseEvent) {
-      e.stopPropagation(); // Prevent triggering the movie click
-      if (window.confirm(`Are you sure you want to remove "${movie.title}" from your likes?`)) {
-        props.onRemoveLike(movie);
-      }
-    }
-    return (
-      <>
-        
-        <div key={movie.id} className="seed-result-card profile" onClick={movieClickACB}>
-          <img
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={movie.title}
-          />
-          <div className="movie-overlay">
-            <span className="movie-title">{movie.title}</span>
-            <button className="remove-btn" onClick={removeLikeACB}>
-              X
-            </button>
-          </div>
-        </div>
-      </>
     );
   }
 

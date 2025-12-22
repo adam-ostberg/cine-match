@@ -1,4 +1,20 @@
-import { getMovieDetails,/*  type MovieDetails, */ type TMDBMoviePageResult, type TMDBMoviePage, getMovieVideos, getPopularMovies, fetchMoviesPages, type TMDBVideoResults, type TMDBVideoType, getMovieCredits, getImdbId, type WatchProvidersResponse, getWatchProviders, getMovieList, type TMDBGenre, type TMDBsearchData, searchTMDBMovies, getRecommendedMovie, type MovieDetails } from "./apiConfig"
+import { getMovieDetails, 
+    type TMDBMoviePageResult, 
+    type TMDBMoviePage, 
+    getMovieVideos, 
+    getPopularMovies, 
+    fetchMoviesPages, 
+    type TMDBVideoResults, 
+    type TMDBVideoType, 
+    getMovieCredits, 
+    getImdbId, 
+    getWatchProviders, 
+    getMovieList, 
+    type TMDBGenre, 
+    type TMDBsearchData, 
+    searchTMDBMovies, 
+    getRecommendedMovie 
+} from "./apiConfig"
 import { resolvePromise, type PromiseState } from "./resolvePromise";
 import { getImdbRating } from "./imdbApiConfig";
 import { filterByRatingAndRuntime, getFilteredPopularMovies } from "./helperFunctions";
@@ -151,7 +167,7 @@ export class MovieModel {
         );
         recommendationMovies = await filterByRatingAndRuntime(recommendationMovies, this.minRating, this.minRuntime, this.maxRuntime);
 
-        const idQueuePrms = getFilteredPopularMovies(0, 30, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime)
+        const idQueuePrms = getFilteredPopularMovies(0, 50, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime)
             .then((popularMovies) => {
                 const ids = [...recommendationMovies, ...popularMovies].map(movie => movie.id); // our queue
                 return [...new Set(ids)] // removes duplicates
@@ -174,7 +190,7 @@ export class MovieModel {
 
         if (this.movieIdQueuePrmsState.data.length < 18 && !this.isEnsuringIdQueueHealth) {
             this.isEnsuringIdQueueHealth = true;
-            const popularMovies = await getFilteredPopularMovies(30, 100, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime);
+            const popularMovies = await getFilteredPopularMovies(50, 100, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime);
             const newIdQueue = [...this.movieIdQueuePrmsState.data, ...popularMovies.map(movie => movie.id)];
             this.movieIdQueuePrmsState.data = [...new Set(newIdQueue)]; // removes duplicates
             this.isEnsuringIdQueueHealth = false;

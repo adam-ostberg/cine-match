@@ -38,7 +38,14 @@ const Navbar = observer(
     const username = (user.currentUser && user.username) || null;
 
     return (
-      <NavbarView onLogoClick={logoClickACB} onSignOutClick={handleSignOutACB} onExitSession={handleExitSessionACB} username={username} userId={user.userId || ""} sessionStatus={props.sessionModel.status}/>
+      <NavbarView 
+        onLogoClick={logoClickACB} 
+        onSignOutClick={handleSignOutACB} 
+        onExitSession={handleExitSessionACB} 
+        username={username} 
+        userId={user.userId || ""} 
+        sessionId={props.sessionModel.sessionId}
+      />
     );
   }
 );
