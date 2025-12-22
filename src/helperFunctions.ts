@@ -2,7 +2,7 @@
 import { getCountryForTimezone } from "countries-and-timezones";
 import { MovieModel } from "./MovieModel";
 import { fetchMoviesPages, getMovieDetails, getPopularMovies, type MovieDetails, type TMDBMoviePageResult } from "./apiConfig";
-import { fetchImdbRatings } from "./testImdbApi";
+import { fetchImdbRatings } from "./bulkImdbApi";
 import { runInAction } from "mobx";
 
 export function getVideoUrl(video: { site: string; key: string }) {

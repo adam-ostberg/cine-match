@@ -1,10 +1,34 @@
 import "../style.css"
-import { type MovieDetails, type TMDBCast, type TMDBCrew, type WatchProvider, type CountryWatchOptions, type TMDBGenre, type TMDBVideoType, type TMDBMovieCredits, type WatchProvidersResponse, } from "../apiConfig";
+import { 
+  type MovieDetails, 
+  type TMDBCast, 
+  type TMDBCrew, 
+  type WatchProvider, 
+  type CountryWatchOptions, 
+  type TMDBGenre, 
+  type TMDBVideoType, 
+  type TMDBMovieCredits, 
+  type WatchProvidersResponse 
+} from "../apiConfig";
 import { observer } from "mobx-react-lite";
-import { minutesToHourAndMinutesText, getCountryCode, hideRootAndMainContentOverflow, getPopularityColor } from "../helperFunctions";
+import { 
+  minutesToHourAndMinutesText, 
+  getCountryCode, 
+  hideRootAndMainContentOverflow, 
+  getPopularityColor 
+} from "../helperFunctions";
 import { useState, useEffect, useRef } from "react";
 /* npm install react-icons */
-import { FaArrowLeft, FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaFire, FaUserCircle, FaExternalLinkAlt, /* FaPlus */ } from "react-icons/fa";
+import { 
+  FaArrowLeft, 
+  FaPlay, 
+  FaPause, 
+  FaVolumeMute, 
+  FaVolumeUp, 
+  FaFire, 
+  FaUserCircle, 
+  FaExternalLinkAlt
+} from "react-icons/fa";
 import { MdOutlineSwipe } from "react-icons/md";
 import imdbLogo from "../assets/imdb_logo_2016.svg";
 
@@ -34,7 +58,6 @@ const DetailsView = observer(
       const detailContainer = document.getElementById(`details-container ${details.id}`);
       hideRootAndMainContentOverflow();
       if (!!detailContainer) {
-        //detailsScrollableArea?.classList.add("hide-scrollbar");
         detailContainer.style.top = "100%";
         detailContainer.style.scrollbarWidth = "none";
         background?.classList.add("is-dark");
@@ -112,7 +135,7 @@ const DetailsView = observer(
 
       return uniqueProviders.sort((a, b) => a.display_priority - b.display_priority);
     }
-    function outputWatchProviders(provider: WatchProvider) {
+    function outputWatchProvidersCB(provider: WatchProvider) {
       function handleProviderClick() {
         if (watchProviders && watchProviders.link) {
           window.open(watchProviders.link, "_blank");
@@ -281,7 +304,7 @@ const DetailsView = observer(
               <div className="details-section">
                 <h3>Where to Watch</h3>
                 <div className="details-grid-row">
-                  {validProviders.map(outputWatchProviders)}
+                  {validProviders.map(outputWatchProvidersCB)}
                 </div>
               </div>
             )}
