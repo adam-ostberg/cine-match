@@ -8,7 +8,16 @@ import { SessionModel } from "./SessionModel";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot as firestoreOnSnapshot, collection, getDocs } from "firebase/firestore";
 import type { Unsubscribe } from "firebase/auth";
 import type { UserModel } from "./UserModel";
-import { persistSessionSwipe } from "./firestoreModel";
+import { 
+  persistSessionSwipe, 
+  sendFriendRequest, 
+  acceptFriendRequest, 
+  createSession, 
+  joinSession, 
+  sendLobbyInvite,
+  acceptLobbyInvite,
+  declineLobbyInvite 
+} from "./firestoreModel";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -217,18 +226,32 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
   // Flag to prevent write-back loops
   let isUpdatingFromFirestore = false;
 
-  // Watch for pending session swipes
+  // Watch for pending session swipes - return JSON string to ensure MobX detects changes
   function pendingSessionSwipeACB() {
-    return user.pendingSessionSwipe;
+    const swipe = user.pendingSessionSwipe;
+    if (!swipe) return null;
+    return JSON.stringify(swipe);
   }
 
-  async function persistSessionSwipeACB(swipe: { movieId: number; title: string; posterPath: string } | null) {
-    // We need to have a valid swipe, session ID and user ID
-    if (!swipe || !user.currentSessionId || !user.userId) return;
+  async function persistSessionSwipeACB(swipeJson: string | null) {
+    if (!swipeJson) return;
+    
+    const swipe = JSON.parse(swipeJson) as { movieId: number; title: string; posterPath: string };
+    const sessionId = user.currentSessionId;
+    const userId = user.userId;
+    
+    if (!sessionId || !userId) {
+      console.warn("Cannot persist swipe: missing sessionId or userId", { sessionId, userId });
+      user.clearPendingSessionSwipe();
+      return;
+    }
+
+    console.log("Persisting session swipe:", { sessionId, userId, swipe });
 
     // Persist the swipe to Firestore
     try {
-      await persistSessionSwipe(user.currentSessionId, user.userId, swipe);
+      const success = await persistSessionSwipe(sessionId, userId, swipe);
+      console.log("Session swipe persisted:", success);
     } catch (e) {
       console.error("Failed to persist session swipe:", e);
     } finally {
@@ -236,15 +259,153 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     }
   }
 
-  // For checking changes
+  // Watch for pending friend requests - return JSON string to ensure MobX detects changes
+  function pendingFriendRequestACB() {
+    const req = user.pendingFriendRequest;
+    if (!req) return null;
+    return JSON.stringify(req);
+  }
+
+  // Persist friend request if there was one pending detected
+  async function persistFriendRequestACB(requestJson: string | null) {
+    if (!requestJson) return;
+    const request = JSON.parse(requestJson) as { toUsername: string };
+    try {
+      await sendFriendRequest(user, request.toUsername);
+    } catch (e: any) {
+      console.error("Failed to send friend request:", e);
+      alert("Failed to send friend request: " + e.message);
+    } finally {
+      user.clearPendingFriendRequest();
+    }
+  }
+
+  // Watch for pending accept friend request - return JSON string to ensure MobX detects changes
+  function pendingAcceptFriendRequestACB() {
+    const req = user.pendingAcceptFriendRequest;
+    if (!req) return null;
+    return JSON.stringify(req);
+  }
+
+  // Persist it
+  async function persistAcceptFriendRequestACB(requestJson: string | null) {
+    if (!requestJson) return;
+    const request = JSON.parse(requestJson) as { fromUserId: string; fromUsername: string };
+    try {
+      await acceptFriendRequest(user, request.fromUserId, request.fromUsername);
+    } catch (e: any) {
+      console.error("Failed to accept friend request:", e);
+      alert("Failed to accept friend request: " + e.message);
+    } finally {
+      user.clearPendingAcceptFriendRequest();
+    }
+  }
+
+  // Watch for pending lobby invites - return JSON string to ensure MobX detects changes
+  function pendingLobbyInviteACB() {
+    const inv = user.pendingLobbyInvite;
+    if (!inv) return null;
+    return JSON.stringify(inv);
+  }
+
+  async function persistLobbyInviteACB(inviteJson: string | null) {
+    if (!inviteJson) return;
+    if (!user.currentSessionId) {
+      user.clearPendingLobbyInvite();
+      return;
+    }
+    const invite = JSON.parse(inviteJson) as { toUserId: string };
+    try {
+      await sendLobbyInvite(user, invite.toUserId, user.currentSessionId);
+    } catch (e) {
+      console.error("Failed to send lobby invite:", e);
+    } finally {
+      user.clearPendingLobbyInvite();
+    }
+  }
+
+  // Watch for pending create session
+  function pendingCreateSessionACB() {
+    return user.pendingCreateSession;
+  }
+
+  // Persist the create session request
+  async function persistCreateSessionACB(shouldCreate: boolean) {
+    if (!shouldCreate) return;
+    try {
+      const sessionId = await createSession(user);
+      if (sessionId) {
+        window.location.hash = "#/lobby";
+      }
+    } catch (e) {
+      console.error("Failed to create session:", e);
+    } finally {
+      user.clearPendingCreateSession();
+    }
+  }
+
+  // Watch for pending join session - return JSON string to ensure MobX detects changes
+  function pendingJoinSessionACB() {
+    const req = user.pendingJoinSession;
+    if (!req) return null;
+    return JSON.stringify(req);
+  }
+
+  async function persistJoinSessionACB(joinRequestJson: string | null) {
+    if (!joinRequestJson) return;
+    const joinRequest = JSON.parse(joinRequestJson) as { sessionId: string };
+    try {
+      await joinSession(user, joinRequest.sessionId);
+      window.location.hash = "#/lobby";
+    } catch (e) {
+      console.error("Failed to join session:", e);
+    } finally {
+      user.clearPendingJoinSession();
+    }
+  }
+
+  // Watch for pending accept lobby invite
+  function pendingAcceptLobbyInviteACB() {
+    return user.pendingAcceptLobbyInvite;
+  }
+
+  async function persistAcceptLobbyInviteACB(shouldAccept: boolean) {
+    if (!shouldAccept) return;
+    try {
+      await acceptLobbyInvite(user);
+      window.location.hash = "#/lobby";
+    } catch (e) {
+      console.error("Failed to accept lobby invite:", e);
+    } finally {
+      user.clearPendingAcceptLobbyInvite();
+    }
+  }
+
+  // Watch for pending decline lobby invite
+  function pendingDeclineLobbyInviteACB() {
+    return user.pendingDeclineLobbyInvite;
+  }
+
+  function persistDeclineLobbyInviteACB(shouldDecline: boolean) {
+    if (!shouldDecline) return;
+    try {
+      declineLobbyInvite(user);
+    } catch (e) {
+      console.error("Failed to decline lobby invite:", e);
+    } finally {
+      user.clearPendingDeclineLobbyInvite();
+    }
+  }
+
+  // For checking changes - use JSON strings to ensure MobX detects deep changes
   function getUserInfoACB() {
     return {
       username: user.username,
-      likes: [...user.likes],
-      matches: [...user.matches],
-      friends: [...user.friends],
-      friendRequests: [...user.friendRequests],
-      invite: user.invite,
+      likes: JSON.stringify(user.likes),
+      matches: JSON.stringify(user.matches),
+      friends: JSON.stringify(user.friends),
+      friendRequests: JSON.stringify(user.friendRequests),
+      invite: user.invite ? JSON.stringify(user.invite) : null,
     };
   }
 
@@ -298,11 +459,25 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
   // Install the side effect for local changes - this returns a disposer function
   const unsubscribeReaction = watchFunction(getUserInfoACB, persistUserModelACB);
   const unsubscribeSwipeReaction = watchFunction(pendingSessionSwipeACB, persistSessionSwipeACB);
+  const unsubscribeFriendRequest = watchFunction(pendingFriendRequestACB, persistFriendRequestACB);
+  const unsubscribeAcceptFriendRequest = watchFunction(pendingAcceptFriendRequestACB, persistAcceptFriendRequestACB);
+  const unsubscribeLobbyInvite = watchFunction(pendingLobbyInviteACB, persistLobbyInviteACB);
+  const unsubscribeCreateSession = watchFunction(pendingCreateSessionACB, persistCreateSessionACB);
+  const unsubscribeJoinSession = watchFunction(pendingJoinSessionACB, persistJoinSessionACB);
+  const unsubscribeAcceptLobbyInvite = watchFunction(pendingAcceptLobbyInviteACB, persistAcceptLobbyInviteACB);
+  const unsubscribeDeclineLobbyInvite = watchFunction(pendingDeclineLobbyInviteACB, persistDeclineLobbyInviteACB);
 
   // Return a combined cleanup function
   return () => {
     unsubscribeFirestore();
     if (unsubscribeReaction) unsubscribeReaction();
     if (unsubscribeSwipeReaction) unsubscribeSwipeReaction();
+    if (unsubscribeFriendRequest) unsubscribeFriendRequest();
+    if (unsubscribeAcceptFriendRequest) unsubscribeAcceptFriendRequest();
+    if (unsubscribeLobbyInvite) unsubscribeLobbyInvite();
+    if (unsubscribeCreateSession) unsubscribeCreateSession();
+    if (unsubscribeJoinSession) unsubscribeJoinSession();
+    if (unsubscribeAcceptLobbyInvite) unsubscribeAcceptLobbyInvite();
+    if (unsubscribeDeclineLobbyInvite) unsubscribeDeclineLobbyInvite();
   };
 }

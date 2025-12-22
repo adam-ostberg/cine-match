@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 import { HomeView } from "../views/HomeView.tsx";
 import type { TMDBMoviePageResult } from "../apiConfig.ts";
 // import type { PromiseState } from "../resolvePromise.ts";
-import { createSession, joinSession, listenToSession } from "../firestoreModel.ts";
 import { MovieModel } from "../MovieModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
@@ -20,31 +19,23 @@ export type HomePresenterProps = {
 const Home = observer(
     function HomeRender(props: HomePresenterProps) {
         const [showDetails, setShowDetails] = useState(false); // State to control details overlay
-        async function sessionStartACB() {
+        function sessionStartACB() {
             props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
             if (!props.userModel.currentUser) {
                 alert("Please log in first.");
                 return;
             }
             props.model.clearMovieFilters();
-            window.location.hash = "#/lobby";
-            const sessionId = await createSession(props.userModel);
-            // @ts-ignore  /* [TODO] for npm build, remove */
-            const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel, props.userModel);
+            props.userModel.createSessionAction();
         }
 
-        async function sessionJoinACB(sessionId: string) {
+        function sessionJoinACB(sessionId: string) {
             if (!props.userModel.userId) {
                 alert("Please log in first.");
                 return;
             }
             props.model.clearMovieFilters();
-            window.location.hash = "#/lobby";
-            await joinSession(props.userModel, sessionId); // TODO get session ID from user input
-
-            // TODO add this to the model so we can stop listening when leaving the home view
-            // @ts-ignore
-            const unsubscribe = listenToSession(sessionId, props.model, props.sessionModel, props.userModel);
+            props.userModel.joinSessionAction(sessionId);
         }
 
         if (!props.model.popularMoviesPrmsState.data) {
