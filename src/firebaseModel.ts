@@ -85,6 +85,7 @@ export function connectToPersistence(model: MovieModel, reaction: any) {
 
 export function connectSessionToPersistence(session: SessionModel, userModel: UserModel, model: MovieModel, watchFunction: any) {
   let unsubscribeFirestore: Unsubscribe | null = null;
+  let unsubscribeLikes: Unsubscribe | null = null;
   
   // Flag to prevent write-back loops when receiving Firestore updates
   let isUpdatingFromFirestore = false;
@@ -95,10 +96,14 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
   }
 
   function onSessionIdChangeACB(sessionId: string | null) {
-    // Clean up previous listener if exists
+    // Clean up previous listeners if exists
     if (unsubscribeFirestore) {
       unsubscribeFirestore();
       unsubscribeFirestore = null;
+    }
+    if (unsubscribeLikes) {
+      unsubscribeLikes();
+      unsubscribeLikes = null;
     }
 
     // Reset session state if no session
@@ -134,6 +139,27 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
       session.setStatus(data.status || "waiting");
       session.setReady(true);
 
+      // Check if a match has been found
+      if (data.match && data.match.movieId) {
+        console.log("Match detected in session:", data.match);
+        
+        // Queue the match animation
+        session.queueMatch(data.match.movieId);
+
+        // Build match data for user's match history
+        const usersInSession = data.participants?.map((p: { userId: string; username: string }) => p.username) || [];
+        const TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
+        
+        const matchData = {
+          movieId: data.match.movieId,
+          title: data.match.title,
+          poster_path: data.match.poster_path ? (TMDB_BASE_URL + "w300" + data.match.poster_path) : null,
+          usersInSession: usersInSession,
+        };
+
+        userModel.addMatch(matchData);
+      }
+
       // Reset flag after updates are applied (use setTimeout to let MobX reactions complete)
       setTimeout(() => {
         isUpdatingFromFirestore = false;
@@ -142,8 +168,8 @@ export function connectSessionToPersistence(session: SessionModel, userModel: Us
       console.error("Error listening to session:", error);
     });
 
-    // This updates evertime the likes collection changes in the firestore database.
-    const unsubscribeLikes = firestoreOnSnapshot(likeCollectionRef, (querySnapshot) => {
+      // This updates evertime the likes collection changes in the firestore database.
+      unsubscribeLikes = firestoreOnSnapshot(likeCollectionRef, (querySnapshot) => {
       // Callback runs every time the collection updates
       const movieLikeIds = querySnapshot.docs.map(doc => Number(doc.id));
       if (!movieLikeIds || !Array.isArray(movieLikeIds) || movieLikeIds.length === 0) {
@@ -226,32 +252,36 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
   // Flag to prevent write-back loops
   let isUpdatingFromFirestore = false;
 
-  // Watch for pending session swipes - return JSON string to ensure MobX detects changes
+  // Watch for pending session swipes
   function pendingSessionSwipeACB() {
-    const swipe = user.pendingSessionSwipe;
-    if (!swipe) return null;
-    return JSON.stringify(swipe);
+    return user.pendingSessionSwipe;
   }
 
-  async function persistSessionSwipeACB(swipeJson: string | null) {
-    if (!swipeJson) return;
+  async function persistSessionSwipeACB(swipe: { movieId: number; title: string; posterPath: string } | null) {
+    // We need to have a valid swipe, session ID and user ID
+    if (!swipe) {
+      return;
+    }
     
-    const swipe = JSON.parse(swipeJson) as { movieId: number; title: string; posterPath: string };
-    const sessionId = user.currentSessionId;
-    const userId = user.userId;
-    
-    if (!sessionId || !userId) {
-      console.warn("Cannot persist swipe: missing sessionId or userId", { sessionId, userId });
+    if (!user.currentSessionId || !user.userId) {
+      console.warn("Cannot persist swipe - missing sessionId or userId:", { 
+        sessionId: user.currentSessionId, 
+        userId: user.userId 
+      });
       user.clearPendingSessionSwipe();
       return;
     }
 
-    console.log("Persisting session swipe:", { sessionId, userId, swipe });
+    console.log("Persisting session swipe:", { 
+      sessionId: user.currentSessionId, 
+      userId: user.userId, 
+      swipe 
+    });
 
     // Persist the swipe to Firestore
     try {
-      const success = await persistSessionSwipe(sessionId, userId, swipe);
-      console.log("Session swipe persisted:", success);
+      const result = await persistSessionSwipe(user.currentSessionId, user.userId, swipe);
+      console.log("Session swipe result:", result);
     } catch (e) {
       console.error("Failed to persist session swipe:", e);
     } finally {
@@ -259,17 +289,14 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     }
   }
 
-  // Watch for pending friend requests - return JSON string to ensure MobX detects changes
+  // Watch for pending friend requests
   function pendingFriendRequestACB() {
-    const req = user.pendingFriendRequest;
-    if (!req) return null;
-    return JSON.stringify(req);
+    return user.pendingFriendRequest;
   }
 
   // Persist friend request if there was one pending detected
-  async function persistFriendRequestACB(requestJson: string | null) {
-    if (!requestJson) return;
-    const request = JSON.parse(requestJson) as { toUsername: string };
+  async function persistFriendRequestACB(request: { toUsername: string } | null) {
+    if (!request) return;
     try {
       await sendFriendRequest(user, request.toUsername);
     } catch (e: any) {
@@ -280,17 +307,14 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     }
   }
 
-  // Watch for pending accept friend request - return JSON string to ensure MobX detects changes
+  // Watch for pending accept friend request
   function pendingAcceptFriendRequestACB() {
-    const req = user.pendingAcceptFriendRequest;
-    if (!req) return null;
-    return JSON.stringify(req);
+    return user.pendingAcceptFriendRequest;
   }
 
   // Persist it
-  async function persistAcceptFriendRequestACB(requestJson: string | null) {
-    if (!requestJson) return;
-    const request = JSON.parse(requestJson) as { fromUserId: string; fromUsername: string };
+  async function persistAcceptFriendRequestACB(request: { fromUserId: string; fromUsername: string } | null) {
+    if (!request) return;
     try {
       await acceptFriendRequest(user, request.fromUserId, request.fromUsername);
     } catch (e: any) {
@@ -301,20 +325,13 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     }
   }
 
-  // Watch for pending lobby invites - return JSON string to ensure MobX detects changes
+  // Watch for pending lobby invites
   function pendingLobbyInviteACB() {
-    const inv = user.pendingLobbyInvite;
-    if (!inv) return null;
-    return JSON.stringify(inv);
+    return user.pendingLobbyInvite;
   }
 
-  async function persistLobbyInviteACB(inviteJson: string | null) {
-    if (!inviteJson) return;
-    if (!user.currentSessionId) {
-      user.clearPendingLobbyInvite();
-      return;
-    }
-    const invite = JSON.parse(inviteJson) as { toUserId: string };
+  async function persistLobbyInviteACB(invite: { toUserId: string } | null) {
+    if (!invite || !user.currentSessionId) return;
     try {
       await sendLobbyInvite(user, invite.toUserId, user.currentSessionId);
     } catch (e) {
@@ -344,16 +361,13 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     }
   }
 
-  // Watch for pending join session - return JSON string to ensure MobX detects changes
+  // Watch for pending join session
   function pendingJoinSessionACB() {
-    const req = user.pendingJoinSession;
-    if (!req) return null;
-    return JSON.stringify(req);
+    return user.pendingJoinSession;
   }
 
-  async function persistJoinSessionACB(joinRequestJson: string | null) {
-    if (!joinRequestJson) return;
-    const joinRequest = JSON.parse(joinRequestJson) as { sessionId: string };
+  async function persistJoinSessionACB(joinRequest: { sessionId: string } | null) {
+    if (!joinRequest) return;
     try {
       await joinSession(user, joinRequest.sessionId);
       window.location.hash = "#/lobby";
@@ -397,15 +411,15 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
     }
   }
 
-  // For checking changes - use JSON strings to ensure MobX detects deep changes
+  // For checking changes
   function getUserInfoACB() {
     return {
       username: user.username,
-      likes: JSON.stringify(user.likes),
-      matches: JSON.stringify(user.matches),
-      friends: JSON.stringify(user.friends),
-      friendRequests: JSON.stringify(user.friendRequests),
-      invite: user.invite ? JSON.stringify(user.invite) : null,
+      likes: [...user.likes],
+      matches: [...user.matches],
+      friends: [...user.friends],
+      friendRequests: [...user.friendRequests],
+      invite: user.invite,
     };
   }
 
