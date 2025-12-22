@@ -9,6 +9,7 @@ export type HomeViewProps = {
   userModel: UserModel;
   sessionModel: SessionModel;
   sessionId: string | null;
+  sessionStatus: "waiting" | "active" | "matched";
   movies: TMDBMoviePageResult[] | null;
   username: string | null;
   onStartSession: () => void;
@@ -20,6 +21,7 @@ export type HomeViewProps = {
 export function HomeView(props: HomeViewProps) {
 
   const movies = props.movies || [];
+  const sessionActive = props.sessionStatus == "active" || props.sessionStatus == "matched";
 
   // Duplicate array for infinite scroll
   const infiniteMovies = [...movies, ...movies];
@@ -37,7 +39,8 @@ export function HomeView(props: HomeViewProps) {
   }
 
   function onContinueSwipingACB() {
-    window.location.hash = "#/swipe";
+    if (sessionActive) { window.location.hash = "#/swipe" }
+    else { window.location.hash = "#/lobby" };
   }
 
   function exitSessionACB() {

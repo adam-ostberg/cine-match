@@ -7,6 +7,7 @@ import { signOutUser } from "../authService";
 import type { SessionModel } from "../SessionModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
+import { sendFriendRequest } from "../firestoreModel.ts";
 
 export type ProfilePresenterProps = {
   model: MovieModel;
@@ -23,6 +24,7 @@ export type LikedMovie = {
 const Profile = observer(
   function ProfileRender(props: ProfilePresenterProps) {
     const [showDetails, setShowDetails] = useState(false); // State to control details overlay
+    const [friendRequestMessage, setFriendRequestMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
     function handleUsernameChangeACB(newName: string) {
       props.userModel.setUsername(newName);
@@ -54,8 +56,27 @@ const Profile = observer(
       setShowDetails(false); // Hide details overlay
     }
 
-    function handleSendFriendRequestACB(friendUsername: string) {
-      props.userModel.sendFriendRequest(friendUsername);
+    async function handleSendFriendRequestACB(friendUsername: string) {
+      if (!friendUsername.trim()) {
+        setFriendRequestMessage({ text: "Please enter a username", isError: true });
+        setTimeout(() => setFriendRequestMessage(null), 3000);
+        return;
+      }
+      
+      try {
+        const success = await sendFriendRequest(props.userModel, friendUsername);
+        if (success) {
+          setFriendRequestMessage({ text: "Friend request sent!", isError: false });
+        } else {
+          setFriendRequestMessage({ text: "User not found or already a friend", isError: true });
+        }
+      } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : "Failed to send friend request";
+        setFriendRequestMessage({ text: message, isError: true });
+      }
+      
+      // Clear message after 3 seconds
+      setTimeout(() => setFriendRequestMessage(null), 3000);
     }
 
     function handleAcceptFriendRequestACB(fromUsername: string, fromUserId: string) {
@@ -98,6 +119,7 @@ const Profile = observer(
         onSendFriendRequest={handleSendFriendRequestACB}
         onAcceptFriendRequest={handleAcceptFriendRequestACB}
         onSendInvite={handleSendInviteACB}
+        friendRequestMessage={friendRequestMessage}
       />
       : "";
 

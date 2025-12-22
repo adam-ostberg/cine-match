@@ -223,7 +223,7 @@ height: auto;
     top: 24px;
   }
 
-  .home-section, .profile-container, .swipe-sidebar {
+  .home-section, .profile-container, .swipe-sidebar, .lobby-wrapper {
     margin-top: 75px;
   }
   .profile-container h2 {
@@ -1247,12 +1247,17 @@ height: auto;
   background: radial-gradient(white 45%, transparent 50%);
 }
 
+.lobby-wrapper {
+  position: relative;
+  min-height: 90vh;
+  background-color: var(--bg-color);
+}
+
 .lobby-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background-color: var(--bg-color);
+  min-height: 90vh;
 }
 
 .lobby-content {
@@ -1271,6 +1276,14 @@ height: auto;
   font-size: 3rem;
   font-weight: bold;
   text-decoration: none;
+}
+
+.lobby-code-section,
+.lobby-users-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .lobby-code-section p,
@@ -1669,25 +1682,103 @@ height: auto;
   color: red;
 }
 
-.friends-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: left;
+.success-message {
+  color: var(--btn-green);
 }
 
-.friend-item {
+.friends-list-container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20px;
+  min-width: 300px;
+  max-width: 350px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
+  gap: 20px;
+  height: fit-content;
+  max-height: calc(100vh - 40px);
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.friend-item p {
-  margin: 8px;
-  font-size: 0.9rem;
+.friends-list-container h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #ccc;
+  text-align: center;
+  border-bottom: 2px solid var(--btn-green);
+  padding-bottom: 10px;
+}
+
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+  overflow-x: visible;
+  padding: 5px;
+  padding-right: 10px;
+  margin-right: -5px;
+  
+  scrollbar-width: thin;
+  scrollbar-color: var(--btn-green) rgba(255, 255, 255, 0.1);
+}
+
+.friends-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.friends-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.friends-list::-webkit-scrollbar-thumb {
+  background: var(--btn-green);
+  border-radius: 3px;
+}
+
+.friends-list::-webkit-scrollbar-thumb:hover {
+  background: #6bc96b;
+}
+
+.friends-list .friend-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.friends-list .friend-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--btn-green);
+  transform: translateX(-2px);
+}
+
+.friends-list .friend-item p {
+  flex: 1;
+  margin: 0;
+  font-size: 0.95rem;
   color: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friends-list .friend-item .secondary-button {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 6px 12px;
+  font-size: 0.85rem;
 }
 
 .invite-notification {
@@ -1738,4 +1829,28 @@ height: auto;
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 999;
   backdrop-filter: blur(3px);
+}
+
+@media (max-width: 1023px) {
+  .lobby-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 40px;
+  }
+  
+  .friends-list-container {
+    position: relative;
+    top: auto;
+    right: auto;
+    transform: none;
+    max-width: 600px;
+    width: 100%;
+    max-height: 300px;
+    margin: 0 auto;
+  }
+  
+  .lobby-container {
+    min-height: auto;
+  }
 }

@@ -1,5 +1,3 @@
-/* [TODO] Not working */
-
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, onValue } from "firebase/database";
 import { firebaseConfig } from "./firebaseConfig";

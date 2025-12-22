@@ -19,13 +19,13 @@ const Home = observer(
     function HomeRender(props: HomePresenterProps) {
         const [showDetails, setShowDetails] = useState(false); // State to control details overlay
         function sessionStartACB() {
-            props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
             if (!props.userModel.currentUser) {
                 alert("Please log in first.");
                 return;
             }
-            props.model.clearMovieFilters();
             props.userModel.createSessionAction();
+            props.model.clearMovieFilters();
+            props.model.setCurrentMovieId(props.model.getLatestPrefetchMovieId());
         }
 
         function sessionJoinACB(sessionId: string) {
@@ -92,6 +92,7 @@ const Home = observer(
                         userModel={props.userModel}
                         sessionModel={props.sessionModel}
                         sessionId={props.userModel.currentSessionId || null}
+                        sessionStatus={props.sessionModel.status}
                         onStartSession={sessionStartACB}
                         username={username}
                         onJoinSession={sessionJoinACB}

@@ -108,6 +108,7 @@ export async function getFilteredPopularMovies(
   let fetchCount = Math.floor(Math.random() * pageRange + pageOffset); // random value between 0-30 as a starting point for the popular movies so you always get a variation if you're not using any filter and recommendations.
   const fetchStop = fetchCount + 10;
   while (popularMovies.length < 30 && fetchCount < fetchStop) {
+    try {
       const popularData = await fetchMoviesPages(getPopularMovies, 1, fetchCount);
 
       const filteredData = popularData.filter(movie =>
@@ -118,6 +119,9 @@ export async function getFilteredPopularMovies(
       const fullyFilteredMovies = await filterByRatingAndRuntime(filteredData, minRating, minRuntime, maxRuntime);
 
       popularMovies = [...popularMovies, ...fullyFilteredMovies];
+    } catch (error) {
+      console.error('Error fetching movie pages:', error);
+    }
       fetchCount++;
   }
   if (fetchCount >= fetchStop) { // if it couldn't find enough filtered movies just append any popular movie to the queue.
