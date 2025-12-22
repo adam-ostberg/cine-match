@@ -1,5 +1,6 @@
 import { UserAvatar } from "../components/UserAvatar";
 import type { FriendType } from "../UserModel";
+import { useState } from "react";
 
 export type LobbyViewProps = {
   lobbyId: string;
@@ -12,6 +13,7 @@ export type LobbyViewProps = {
 }
 
 export function LobbyView(props: LobbyViewProps) {
+  const [sentInviteByUserId, setSentInviteByUserId] = useState<Record<string, boolean>>({});
   
   function startSwipingACB() {
     props.onStartSwiping();
@@ -22,6 +24,7 @@ export function LobbyView(props: LobbyViewProps) {
   }
 
   function inviteFriendClickACB(friend: FriendType) {
+    setSentInviteByUserId((prev) => ({ ...prev, [friend.userId]: true }));
     props.onInviteFriend(friend);
   }
 
@@ -40,7 +43,13 @@ export function LobbyView(props: LobbyViewProps) {
             <div key={friend.userId} className="friend-item">
               <UserAvatar userId={friend.userId} size={40}/>
               <p>{friend.username}</p>
-              <button className="secondary-button" onClick={() => inviteFriendClickACB(friend)}>Invite</button>
+              <button
+                className="secondary-button"
+                disabled={!!sentInviteByUserId[friend.userId]}
+                onClick={() => inviteFriendClickACB(friend)}
+              >
+                {sentInviteByUserId[friend.userId] ? "Sent ✓" : "Invite"}
+              </button>
             </div>
           ))}
         </div>

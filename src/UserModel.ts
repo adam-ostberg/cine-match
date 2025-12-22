@@ -30,6 +30,7 @@ export class UserModel  {
     userId = "";
     ready = false;
     currentUser: User | null = null;
+    email = "";
     username = "";
     currentSessionId: string | null = null;
     likes: any[] = [];
@@ -62,6 +63,10 @@ export class UserModel  {
 
     setUsername(username: string) {
         this.username = username;
+    }
+
+    setEmail(email: string) {
+        this.email = email;
     }
 
     setCurrentSessionId(id: string | null) {

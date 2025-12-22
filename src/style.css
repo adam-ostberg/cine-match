@@ -34,10 +34,6 @@ html, body {
     pointer-events: none;
 }
 
-.home-presenter-parent {
-
-}
-
 .vertical-line {
   color: white;
   margin: 40px 0;
@@ -74,6 +70,24 @@ html, body {
   color: rgb(198, 198, 198);
   margin: 0;
   padding: 0;
+}
+
+.home-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 16px;
+  margin-top: clamp(12px, 2vh, 24px);
+}
+
+.home-intro p {
+  max-width: min(70ch, 92vw);
+  text-align: center;
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  line-height: 1.45;
+  white-space: pre-line;
 }
 
 /* Carousel css from https://blog.logto.io/css-only-infinite-scroll */
@@ -454,6 +468,7 @@ height: auto;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2; /* max rows */
+  line-clamp: 2; /* standard */
   overflow: hidden;
 }
 @media (max-width: 768px) and (hover: none) and (pointer: coarse) {
@@ -461,11 +476,6 @@ height: auto;
   .swipe-title {
     font-size: 4vh;
   }
-}
-
-
-#current-session {
-
 }
 
 .dislike-btn svg {
@@ -1853,4 +1863,8 @@ height: auto;
   .lobby-container {
     min-height: auto;
   }
+}
+
+.email-text {
+  color: rgb(164, 164, 164);
 }

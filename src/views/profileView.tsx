@@ -23,7 +23,6 @@ export type ProfileViewProps = {
   friends: FriendType[];
   friendRequestMessage: { text: string; isError: boolean } | null;
 
-  onUsernameChange: (name: string) => void;
   onRemoveLike: (movie: TMDBMoviePageResult) => void
   onMovieClick: (id: number) => void;
   onSignOutClick: () => void;
@@ -39,22 +38,6 @@ export function ProfileView(props: ProfileViewProps) {
   const matchedMovies = [...props.matchedMovies];
   const aggregatedMatchedMovies = mergeMatchesByMovie(matchedMovies.reverse()?.slice(0, 29));
   const likedMovies = [...new Set(props.likedMovies)]; // remove duplicates
-
-  function handleSearchKeyDownACB(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
-      const input = e.currentTarget;
-      props.onUsernameChange(input.value);
-      // Clears focus after enterd
-      input.blur();
-    }
-  }
-
-  function handleSaveClickCB() {
-    const input = document.getElementById("username-input") as HTMLInputElement;
-    if (input) {
-      props.onUsernameChange(input.value);
-    }
-  }
 
   function signOutClickACB() {
     props.onSignOutClick();
@@ -154,19 +137,8 @@ export function ProfileView(props: ProfileViewProps) {
             </IconButton>
             <div className="profile-info">
               <span className="username">{props.userModel.username}</span>
+              <p className="email-text">{props.userModel.email}</p>
               <button className="secondary-button" onClick={signOutClickACB}>Sign Out</button>
-              <div className="search-row">
-                <input
-                  id="username-input"
-                  className="username-input"
-                  type="text"
-                  placeholder="Change username"
-                  onKeyDown={handleSearchKeyDownACB}
-                />
-                <button className="secondary-button" onClick={handleSaveClickCB}>
-                  Save
-                </button>
-              </div>
             </div>
           </div>
           <div className="section">

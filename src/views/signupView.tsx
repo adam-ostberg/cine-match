@@ -1,4 +1,5 @@
 import "/src/style.css";
+import type { KeyboardEvent } from "react";
 
 type SignupViewProps = {
     errorMessage: string | null;
@@ -25,6 +26,13 @@ export function SignupView(props: SignupViewProps) {
     props.onSignup(signupValues.username, signupValues.email, signupValues.password);
   }
 
+  function handleKeyDownACB(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      signUpACB();
+    }
+  }
+
   function handleSwitchToLoginACB() {
     props.onToLogin();
   }
@@ -37,15 +45,15 @@ export function SignupView(props: SignupViewProps) {
           <label>
             Username:
           </label>
-          <input id="username" type="text" placeholder="Username" required />
+          <input id="username" type="text" placeholder="Username" required onKeyDown={handleKeyDownACB} />
           <label>
             E-Mail:
           </label>
-          <input id="email" type="email" placeholder="example@address.com" required />
+          <input id="email" type="email" placeholder="example@address.com" required onKeyDown={handleKeyDownACB} />
           <label>
             Password:
           </label>
-          <input id="password" type="password" placeholder="password" required />
+          <input id="password" type="password" placeholder="password" required onKeyDown={handleKeyDownACB} />
           <div className="button-row">
             <button className="primary-button" onClick={signUpACB}>Sign Up</button>
           </div>

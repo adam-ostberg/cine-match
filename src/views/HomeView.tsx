@@ -74,12 +74,16 @@ export function HomeView(props: HomeViewProps) {
     return <div><p>Loading movies...</p></div>;
   } */
 
+  const introText = props.userModel.currentUser
+    ? `Create a session and invite some friends to decide which movie to watch!`
+    : `CineMatch helps you and your friends decide upon a movie to watch. Create an account and invite your friends to a session to begin swiping until you find your perfect movie match!`;
+
 return (
     <div className="home">
       <Navbar userModel={props.userModel} sessionModel={props.sessionModel}/>
       <div className="home-section">
-        <div style={{display: "flex", flexDirection: "column", alignItems: "center", marginTop: "2vh"}}>
-          <p>Swipe to find your perfect movie</p>
+        <div className="home-intro">
+          <p>{introText}</p>
         </div>
         <div className="carousel-view">
           <div className="carousel-track">

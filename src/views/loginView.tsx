@@ -1,4 +1,5 @@
 import "/src/style.css";
+import type { KeyboardEvent } from "react";
 
 type LoginViewProps = {
     errorMessage: string | null;
@@ -23,6 +24,13 @@ export function LoginView(props: LoginViewProps) {
     props.onLogin(loginValues.email, loginValues.password);
   }
 
+  function handleKeyDownACB(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      loginACB();
+    }
+  }
+
   function switchToCreateAccountACB() {
     props.onToCreateAccount();
   }
@@ -35,11 +43,11 @@ export function LoginView(props: LoginViewProps) {
           <label>
             E-Mail:
           </label>
-          <input id="email" type="email" placeholder="example@address.com" required />
+          <input id="email" type="email" placeholder="example@address.com" required onKeyDown={handleKeyDownACB} />
           <label>
             Password:
           </label>
-          <input id="password" type="password" placeholder="password" required />
+          <input id="password" type="password" placeholder="password" required onKeyDown={handleKeyDownACB} />
           <div className="button-row">
             <button className="primary-button" onClick={loginACB}>Login</button>
           </div>
