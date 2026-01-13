@@ -3,8 +3,10 @@ import { UserModel } from "../UserModel"
 import { NavbarView } from "../views/NavbarView";
 import { signOutUser } from "../authService";
 import type { SessionModel } from "../SessionModel";
+import type { MovieModel } from "../MovieModel";
 
 type NavbarPresenterProps = {
+  movieModel: MovieModel;
   userModel: UserModel;
   sessionModel: SessionModel;
 }
@@ -28,6 +30,7 @@ const Navbar = observer(
       if (userId) {
         props.sessionModel.removeUser(userId);
       }
+      props.movieModel.clearMovieFilters();
       props.sessionModel.clearMatchVars();
       props.sessionModel.setSessionId(null);
       props.userModel.setCurrentSessionId(null);

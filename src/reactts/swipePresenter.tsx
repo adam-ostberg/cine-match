@@ -117,7 +117,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 		return (
 			<div className="swipe-flex-parent">
 				<div className="details-view-background" onClick={closeDetailsACB}>
-					<Navbar userModel={props.userModel} sessionModel={props.sessionModel}/>
+					<Navbar movieModel={props.model} userModel={props.userModel} sessionModel={props.sessionModel}/>
 					{view}
 				</div>
 				{details}

@@ -167,7 +167,7 @@ export class MovieModel {
         );
         recommendationMovies = await filterByRatingAndRuntime(recommendationMovies, this.minRating, this.minRuntime, this.maxRuntime);
 
-        const idQueuePrms = getFilteredPopularMovies(0, 50, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime)
+        const idQueuePrms = getFilteredPopularMovies(0, 20, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime)
             .then((popularMovies) => {
                 const ids = [...recommendationMovies, ...popularMovies].map(movie => movie.id); // our queue
                 return [...new Set(ids)] // removes duplicates
@@ -190,7 +190,7 @@ export class MovieModel {
 
         if (this.movieIdQueuePrmsState.data.length < 18 && !this.isEnsuringIdQueueHealth) {
             this.isEnsuringIdQueueHealth = true;
-            const popularMovies = await getFilteredPopularMovies(50, 100, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime);
+            const popularMovies = await getFilteredPopularMovies(20, 50, this.likes, this.dislikes, this.selectedGenreIds, this.minRating, this.minRuntime, this.maxRuntime);
             const newIdQueue = [...this.movieIdQueuePrmsState.data, ...popularMovies.map(movie => movie.id)];
             this.movieIdQueuePrmsState.data = [...new Set(newIdQueue)]; // removes duplicates
             this.isEnsuringIdQueueHealth = false;

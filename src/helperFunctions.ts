@@ -144,7 +144,7 @@ export async function filterByRatingAndRuntime(data: TMDBMoviePageResult[], minR
       //await sleep(10); // Do this to avoid API Rate limiting
   }
 
-  const imdbIds = details.map(detail => detail.imdb_id);
+  const imdbIds = details.map(detail => detail.imdb_id).filter(id => !!id); // Remove any IDs that are falsy
 
   const ratings = (await fetchImdbRatings(imdbIds))?.data?.titles ?? [];
   if (ratings.length === 0) return [];

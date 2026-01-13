@@ -62,6 +62,7 @@ const Home = observer(
             }
             props.sessionModel.setSessionId(null);
             props.userModel.setCurrentSessionId(null);
+            props.model.clearMovieFilters();
         }
 
 		const HAS_ALL_DETAILS_DATA = (
@@ -86,6 +87,7 @@ const Home = observer(
             <div className="home-presenter-parent">
                 <div className="details-view-background" onClick={closeDetailsACB}>
                     <HomeView
+                        movieModel={props.model}
                         userModel={props.userModel}
                         sessionModel={props.sessionModel}
                         sessionId={props.userModel.currentSessionId || null}

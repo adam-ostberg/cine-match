@@ -121,7 +121,7 @@ export function ProfileView(props: ProfileViewProps) {
 
   return (props.userModel.username ? (
     <>
-      <Navbar userModel={props.userModel} sessionModel={props.sessionModel}/>
+      <Navbar movieModel={props.model} userModel={props.userModel} sessionModel={props.sessionModel}/>
       <div className="scroll-auto">
         <div className="profile-container">
           <h2>My Profile</h2>
