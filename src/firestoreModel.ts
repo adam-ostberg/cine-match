@@ -172,6 +172,7 @@ export async function sendFriendRequest(fromUser: UserModel, toUsername: string)
     // If there is no user with that username return false and tell the user
     if (querySnapshot.empty) {
         console.error("User not found!");
+        fromUser.setFriendRequestSuccessful("failure");
         return false;
     }
 
