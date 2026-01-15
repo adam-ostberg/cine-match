@@ -78,7 +78,7 @@ export function HomeView(props: HomeViewProps) {
 
   const introText = props.userModel.currentUser
     ? "Create a session and invite friends to decide what movie to watch."
-    : "CineMatch helps you and your friends decide what movie to watch. Create an account, invite friends to a session, and start swiping until you find a match.";
+    : "CineMatch helps you and your friends decide what movie to watch. Create an account, invite friends and start swiping until you find a match.";
 
 return (
     <div className="home">
@@ -112,7 +112,7 @@ return (
           )
         ) : (
           <div className="session-section">
-            <p>Please log in to create or join a session...</p>
+            <p>Please log in or create an account to start a session...</p>
 						<button className="secondary-button" style={{fontSize: "22px", width: "200px"}} onClick={() => { window.location.hash = "#/account" }}>
 							Log In
 						</button>
