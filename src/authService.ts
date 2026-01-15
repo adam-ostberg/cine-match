@@ -7,7 +7,7 @@ import {
     type User
 } from "firebase/auth";
 
-import { doc, setDoc, serverTimestamp, getDoc, getDocs, query, where, collection } from "firebase/firestore";
+import { getDocs, query, where, collection } from "firebase/firestore";
 
 import { UserModel } from "./UserModel";
 
@@ -34,11 +34,11 @@ export async function signUpWithEmail(userModel: UserModel, username: string, em
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    await setDoc(doc(db, "users", user.uid), {
-        username: username,
-        email: email,
-        createdAt: serverTimestamp(),
-    });
+    // await setDoc(doc(db, "users", user.uid), {
+    //     username: username,
+    //     email: email,
+    //     createdAt: serverTimestamp(),
+    // });
 
     userModel.setCurrentUser(user);
     userModel.setUserId(user.uid);
@@ -48,17 +48,19 @@ export async function signUpWithEmail(userModel: UserModel, username: string, em
 }
 
 // Sign in an existing user with email and password
-export async function signInWithEmail(userModel: UserModel, email: string, password: string) {
+export async function signInWithEmail(email: string, password: string) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     // Get the signed in users username and update it in the model
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    const username = userDoc.data()?.username || "";
+    // const userDoc = await getDoc(doc(db, "users", user.uid));
+    // const username = userDoc.data()?.username || "";
 
-    userModel.setUsername(username);
-    userModel.setCurrentUser(user);
-    userModel.setUserId(user.uid);
+    /* The observeAuth listener in mobxReactiveModel will detect this change, update userModel, and trigger persistence to fetch the username */
+
+    // userModel.setUsername(username);
+    // userModel.setCurrentUser(user);
+    // userModel.setUserId(user.uid);
     return user;
 }
 

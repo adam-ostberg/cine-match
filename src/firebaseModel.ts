@@ -444,6 +444,9 @@ export function connectUserToPersistence(user: UserModel, watchFunction: any) {
   const unsubscribeFirestore = firestoreOnSnapshot(docRef, (docSnap) => {
     if (!docSnap.exists()) {
       console.warn("User document does not exist:", user.userId);
+      // So if it doesn't exist, it's persisted (maybe breaks something)
+      user.setReady(true);
+      persistUserModelACB(); 
       return;
     }
 

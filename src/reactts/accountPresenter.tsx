@@ -18,7 +18,7 @@ const Account = observer(
 
     async function handleLoginACB(email: string, password: string) {
       try {
-        await signInWithEmail(props.userModel, email.trim(), password);
+        await signInWithEmail(email.trim(), password);
         window.location.hash = "#/";
       } catch (err: any) {
         switch (err?.message) {
