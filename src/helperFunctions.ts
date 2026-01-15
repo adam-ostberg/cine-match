@@ -115,6 +115,8 @@ export async function getFilteredPopularMovies(
           movie.genre_ids.some(genre => selectedGenreIds.includes(genre)) // filter by selected genres
           && !likes.includes(movie.id) // not in liked
           && !dislikes.includes(movie.id) // not in disliked
+          && !!movie.poster_path
+          && !!movie.backdrop_path
       );
       const fullyFilteredMovies = await filterByRatingAndRuntime(filteredData, minRating, minRuntime, maxRuntime);
 
