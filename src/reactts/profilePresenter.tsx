@@ -54,25 +54,13 @@ const Profile = observer(
 
     async function handleSendFriendRequestACB(friendUsername: string) {
       if (!friendUsername.trim()) {
+        props.userModel.setFriendRequestSuccessful("failure")
         setFriendRequestMessage({ text: "Please enter a username", isError: true });
         setTimeout(() => setFriendRequestMessage(null), 3000);
         return;
       }
-      
-      try {
-        const success = await sendFriendRequest(props.userModel, friendUsername);
-        if (success) {
-          setFriendRequestMessage({ text: "Friend request sent!", isError: false });
-        } else {
-          setFriendRequestMessage({ text: "User not found or already a friend", isError: true });
-        }
-      } catch (e: unknown) {
-        const message = e instanceof Error ? e.message : "Failed to send friend request";
-        setFriendRequestMessage({ text: message, isError: true });
-      }
-      
-      // Clear message after 3 seconds
-      setTimeout(() => setFriendRequestMessage(null), 3000);
+      props.userModel.setFriendRequestSuccessful("pending")
+      props.userModel.sendFriendRequest(friendUsername);
     }
 
     function handleAcceptFriendRequestACB(fromUsername: string, fromUserId: string) {
@@ -114,7 +102,7 @@ const Profile = observer(
         onSendFriendRequest={handleSendFriendRequestACB}
         onAcceptFriendRequest={handleAcceptFriendRequestACB}
         onSendInvite={handleSendInviteACB}
-        friendRequestMessage={friendRequestMessage}
+        sucessfulFriendRequest={props.userModel.successfulFriendRequest}
       />
       : "";
 

@@ -10,6 +10,8 @@ import type { SessionModel } from "../SessionModel.ts";
 import type { MovieModel } from "../MovieModel.ts";
 import { CustomTooltip } from "../tooltip.tsx";
 import type { LikedMovie } from "../reactts/profilePresenter.tsx";
+import { useState } from "react";
+import { sendFriendRequest } from "../firestoreModel.ts";
 
 
 export type ProfileViewProps = {
@@ -21,7 +23,7 @@ export type ProfileViewProps = {
   matchedMovies: MatchType[];
   friendRequests: FriendRequestType[];
   friends: FriendType[];
-  friendRequestMessage: { text: string; isError: boolean } | null;
+  sucessfulFriendRequest: "success" | "failure" | "pending" | null
 
   onRemoveLike: (movie: TMDBMoviePageResult) => void
   onMovieClick: (id: number) => void;
@@ -60,6 +62,17 @@ export function ProfileView(props: ProfileViewProps) {
     props.onAcceptFriendRequest(fromUsername, fromUserId);
   }
   const enoughMatches = (props.matchedMovies.length ?? 0) > 0;
+
+  let friendRequestMessage = null;
+  if (props.sucessfulFriendRequest === "success") {
+    friendRequestMessage = { text: "Friend request sent!", isError: false };
+  }
+  else if (props.sucessfulFriendRequest === "failure") {
+    friendRequestMessage = { text: "User not found or already a friend", isError: true };    
+  }
+  else if (props.sucessfulFriendRequest === "pending") {
+    friendRequestMessage = { text: "Pending", isError: false }; 
+  }
 
   // TODO: Maybe remove this as its not linked to the new system
 
@@ -157,9 +170,9 @@ export function ProfileView(props: ProfileViewProps) {
                 <input id="friend-username-input" className="username-input" type="text" placeholder="Friend's username" />
                 <button className="secondary-button" onClick={sendFriendRequestACB}>Send request</button>
               </div>
-              {props.friendRequestMessage && (
-                <p className={props.friendRequestMessage.isError ? "error-message" : "success-message"}>
-                  {props.friendRequestMessage.text}
+              {friendRequestMessage && (
+                <p className={friendRequestMessage.isError ? "error-message" : "success-message"}>
+                  {friendRequestMessage.text}
                 </p>
               )}
               <h4>Current friends</h4>

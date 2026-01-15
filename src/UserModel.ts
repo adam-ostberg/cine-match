@@ -1,5 +1,5 @@
 import { type User } from "firebase/auth";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 export type FriendType = {
     userId: string;
@@ -38,6 +38,7 @@ export class UserModel  {
     invite: InviteType | null = null;
     friends: FriendType[] = [];
     friendRequests: FriendRequestType[] = [];
+    successfulFriendRequest: "success" | "failure" | "pending" | null = null;
     // Pending actions for persistence via side effects
     pendingSessionSwipe: { movieId: number; title: string; posterPath: string } | null = null;
     pendingFriendRequest: { toUsername: string } | null = null;
@@ -206,5 +207,27 @@ export class UserModel  {
     acceptFriendRequest(userId: string, username: string) {
         this.removeFriendRequest(userId);
         this.addFriend({userId, username});
+    }
+
+    setFriendRequestSuccessful(value: "success" | "failure" | "pending" | null) {
+        if (value === "failure") {
+            this.successfulFriendRequest = "failure"
+            runInAction(() => {
+                setTimeout(() => {
+                    this.successfulFriendRequest = null
+                }, 3000)
+            })
+        }
+        else if (value === "success") {
+            this.successfulFriendRequest = "success"
+            runInAction(() => {
+                setTimeout(() => {
+                    this.successfulFriendRequest = null
+                }, 3000)
+            })
+        }
+        else if (value === "pending") {
+            this.successfulFriendRequest = "pending"
+        }
     }
 }

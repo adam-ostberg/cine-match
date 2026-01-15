@@ -181,6 +181,7 @@ export async function sendFriendRequest(fromUser: UserModel, toUsername: string)
     // You should not be able to send a friend request to yourself
     if (targetUserId === fromUser.userId) {
         console.error("Cannot send friend request to yourself");
+        fromUser.setFriendRequestSuccessful("failure");
         return false;
     }
 
@@ -188,6 +189,7 @@ export async function sendFriendRequest(fromUser: UserModel, toUsername: string)
     const isAlreadyFriend = fromUser.friends.some(friend => friend.userId === targetUserId);
     if (isAlreadyFriend) {
         console.error("User is already your friend");
+        fromUser.setFriendRequestSuccessful("failure");
         return false;
     }
 
@@ -200,7 +202,7 @@ export async function sendFriendRequest(fromUser: UserModel, toUsername: string)
             status: "pending"
         })
     });
-
+    fromUser.setFriendRequestSuccessful("success");
     return true;
 }
 
