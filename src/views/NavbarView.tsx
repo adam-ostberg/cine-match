@@ -106,9 +106,9 @@ export function NavbarView(props: navbarViewProps) {
 							</button>
 							: ""
 						}
-						<button className="secondary-button" onClick={() => { window.location.hash = "#/account" }}>
+						{/* <button className="secondary-button" onClick={() => { window.location.hash = "#/account" }}>
 							Log In
-						</button>
+						</button> */}
 					</div>
 				)
 			}
