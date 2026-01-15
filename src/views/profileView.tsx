@@ -4,18 +4,13 @@ import { type TMDBMoviePageResult } from "../apiConfig.ts";
 import { FaUserCircle } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { UserAvatar } from "../components/UserAvatar.tsx";
-import { Navbar } from "../reactts/navbarPresenter.tsx";
 import type { UserModel, MatchType, FriendRequestType, FriendType } from "../UserModel.ts";
 import type { SessionModel } from "../SessionModel.ts";
-import type { MovieModel } from "../MovieModel.ts";
 import { CustomTooltip } from "../tooltip.tsx";
 import type { LikedMovie } from "../reactts/profilePresenter.tsx";
-import { useState } from "react";
-import { sendFriendRequest } from "../firestoreModel.ts";
 
 
 export type ProfileViewProps = {
-  model: MovieModel;
   userModel: UserModel;
   sessionModel: SessionModel;
   likedMovies: LikedMovie[];
@@ -134,7 +129,6 @@ export function ProfileView(props: ProfileViewProps) {
 
   return (props.userModel.username ? (
     <>
-      <Navbar movieModel={props.model} userModel={props.userModel} sessionModel={props.sessionModel}/>
       <div className="scroll-auto">
         <div className="profile-container">
           <h2>My Profile</h2>

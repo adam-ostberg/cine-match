@@ -7,7 +7,7 @@ import { signOutUser } from "../authService";
 import type { SessionModel } from "../SessionModel.ts";
 import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
-import { sendFriendRequest } from "../firestoreModel.ts";
+import { Navbar } from "./navbarPresenter.tsx";
 
 export type ProfilePresenterProps = {
   model: MovieModel;
@@ -24,7 +24,6 @@ export type LikedMovie = {
 const Profile = observer(
   function ProfileRender(props: ProfilePresenterProps) {
     const [showDetails, setShowDetails] = useState(false); // State to control details overlay
-    const [friendRequestMessage, setFriendRequestMessage] = useState<{ text: string; isError: boolean } | null>(null);
 
     function handleRemoveLikeACB(movie: TMDBMoviePageResult) {
       props.model.toggleAlltimeLike(movie, true);
@@ -55,8 +54,6 @@ const Profile = observer(
     async function handleSendFriendRequestACB(friendUsername: string) {
       if (!friendUsername.trim()) {
         props.userModel.setFriendRequestSuccessful("failure")
-        setFriendRequestMessage({ text: "Please enter a username", isError: true });
-        setTimeout(() => setFriendRequestMessage(null), 3000);
         return;
       }
       props.userModel.setFriendRequestSuccessful("pending")
@@ -96,7 +93,6 @@ const Profile = observer(
         onMovieClick={handleMovieClickACB}
         onSignOutClick={handleSignOutACB}
         matchedMovies={props.userModel.matches}
-        model={props.model}
         friendRequests={props.userModel.friendRequests}
         friends={props.userModel.friends}
         onSendFriendRequest={handleSendFriendRequestACB}
@@ -124,6 +120,7 @@ const Profile = observer(
             : "";
     return (
       <div className="details-view-background" onClick={closeDetailsACB}>
+        <Navbar movieModel={props.model} userModel={props.userModel} sessionModel={props.sessionModel}/>
         {profile}
         {details}
       </div>

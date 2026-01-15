@@ -1,13 +1,10 @@
 import "../style.css";
 
 import type { TMDBMoviePageResult } from "../apiConfig";
-import { Navbar } from "../reactts/navbarPresenter";
 import type { UserModel } from "../UserModel";
 import type { SessionModel } from "../SessionModel";
-import type { MovieModel } from "../MovieModel";
 
 export type HomeViewProps = {
-  movieModel: MovieModel
   userModel: UserModel;
   sessionModel: SessionModel;
   sessionId: string | null;
@@ -82,7 +79,6 @@ export function HomeView(props: HomeViewProps) {
 
 return (
     <div className="home">
-      <Navbar movieModel={props.movieModel} userModel={props.userModel} sessionModel={props.sessionModel}/>
       <div className="home-section">
         <div className="home-intro">
           <p>{introText}</p>

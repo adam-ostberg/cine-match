@@ -8,6 +8,7 @@ import { useState } from "react";
 import { DetailsView } from "../views/DetailsView.tsx";
 import { UserModel } from "../UserModel.ts";
 import { SessionModel } from "../SessionModel.ts";
+import { Navbar } from "./navbarPresenter.tsx";
 
 export type HomePresenterProps = {
     model: MovieModel;
@@ -86,8 +87,8 @@ const Home = observer(
         return (
             <div className="home-presenter-parent">
                 <div className="details-view-background" onClick={closeDetailsACB}>
+                    <Navbar movieModel={props.model} userModel={props.userModel} sessionModel={props.sessionModel}/>
                     <HomeView
-                        movieModel={props.model}
                         userModel={props.userModel}
                         sessionModel={props.sessionModel}
                         sessionId={props.userModel.currentSessionId || null}
