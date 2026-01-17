@@ -278,6 +278,7 @@ export interface TMDBMoviePageResult {
   imdbRating?: number; // appended after fetch
   runtime?: number; // appended after fetch
   sourceType: string; // either "recommended" | "popular" | "liked" (from another user)
+  filterStatus?: string;
 }
 
 export interface TMDBMoviePage {
@@ -286,6 +287,57 @@ export interface TMDBMoviePage {
   total_pages: number;
   total_results: number;
 }
+
+export interface DiscoverMovieParams {
+  page?: number;
+  language?: string;
+  sort_by?: string;
+  include_adult?: boolean;
+  genresOr?: number[]; // all or
+  runtimeMin?: number; // minutes
+  runtimeMax?: number; // minutes
+  releaseDateTo?: string;   // YYYY-MM-DD
+}
+
+
+export async function discoverMovies(
+  params: DiscoverMovieParams = {}
+): Promise<TMDBMoviePage> {
+  const searchParams = new URLSearchParams({
+    include_adult: String(params.include_adult ?? false),
+    page: String(params.page ?? 1),
+    sort_by: params.sort_by ?? "popularity.desc",
+  });
+
+  if (params.releaseDateTo) {
+    searchParams.set("release_date.lte", params.releaseDateTo);
+  }  
+  else {
+    const today = new Date().toISOString().split("T")[0];
+    searchParams.set("release_date.lte", today); // Always show films that have been released
+  }
+
+  if (params.genresOr?.length) {
+    searchParams.set("with_genres", params.genresOr.join("|"));
+  }
+  if (params.runtimeMin !== undefined) {
+    searchParams.set("with_runtime.gte", String(params.runtimeMin));
+  }
+
+  if (params.runtimeMax !== undefined) {
+    searchParams.set("with_runtime.lte", String(params.runtimeMax));
+  }
+
+  const URL = `${BASE_URL}/discover/movie?${searchParams.toString()}`
+  const response = await fetch(URL, optionsGET)
+
+  if (!response.ok) {
+    throw new Error(`TMDB error: ${response.status}`);
+  }
+
+  return response.json();
+}
+
 
 export function getPopularMovies(page: number): Promise<any>{
   /* We get a list of popular movies to populate a search screen */
@@ -316,9 +368,10 @@ export function getPopularMovies(page: number): Promise<any>{
 }
 
 export async function fetchMoviesPages(
-  fetcherFn: (page: number) => Promise<TMDBMoviePage>,
+  fetcherFn: (pageOrParams: any) => Promise<TMDBMoviePage>,
   pagesToFetch: number,
-  startPage = 1
+  startPage = 1,
+  params: DiscoverMovieParams | null = null,
 ): Promise<TMDBMoviePageResult[]> {
 
   if (pagesToFetch < 1) {
@@ -326,11 +379,16 @@ export async function fetchMoviesPages(
   }
 
   const endPage = startPage + pagesToFetch - 1;
-
   // Build an array of promises for each page
   const pagePromises: Promise<TMDBMoviePage>[] = [];
   for (let page = startPage; page <= endPage; page++) {
-    pagePromises.push(fetcherFn(page));
+    if (!params) {
+      pagePromises.push(fetcherFn(page));
+    }
+    else {
+      params.page = page
+      pagePromises.push(fetcherFn(params))
+    }
   }
 
   try {
@@ -549,5 +607,5 @@ export function getMovieList() {
     .catch(handleErrorACB);
 }
 
-//const data = await fetchMoviesPages(getPopularMovies, 2, 1);
+//const data = await discoverMovies();
 //console.log(data);

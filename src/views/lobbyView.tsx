@@ -75,7 +75,7 @@ export function LobbyView(props: LobbyViewProps) {
 
           
           <div className="lobby-actions">
-              <button className="primary-button gray-button" onClick={toOptionsViewACB}>Filter Movie Algoritm</button>
+              <button className="primary-button gray-button" onClick={toOptionsViewACB}>Set Movie Preferences</button>
               {props.isHost ? (
                   <button className="primary-button" onClick={startSwipingACB}>Begin Swiping</button>
               ) : (

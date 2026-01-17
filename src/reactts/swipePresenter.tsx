@@ -100,6 +100,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			currentSessionId={props.model.currentSessionId} sessionModel={props.sessionModel}
 			userModel={props.userModel} sessionShowMatchAnimation={props.sessionModel.showMatchAnimation}
 			participants={props.sessionModel.participants} isFetchingIdQueue={props.model.isFetchingIdQueue}
+			movieIdToFilterStatus={props.model.movieIdToFilterStatus}
 			/>);
 
 		const details = showDetails && HAS_ALL_DETAILS_DATA 

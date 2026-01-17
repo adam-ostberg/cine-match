@@ -1,7 +1,7 @@
 // https://www.npmjs.com/package/countries-and-timezones
 import { getCountryForTimezone } from "countries-and-timezones";
 import { MovieModel } from "./MovieModel";
-import { fetchMoviesPages, getMovieDetails, getPopularMovies, type MovieDetails, type TMDBMoviePageResult } from "./apiConfig";
+import { discoverMovies, fetchMoviesPages, getMovieDetails, getPopularMovies, type DiscoverMovieParams, type MovieDetails, type TMDBMoviePageResult } from "./apiConfig";
 import { fetchImdbRatings } from "./bulkImdbApi";
 import { runInAction } from "mobx";
 
@@ -102,6 +102,7 @@ export async function getFilteredPopularMovies(
   minRating: number,
   minRuntime: number,
   maxRuntime: number,
+  movieIdToFilterStatus: Map<number, string>,
 ): Promise<TMDBMoviePageResult[]> {
 
   let popularMovies: TMDBMoviePageResult[] = [];
@@ -109,7 +110,14 @@ export async function getFilteredPopularMovies(
   const fetchStop = fetchCount + 10;
   while (popularMovies.length < 30 && fetchCount < fetchStop) {
     try {
-      const popularData = await fetchMoviesPages(getPopularMovies, 1, fetchCount);
+      const params: DiscoverMovieParams = {
+        genresOr: selectedGenreIds,
+        runtimeMin: minRuntime,
+        runtimeMax: maxRuntime,
+      }
+      console.log("fetching movies page: " + fetchCount);
+      const popularData = await fetchMoviesPages(discoverMovies, 1, fetchCount, params)
+      //const popularData = await fetchMoviesPages(getPopularMovies, 1, fetchCount);
 
       const filteredData = popularData.filter(movie =>
           movie.genre_ids.some(genre => selectedGenreIds.includes(genre)) // filter by selected genres
@@ -128,6 +136,11 @@ export async function getFilteredPopularMovies(
   }
   if (fetchCount >= fetchStop) { // if it couldn't find enough filtered movies just append any popular movie to the queue.
       const popularData = await fetchMoviesPages(getPopularMovies, 1, fetchCount+1);
+      runInAction(() => {
+        popularData.forEach(movie => {
+          movieIdToFilterStatus.set(movie.id, "popular movie (unfiltered)")
+        })
+      })
       popularMovies = [...popularMovies, ...popularData];
   }
 

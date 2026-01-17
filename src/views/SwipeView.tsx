@@ -30,6 +30,7 @@ export type SwipeViewProps = {
   userModel: UserModel;
   participants: UserInfoType[];
   isFetchingIdQueue: boolean;
+  movieIdToFilterStatus: Map<number, string>
   onDislike: (id: number) => void;
   onLike: (id: number) => void;
   onMoreInfo: () => void;
@@ -185,12 +186,15 @@ const SwipeView = observer(
             <ViewSidebarRoundedIcon />
           </IconButton>
           <div className="sidebar-content">
-            <h2>Status</h2>
+            <h2>Session Status</h2>
             <p id="current-session">Current Session id: {props.sessionModel.sessionId}</p>
+            <h2>Movie Status</h2>
+            <p>{props.movieIdToFilterStatus.get(firstDetail?.id ?? -1) ?? "Popular filtered movie"}</p>
             <h2>Lobby</h2>
             <div className="sidebar-lobby-container">
               {props.participants.map(outputParticipants)}
             </div>
+
           </div>
         </aside>
         {props.sessionModel.showMatchAnimation && (

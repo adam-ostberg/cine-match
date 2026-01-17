@@ -146,6 +146,7 @@ export function OptionsView(props: OptionsViewProps) {
       </div>
       <div className="section">
         <h3>Genres</h3>
+        <p className="details-overview">(Matches atleast one genre)</p>
         <button className={`genre-option ${isAllSelected ? "selected" : ""} all`} onClick={props.onToggleAll}>
           {isAllSelected ? "Deselect All" : "Select All"}
         </button>
