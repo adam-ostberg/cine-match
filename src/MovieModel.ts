@@ -173,7 +173,12 @@ export class MovieModel {
         recommendationMovies.forEach(movie => {
             this.movieIdToFilterStatus.set(movie.id, "initial recommendation (filtered)")
         })
-
+        
+        if (this.selectedGenreIds.length == 0) {
+            runInAction(() => {
+                this.selectedGenreIds = this.genres.map(genre => genre.id); // select all genres if its empty
+            })
+        }
         const idQueuePrms = getFilteredPopularMovies(0, 30, this.likes, this.dislikes, Object.values(this.selectedGenreIds), this.minRating, this.minRuntime, this.maxRuntime, this.movieIdToFilterStatus)
             .then((popularMovies) => {
                 const ids = [...recommendationMovies, ...popularMovies].map(movie => movie.id); // our queue
@@ -196,6 +201,11 @@ export class MovieModel {
         if (!Array.isArray(this.movieIdQueuePrmsState.data) || !this.movieIdQueuePrmsState.data) return;
 
         if (this.movieIdQueuePrmsState.data.length < 25 && !this.isEnsuringIdQueueHealth) {
+            if (this.selectedGenreIds.length == 0) {
+                runInAction(() => {
+                    this.selectedGenreIds = this.genres.map(genre => genre.id); // select all genres if its empty
+                })
+            }
             this.isEnsuringIdQueueHealth = true;
             const popularMovies = await getFilteredPopularMovies(30, 60, this.likes, this.dislikes, Object.values(this.selectedGenreIds), this.minRating, this.minRuntime, this.maxRuntime, this.movieIdToFilterStatus);
             const newIdQueue = [...this.movieIdQueuePrmsState.data, ...popularMovies.map(movie => movie.id)];
@@ -430,7 +440,7 @@ export class MovieModel {
     }
 
     clearMovieFilters() {
-        this.selectedGenreIds = this.genres.map(genre => genre.id);
+        this.selectedGenreIds = [];
         this.selectedSeededIds = [];
         this.minRating = 0;
         this.minRuntime = 0;
