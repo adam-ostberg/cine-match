@@ -79,7 +79,9 @@ const Home = observer(
                 credits={props.model.movieCreditsPrmsState.data} 
                 imdb={props.model.imdbRatingPrmsState.data} 
                 watchProviders={props.model.watchProvidersPrmsState.data} 
-                onClose={closeDetailsACB}/> 
+                onClose={closeDetailsACB}
+                selGenreIds={null}
+                /> 
             : "";
 
         const username = props.userModel.currentUser && props.userModel.username || null;

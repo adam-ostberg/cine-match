@@ -28,7 +28,7 @@ const Details = observer(  // needed for the presenter to update (its view) when
 
     const view =
       HAS_ENOUGH_DATA
-        ? <DetailsView details={moviedetailsPrmsState.data} video={movieVideosPrmsState.data} credits={movieCreditsPrmsState.data} imdb={imdbRatingPrmsState.data} watchProviders={watchProvidersPrmsState.data} onClose={closeACB} />
+        ? <DetailsView details={moviedetailsPrmsState.data} video={movieVideosPrmsState.data} credits={movieCreditsPrmsState.data} imdb={imdbRatingPrmsState.data} watchProviders={watchProvidersPrmsState.data} onClose={closeACB} selGenreIds={null}/>
         : ("__no_data__");
 
     return (

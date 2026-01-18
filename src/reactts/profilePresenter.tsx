@@ -116,6 +116,7 @@ const Profile = observer(
               imdb={props.model.imdbRatingPrmsState.data} 
               watchProviders={props.model.watchProvidersPrmsState.data} 
               onClose={closeDetailsACB}
+              selGenreIds={null}
             /> 
             : "";
     return (

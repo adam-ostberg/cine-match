@@ -39,6 +39,7 @@ export type DetailsViewProps = {
   imdb: number;
   watchProviders: WatchProvidersResponse;
   isMatched?: boolean;
+  selGenreIds: number[] | null;
   onClose: () => void;
 };
 
@@ -153,6 +154,31 @@ const DetailsView = observer(
     const topActors = getTopActors(cast);
     const validProviders = filterAndSortWatchProviders(watchProviders);
 
+    function getRelevantGenres(genres: TMDBGenre[]) {
+      const displayGenres: TMDBGenre[] = []
+      for (const genre of genres) {
+        if (props.selGenreIds?.includes(genre.id)) {
+          displayGenres.push(genre);
+        }
+        if (displayGenres.length >= 3) {
+          break;
+        }        
+      }
+      if (displayGenres.length < 3) {
+        for (const genre of genres) {
+          if (!displayGenres.includes(genre)) {
+            displayGenres.push(genre);
+          }
+          if (displayGenres.length >= 3) {
+            break
+          }
+        }
+      }
+
+      return displayGenres
+    }
+    const relevantGenres = getRelevantGenres(details.genres)
+
     function handleMainPlayButtonACB() {
       if (!showVideo) {
         // First time click: Show video and start state as playing
@@ -245,7 +271,7 @@ const DetailsView = observer(
               </div>
 
               <div className={`details-genres-row ${isPlaying ? "hide" : ""}`}>
-                {details.genres.slice(0, 3).map(renderGenreCB)}
+                {relevantGenres.map(renderGenreCB)}
               </div>
 
               <p className={`details-overview ${isPlaying ? "hide" : ""}`}>{details.overview}</p>

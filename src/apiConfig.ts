@@ -330,7 +330,7 @@ export async function discoverMovies(
 
   const URL = `${BASE_URL}/discover/movie?${searchParams.toString()}`
   const response = await fetch(URL, optionsGET)
-
+  console.log(URL)
   if (!response.ok) {
     throw new Error(`TMDB error: ${response.status}`);
   }
@@ -607,5 +607,6 @@ export function getMovieList() {
     .catch(handleErrorACB);
 }
 
-//const data = await discoverMovies();
+//const params: DiscoverMovieParams = {genresOr: [17]}
+//const data = await discoverMovies(params);
 //console.log(data);

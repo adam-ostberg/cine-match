@@ -112,6 +112,7 @@ const Swipe = observer(  // needed for the presenter to update (its view) when r
 			watchProviders={props.model.watchProvidersPrmsState.data} 
 			onClose={closeDetailsACB}
 			isMatched={isMatchDetail}
+			selGenreIds={props.model.selectedGenreIds}
 		/> 
 		: "";
 
